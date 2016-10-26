@@ -3,4 +3,4 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET			/status					controllers.RESTController.status
+GET			/alive					controllers.HealthController.alive

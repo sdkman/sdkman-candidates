@@ -3,13 +3,16 @@ package steps
 import cucumber.api.scala.{EN, ScalaDsl}
 import org.scalatest.Matchers
 import play.api.libs.json.Json
+import steps.support.World
 
 import scalaj.http.Http
 
-class RestSteps extends ScalaDsl with EN with Matchers with Env {
+class HealthSteps extends ScalaDsl with EN with Matchers with World {
 
   When("""^a request is made to the (.*) endpoint$""") { (endpoint: String) =>
-    response = Http(s"$host$endpoint").asString
+    response = Http(s"$host$endpoint")
+      .timeout(connTimeoutMs = 1000, readTimeoutMs = 10000)
+      .asString
   }
 
   Then("""^an (\d+) status is received$""") { (status: Int) =>

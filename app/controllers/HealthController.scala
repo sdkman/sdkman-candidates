@@ -9,8 +9,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class RESTController @Inject() extends Controller {
-  def status = Action.async { request =>
+class HealthController @Inject() extends Controller {
+  def alive = Action.async { request =>
     Future {
       Ok(Json.obj("status" -> "OK"))
     }
