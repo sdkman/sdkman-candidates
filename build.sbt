@@ -1,4 +1,4 @@
-name := """sdkman-hooks-service"""
+name := """play-scala-cucumber-seed"""
 
 version := "1.0-SNAPSHOT"
 
