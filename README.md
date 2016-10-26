@@ -8,4 +8,14 @@ Feature files can be found in the `features` folder, with step defs living benea
 
 A simple end-to-end scenario is provided in the `rest.feature`, testing a `RESTController` with a `/status` endpoint.
 
+##Testing
+
+To run the Cucumber suite, spin up the service as follows:
+
+	$ sbt run
+
+Once running, the tests can be run from within an IDE, or else from the command line using:
+
+	$ sbt test
+
 Enjoy!!!
