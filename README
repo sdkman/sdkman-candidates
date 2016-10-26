@@ -1,5 +1,0 @@
-#Play Scala REST service seed
-
-This template forms the base of a REST microservice.
-
-Testing is performed from outside in with by providing Cucumber and Scalatest.
