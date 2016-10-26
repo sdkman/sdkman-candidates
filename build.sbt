@@ -10,6 +10,10 @@ libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
+  "org.scalatest" %% "scalatest" % "3.0.0" % Test,
+  "info.cukes" %% "cucumber-scala" % "1.2.5" % Test,
+  "info.cukes" % "cucumber-junit" % "1.2.5" % Test,
+  "org.scalaj" %% "scalaj-http" % "2.3.0" % Test,
+  "com.github.tomakehurst" % "wiremock" % "2.2.2" % Test
 )
 
