@@ -15,11 +15,11 @@ class HealthSteps extends ScalaDsl with EN with Matchers with World {
       .asString
   }
 
-  Then("""^an (\d+) status is received$""") { (status: Int) =>
+  Then("""^a (\d+) status code is received$""") { (status: Int) =>
     response.code shouldBe status
   }
 
-  Then("""^the payload's "(.*)" is "(.*)"$""") { (key: String, value: String) =>
+  Then("""^the payload has a "(.*)" of "(.*)"$""") { (key: String, value: String) =>
     val json = Json.parse(response.body)
     val status = (json \ key).as[String]
     status shouldBe value

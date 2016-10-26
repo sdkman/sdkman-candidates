@@ -1,6 +1,6 @@
-Feature: Health endpoint
+Feature: Health Check endpoint
 
-	Scenario: Check the status of the service
+	Scenario: Check if the service is alive
 		When a request is made to the /alive endpoint
-		Then an 200 status is received
-		And the payload's "status" is "OK"
+		Then a 200 status code is received
+		And the payload has a "status" of "OK"
