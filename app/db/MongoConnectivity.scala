@@ -11,5 +11,7 @@ class MongoConnectivity {
 
   def db = mongoClient.getDatabase("sdkman")
 
+  def appCollection = db.getCollection("application")
+
 }
 
