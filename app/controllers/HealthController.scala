@@ -5,6 +5,7 @@ import javax.inject._
 import db.MongoConnectivity
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.BsonString
+import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc._
 
@@ -16,10 +17,15 @@ class HealthController @Inject()(mongo: MongoConnectivity) extends Controller {
   def alive = Action.async { request =>
     mongo.appCollection.find().first().head.map { doc =>
       extractAlive(doc).fold(NotFound(statusMessage("KO"))) { bs =>
-        Ok(statusMessage(bs.getValue))
+        val message = statusMessage(bs.getValue)
+        Logger.info(s"/alive 200 response: $message")
+        Ok(message)
       }
     }.recover {
-      case e => ServiceUnavailable(errorMessage(e))
+      case e =>
+        val message = errorMessage(e)
+        Logger.error(s"/alive 503 response $message")
+        ServiceUnavailable(message)
     }
   }
 
