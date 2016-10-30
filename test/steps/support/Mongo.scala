@@ -4,7 +4,6 @@ import java.util.concurrent.TimeUnit
 
 import org.mongodb.scala.{MongoClient, _}
 import org.mongodb.scala.bson.collection.immutable.Document
-import steps.support.Helpers.ImplicitObservable
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -19,7 +18,7 @@ object Mongo {
 
   lazy val appCollection = db.getCollection("application")
 
-  def insertAlive() = appCollection.insertOne(Document("alive" -> "OK")).results()
+  def insertAliveOk() = appCollection.insertOne(Document("alive" -> "OK")).results()
 
   def dropAppCollection() = appCollection.drop().results()
 }

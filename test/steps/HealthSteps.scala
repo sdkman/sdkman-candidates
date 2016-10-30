@@ -10,7 +10,7 @@ import scalaj.http.Http
 class HealthSteps extends ScalaDsl with EN with Matchers with World {
 
   Before { s =>
-    Mongo.insertAlive()
+    Mongo.insertAliveOk()
   }
 
   And("""^a request is made to the (.*) endpoint$""") { (endpoint: String) =>
