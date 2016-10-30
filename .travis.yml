@@ -10,7 +10,7 @@ scala:
 
 before_install:
   - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - docker run --rm -d --net=host --name mongo mongo:3.2
+  - docker run -d --net=host --name mongo mongo:3.2
 script:
   - ./sbt clean compile docker:publishLocal
   - docker run -d -p 9000:9000 --net=host sdkman/sdkman-candidates:1.0.0-SNAPSHOT
