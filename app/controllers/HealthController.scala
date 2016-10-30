@@ -15,7 +15,7 @@ class HealthController @Inject()(mongo: MongoConnectivity) extends Controller {
 
   def alive = Action.async { request =>
     mongo.appCollection.find().first().head.map { doc =>
-      extractStatus(doc).fold(NotFound(statusMessage("KO"))) { bs =>
+      extractAlive(doc).fold(NotFound(statusMessage("KO"))) { bs =>
         Ok(statusMessage(bs.getValue))
       }
     }.recover {
@@ -23,7 +23,7 @@ class HealthController @Inject()(mongo: MongoConnectivity) extends Controller {
     }
   }
 
-  private def extractStatus(doc: Document) = doc.get[BsonString]("status")
+  private def extractAlive(doc: Document) = doc.get[BsonString]("alive")
 
   private def statusMessage(s: String) = Json.obj("status" -> s)
 
