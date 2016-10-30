@@ -19,7 +19,7 @@ object Mongo {
 
   lazy val appCollection = db.getCollection("application")
 
-  def insertStatus() = appCollection.insertOne(Document("status" -> "OK")).results()
+  def insertAlive() = appCollection.insertOne(Document("alive" -> "OK")).results()
 
   def dropAppCollection() = appCollection.drop().results()
 }
