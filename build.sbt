@@ -1,10 +1,14 @@
+import com.typesafe.config.ConfigFactory
+
 enablePlugins(JavaServerAppPackaging)
 
 enablePlugins(DockerPlugin)
 
 name := """sdkman-candidates"""
 
-version := "1.0.0-SNAPSHOT"
+val conf = ConfigFactory.parseFile(new File("conf/application.conf")).resolve()
+
+version := conf.getString("application.version")
 
 packageName in Docker := "sdkman/sdkman-candidates"
 
