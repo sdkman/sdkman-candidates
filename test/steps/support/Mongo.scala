@@ -20,7 +20,20 @@ object Mongo {
 
   def insertAliveOk() = appCollection.insertOne(Document("alive" -> "OK")).results()
 
-  def dropAppCollection() = appCollection.drop().results()
+  lazy val versionsCollection = db.getCollection("versions")
+
+  def insertVersion(candidate: String, version: String, platform: String, url: String) =
+    versionsCollection.insertOne(
+      Document(
+        "candidate" -> candidate,
+        "version" -> version,
+        "platform" -> platform,
+        "url" -> url))
+
+  def dropAllCollections() = {
+    appCollection.drop().results()
+    versionsCollection.drop().results()
+  }
 }
 
 object Helpers {

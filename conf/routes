@@ -3,4 +3,5 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET			/alive					controllers.HealthController.alive
+GET			/alive											controllers.HealthController.alive
+GET			/candidates/:candidate/:version/:platform		controllers.ValidationController.validate(candidate, version, platform)
