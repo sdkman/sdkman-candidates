@@ -3,7 +3,6 @@ package steps
 import cucumber.api.scala.{EN, ScalaDsl}
 import org.scalatest.Matchers
 import play.api.libs.json.Json
-import steps.support.{Mongo, World}
 
 import scalaj.http.Http
 

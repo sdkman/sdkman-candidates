@@ -1,4 +1,4 @@
-package steps.support
+package steps
 
 import scalaj.http._
 
