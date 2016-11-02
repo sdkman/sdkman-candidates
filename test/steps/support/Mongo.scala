@@ -8,6 +8,8 @@ import org.mongodb.scala.bson.collection.immutable.Document
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
+import org.mongodb.scala.ScalaObservable
+
 object Mongo {
 
   import Helpers._
@@ -29,6 +31,7 @@ object Mongo {
         "version" -> version,
         "platform" -> platform,
         "url" -> url))
+      .results()
 
   def dropAllCollections() = {
     appCollection.drop().results()

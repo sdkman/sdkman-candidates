@@ -23,7 +23,7 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   "org.mongodb.scala" %% "mongo-scala-driver" % "1.1.1",
-  "org.scalatest" %% "scalatest" % "3.0.0" % Test,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0" % Test,
   "info.cukes" %% "cucumber-scala" % "1.2.5" % Test,
   "info.cukes" % "cucumber-junit" % "1.2.5" % Test,
   "org.scalaj" %% "scalaj-http" % "2.3.0" % Test,
