@@ -4,7 +4,7 @@ object Platform {
 
   type PlatformIdentifier = String
 
-  def apply(uname: String): Option[PlatformIdentifier] = uname match {
+  def apply(uname: String): Option[PlatformIdentifier] = uname.toLowerCase match {
     case "linux" => Some(Linux)
     case "darwin" => Some(MacOSX)
     case "freebsd" => Some(FreeBSD)
@@ -13,7 +13,7 @@ object Platform {
     case _ => None
   }
 
-  private val CygwinPattern = "(cygwin|mingw|msys).*".r
+  private val CygwinPattern = "(cygwin|mingw64|msys).*".r
 
   val Linux = "LINUX"
   val MacOSX = "MAC_OSX"
