@@ -14,9 +14,8 @@ class RestSteps extends ScalaDsl with EN with Matchers with World {
       .asString
   }
 
-  When("""^I attempt validation at endpoint (.*) with "(.*)" Accept Header$""") { (endpoint: String, acceptHeader: String) =>
+  When("""^I attempt validation at endpoint (.*)$""") { (endpoint: String) =>
     response = Http(s"$host$endpoint")
-      .header("Accept", acceptHeader)
       .timeout(connTimeoutMs = 1000, readTimeoutMs = 10000)
       .asString
   }

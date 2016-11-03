@@ -20,4 +20,5 @@ object Platform {
   val Windows64 = "CYGWIN"
   val FreeBSD = "FREE_BSD"
   val SunOS = "SUN_OS"
+  val Universal = "UNIVERSAL"
 }
