@@ -16,8 +16,8 @@ class RestSteps extends ScalaDsl with EN with Matchers with World {
 
   When("""^I attempt validation at endpoint (.*) with "(.*)" Accept Header$""") { (endpoint: String, acceptHeader: String) =>
     response = Http(s"$host$endpoint")
-      .timeout(connTimeoutMs = 1000, readTimeoutMs = 10000)
       .header("Accept", acceptHeader)
+      .timeout(connTimeoutMs = 1000, readTimeoutMs = 10000)
       .asString
   }
 
@@ -33,10 +33,5 @@ class RestSteps extends ScalaDsl with EN with Matchers with World {
 
   And("""^the response body is "(.*)"$""") { (body: String) =>
     response.body shouldBe body
-  }
-
-  And("""^the response JSON contains valid field as (.*)""") { (valid: Boolean) =>
-    val json = Json.parse(response.body)
-    (json \ "valid").as[Boolean] shouldBe valid
   }
 }
