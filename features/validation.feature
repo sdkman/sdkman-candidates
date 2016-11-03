@@ -5,13 +5,18 @@ Feature: Candidate Version Validation by Platform
 		And a "java" Candidate of Version "8u111" for platform "LINUX" at "http://dl/8u111-b14/jdk-8u111-linux-x64.tar.gz"
 		And a "java" Candidate of Version "8u111" for platform "CYGWIN64" at "http://dl/8u111-b14/jdk-8u111-windows-x64.exe"
 
-	Scenario: Validation succeeds in Plain Text
+	Scenario: Validation succeeds for known platform
 		When I attempt validation at endpoint /candidates/java/8u111/linux with "plain/text" Accept Header
 		Then a 200 status code is received
 		And the response body is "valid"
 
-	Scenario: Validation fails in Plain Text
+	Scenario: Validation fails for unsupported platform
 		When I attempt validation at endpoint /candidates/java/8u111/freebsd with "plain/text" Accept Header
+		Then a 404 status code is received
+		And the response body is "invalid"
+
+	Scenario: Validation fails for unknown platform
+		When I attempt validation at endpoint /candidates/java/8u111/zxspectrum with "plain/text" Accept Header
 		Then a 404 status code is received
 		And the response body is "invalid"
 
