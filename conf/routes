@@ -4,4 +4,4 @@
 
 # An example controller showing a sample home page
 GET			/alive                                        controllers.HealthController.alive
-GET			/candidates/:candidate/:version/:uname        controllers.ValidationController.validate(candidate, version, uname)
+GET			/validate/:candidate/:version/:uname          controllers.ValidationController.validate(candidate, version, uname)
