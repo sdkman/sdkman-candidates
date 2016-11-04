@@ -22,8 +22,8 @@ class ValidationController @Inject()(versionsRepo: VersionsRepo) extends Control
         maybePlatformSpecific <- maybePlatformSpecificF
         maybeVersion = maybeUniversal orElse maybePlatformSpecific
       } yield {
-        maybeVersion.fold(NotFound(Invalid))(v => Ok(Valid))
+        maybeVersion.fold(Ok(Invalid))(v => Ok(Valid))
       }
-    }.getOrElse(Future.successful(NotFound(Invalid)))
+    }.getOrElse(Future.successful(Ok(Invalid)))
   }
 }

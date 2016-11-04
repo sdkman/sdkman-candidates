@@ -13,12 +13,12 @@ Feature: Candidate Version Validation by Platform
 
 	Scenario: Validation fails for a multi-platform binary on an unsupported platform
 		When I attempt validation at endpoint /validate/java/8u111/freebsd
-		Then a 404 status code is received
+		Then a 200 status code is received
 		And the response body is "invalid"
 
 	Scenario: Validation fails for a multi-platform binary on an unknown platform
 		When I attempt validation at endpoint /validate/java/8u111/commodore64
-		Then a 404 status code is received
+		Then a 200 status code is received
 		And the response body is "invalid"
 
 	Scenario: Validation succeeds for a universal binary on a know platform
@@ -28,5 +28,5 @@ Feature: Candidate Version Validation by Platform
 
 	Scenario: Validation fails for a universal binary on an unknown platform
 		When I attempt validation at endpoint /validate/scala/2.12.0/commodore64
-		Then a 404 status code is received
+		Then a 200 status code is received
 		And the response body is "invalid"
