@@ -1,10 +1,10 @@
 package utils
 
+case class Platform(identifier: String, name: String)
+
 object Platform {
 
-  type PlatformIdentifier = String
-
-  def apply(uname: String): Option[PlatformIdentifier] = uname.toLowerCase match {
+  def apply(uname: String): Option[Platform] = uname.toLowerCase match {
     case "linux" => Some(Linux)
     case "darwin" => Some(MacOSX)
     case "freebsd" => Some(FreeBSD)
@@ -15,10 +15,10 @@ object Platform {
 
   private val CygwinPattern = "(cygwin|mingw64|msys).*".r
 
-  val Linux = "LINUX"
-  val MacOSX = "MAC_OSX"
-  val Windows64 = "CYGWIN"
-  val FreeBSD = "FREE_BSD"
-  val SunOS = "SUN_OS"
-  val Universal = "UNIVERSAL"
+  val Linux = Platform("LINUX", "Linux")
+  val MacOSX = Platform("MAC_OSX", "Mac OSX")
+  val Windows64 = Platform("CYGWIN", "Cygwin")
+  val FreeBSD = Platform("FREE_BSD", "FreeBSD")
+  val SunOS = Platform("SUN_OS", "Solaris")
+  val Universal = Platform("UNIVERSAL", "Universal")
 }
