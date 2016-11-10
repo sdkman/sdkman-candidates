@@ -11,24 +11,35 @@ class CandidatesRepoSpec extends WordSpec with Matchers with BeforeAndAfter with
   val mongoConnectivity = new MongoConnectivity(app.configuration)
   val repo = new CandidatesRepo(mongoConnectivity)
 
+  val scala = Candidate("scala", "Scala", "The Scala Language", "2.12.0", "http://www.scala-lang.org/", "UNIVERSAL")
+  val groovy = Candidate("groovy", "Groovy", "The Groovy Language", "2.4.7", "http://www.groovy-lang.org/", "UNIVERSAL")
+  val java = Candidate("java", "Java", "The Java Language", "8u111", "https://www.oracle.com", "MULTI_PLATFORM")
+
   "candidates repository" should {
+
     "find all candidates regardless of distribution" in {
-      val scala = Candidate("scala", "Scala", "The Scala Language", "2.12.0", "http://www.scala-lang.org/", "UNIVERSAL")
-      val groovy = Candidate("groovy", "Groovy", "The Groovy Language", "2.4.7", "http://www.groovy-lang.org/", "UNIVERSAL")
-      val java = Candidate("java", "Java", "The Java Language", "8u111", "https://www.oracle.com", "MULTI_PLATFORM")
-
-      Mongo.insertCandidates(Seq(scala, groovy, java))
-
       whenReady(repo.findAllCandidates()) { candidates =>
+        candidates.size shouldBe 3
         candidates should contain(scala)
         candidates should contain(groovy)
         candidates should contain(java)
       }
     }
+
+    "find candidates in alphabetically sorted order" in {
+      whenReady(repo.findAllCandidates()) { candidates =>
+        candidates.size shouldBe 3
+        candidates(0) shouldBe groovy
+        candidates(1) shouldBe java
+        candidates(2) shouldBe scala
+      }
+    }
+
   }
 
   before {
     Mongo.dropAllCollections()
+    Mongo.insertCandidates(Seq(scala, groovy, java))
   }
 
 }

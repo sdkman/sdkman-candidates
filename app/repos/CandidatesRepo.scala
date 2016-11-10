@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import db.MongoConnectivity
 import org.mongodb.scala._
 import org.mongodb.scala.bson._
+import org.mongodb.scala.model.Sorts.ascending
 
 import scala.concurrent.Future
 
@@ -11,7 +12,7 @@ class CandidatesRepo @Inject()(mongoConnectivity: MongoConnectivity) {
   def findAllCandidates(): Future[Seq[Candidate]] =
     mongoConnectivity
       .candidatesCollection
-      .find()
+      .find().sort(ascending("candidate"))
       .map(implicit d =>
         Candidate(
           field("candidate"),
