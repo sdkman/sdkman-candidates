@@ -40,5 +40,6 @@ class MongoConnectivity @Inject()(configuration: Configuration) {
 
   def versionsCollection = db.getCollection("versions")
 
+  def candidatesCollection = db.getCollection("candidates")
 }
 
