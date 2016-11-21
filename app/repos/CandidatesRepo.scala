@@ -4,7 +4,7 @@ import com.google.inject.Inject
 import db.MongoConnectivity
 import org.mongodb.scala._
 import org.mongodb.scala.bson._
-import org.mongodb.scala.model.Filters
+import org.mongodb.scala.model.Filters.{eq => filterEq}
 import org.mongodb.scala.model.Sorts.ascending
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -23,7 +23,7 @@ class CandidatesRepo @Inject()(mongoConnectivity: MongoConnectivity) {
 
   def findByIdentifier(candidate: String): Future[Option[Candidate]] =
     mongoConnectivity.candidatesCollection
-      .find(Filters.eq("candidate", candidate))
+      .find(filterEq("candidate", candidate))
       .first
       .map(doc => doc: Candidate)
       .toFuture()
@@ -31,7 +31,8 @@ class CandidatesRepo @Inject()(mongoConnectivity: MongoConnectivity) {
 
   def findAllCandidates(): Future[Seq[Candidate]] =
     mongoConnectivity.candidatesCollection
-      .find().sort(ascending("candidate"))
+      .find()
+      .sort(ascending("candidate"))
       .map(doc => doc: Candidate)
       .toFuture()
 
