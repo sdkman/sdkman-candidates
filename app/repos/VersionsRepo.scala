@@ -5,10 +5,12 @@ import db.MongoConnectivity
 import org.mongodb.scala.ScalaObservable
 import org.mongodb.scala.model.Filters._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class VersionsRepo @Inject()(mongo: MongoConnectivity) {
+
+  import repos.mongoExecutionContext
+
   def findVersion(candidate: String, version: String, platform: String): Future[Option[Version]] =
     mongo.versionsCollection
       .find(and(equal("candidate", candidate), equal("version", version), equal("platform", platform)))

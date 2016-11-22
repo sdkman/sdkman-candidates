@@ -1,7 +1,14 @@
+import java.util.concurrent.Executors
+
 import org.mongodb.scala.bson._
 import org.mongodb.scala.{Document => _, _}
 
+import scala.concurrent.ExecutionContext
+
 package object repos {
+
+  implicit val mongoExecutionContext = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(10))
+
   implicit def documentToCandidate(doc: Document): Candidate =
     Candidate(
       field("candidate", doc),
