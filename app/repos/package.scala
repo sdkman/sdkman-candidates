@@ -1,7 +1,6 @@
 import java.util.concurrent.Executors
 
 import org.mongodb.scala.bson._
-import org.mongodb.scala.{Document => _, _}
 
 import scala.concurrent.ExecutionContext
 
