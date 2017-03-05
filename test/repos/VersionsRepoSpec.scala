@@ -15,7 +15,7 @@ class VersionsRepoSpec extends WordSpec with Matchers with BeforeAndAfter with S
 
     val candidate = "java"
     val version = "8u111"
-    val platform = "LINUX"
+    val platform = "LINUX_64"
     val url = "http://dl/8u111-b14/jdk-8u111-linux-x64.tar.gz"
 
     "find one version by candidate, version and platform" in {
@@ -23,7 +23,7 @@ class VersionsRepoSpec extends WordSpec with Matchers with BeforeAndAfter with S
       Mongo.insertVersion(candidate, version, platform, url)
 
       whenReady(repo.findVersion(candidate, version, platform)) { maybe =>
-        maybe.map {v =>
+        maybe.map { v =>
           v.candidate shouldBe candidate
           v.version shouldBe version
           v.platform shouldBe platform

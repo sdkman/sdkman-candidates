@@ -5,7 +5,9 @@ import org.scalatest.{Matchers, WordSpec}
 class PlatformSpec extends WordSpec with Matchers {
   "platform" should {
     "return some platform identifier when presented with a valid unnormalised uname" in {
-      Platform("Linux") shouldBe Some(Platform.Linux)
+      Platform("Linux") shouldBe Some(Platform.Linux64)
+      Platform("Linux64") shouldBe Some(Platform.Linux64)
+      Platform("Linux32") shouldBe Some(Platform.Linux32)
       Platform("Darwin") shouldBe Some(Platform.MacOSX)
       Platform("CYGWIN_NT-6.1") shouldBe Some(Platform.Windows64)
       Platform("CYGWIN_NT-10.0") shouldBe Some(Platform.Windows64)
@@ -28,7 +30,9 @@ class PlatformSpec extends WordSpec with Matchers {
     }
 
     "return some platform identifier when presented with a valid normalised uname" in {
-      Platform("linux") shouldBe Some(Platform.Linux)
+      Platform("linux") shouldBe Some(Platform.Linux64)
+      Platform("linux64") shouldBe Some(Platform.Linux64)
+      Platform("linux32") shouldBe Some(Platform.Linux32)
       Platform("darwin") shouldBe Some(Platform.MacOSX)
       Platform("cygwin_nt-6.1") shouldBe Some(Platform.Windows64)
       Platform("cygwin_nt-10.0") shouldBe Some(Platform.Windows64)

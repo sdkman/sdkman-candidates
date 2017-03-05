@@ -13,8 +13,8 @@ class ValidationController @Inject()(versionsRepo: VersionsRepo) extends Control
   val Invalid = "invalid"
   val Valid = "valid"
 
-  def validate(candidate: String, version: String, uname: String) = Action.async(parse.anyContent) { implicit request =>
-    Platform(uname).map { platform =>
+  def validate(candidate: String, version: String, id: String) = Action.async(parse.anyContent) { implicit request =>
+    Platform(id).map { platform =>
       val maybeUniversalF = versionsRepo.findVersion(candidate, version, Platform.Universal.identifier)
       val maybePlatformSpecificF = versionsRepo.findVersion(candidate, version, platform.identifier)
       for {

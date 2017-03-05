@@ -5,5 +5,5 @@
 # An example controller showing a sample home page
 GET			/alive										controllers.HealthController.alive
 GET         /default/:candidate                         controllers.DefaultController.find(candidate)
-GET			/validate/:candidate/:version/:uname		controllers.ValidationController.validate(candidate, version, uname)
+GET			/validate/:candidate/:version/:platform		controllers.ValidationController.validate(candidate, version, platform)
 GET			/candidates/all								controllers.CandidatesController.all()
