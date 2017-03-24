@@ -7,3 +7,4 @@ GET			/alive										controllers.HealthController.alive
 GET         /default/:candidate                         controllers.DefaultController.find(candidate)
 GET			/validate/:candidate/:version/:platform		controllers.ValidationController.validate(candidate, version, platform)
 GET			/candidates/all								controllers.CandidatesController.all()
+GET			/candidates/list                            controllers.CandidatesListController.list()

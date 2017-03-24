@@ -27,6 +27,7 @@ libraryDependencies ++= Seq(
   "info.cukes" %% "cucumber-scala" % "1.2.5" % Test,
   "info.cukes" % "cucumber-junit" % "1.2.5" % Test,
   "org.scalaj" %% "scalaj-http" % "2.3.0" % Test,
-  "com.github.tomakehurst" % "wiremock" % "2.2.2" % Test
+  "com.github.tomakehurst" % "wiremock" % "2.2.2" % Test,
+  "org.scalacheck" %% "scalacheck" % "1.12.6" % Test
 )
 

@@ -33,4 +33,8 @@ class RestSteps extends ScalaDsl with EN with Matchers with World {
   And("""^the response body is "(.*)"$""") { (body: String) =>
     response.body shouldBe body
   }
+
+  And("""^the rendered text is:""") { (expectedBody: String) =>
+    response.body shouldBe expectedBody.stripMargin
+  }
 }
