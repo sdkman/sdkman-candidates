@@ -14,7 +14,7 @@ class CandidatesListController @Inject()(candidatesRepo: CandidatesRepo) extends
       val sections = candidates.map { candidate =>
         new CandidateListSection(candidate) with PlainTextRendering
       }
-      Ok(views.html.candidate_list(sections))
+      Ok(views.txt.candidate_list(sections))
     }
   }
 }
