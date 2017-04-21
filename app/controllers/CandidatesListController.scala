@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class CandidatesListController @Inject()(candidatesRepo: CandidatesRepo, cached: Cached) extends Controller {
 
-  def list = cached("candidate-list").default(6.hours) {
+  def list() = cached("candidate-list").default(6.hours) {
     Action.async { request =>
       candidatesRepo.findAllCandidates().map { candidates =>
         val sections = candidates.map { candidate =>
