@@ -8,3 +8,4 @@ GET         /default/:candidate                         controllers.DefaultContr
 GET			/validate/:candidate/:version/:platform		controllers.ValidationController.validate(candidate, version, platform)
 GET			/candidates/all								controllers.CandidatesController.all()
 GET			/candidates/list                            controllers.CandidatesListController.list()
+GET			/versions/:candidate/:platform/all          controllers.VersionsController.all(candidate, platform)

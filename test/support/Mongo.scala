@@ -8,7 +8,7 @@ import org.mongodb.scala.bson.collection.immutable.Document
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import org.mongodb.scala.ScalaObservable
-import repos.Candidate
+import repos.{Candidate, Version}
 
 object Mongo {
 
@@ -26,13 +26,15 @@ object Mongo {
 
   lazy val candidatesCollection = db.getCollection("candidates")
 
-  def insertVersion(candidate: String, version: String, platform: String, url: String) =
+  def insertVersions(vs: Seq[Version]) = vs.foreach(insertVersion)
+
+  def insertVersion(v: Version) =
     versionsCollection.insertOne(
       Document(
-        "candidate" -> candidate,
-        "version" -> version,
-        "platform" -> platform,
-        "url" -> url))
+        "candidate" -> v.candidate,
+        "version" -> v.version,
+        "platform" -> v.platform,
+        "url" -> v.url))
       .results()
 
   def insertCandidates(cs: Seq[Candidate]) = cs.foreach(insertCandidate)
