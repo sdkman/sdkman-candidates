@@ -3,6 +3,7 @@ import java.util.concurrent.Executors
 import org.mongodb.scala.bson._
 
 import scala.concurrent.ExecutionContext
+import scala.language.implicitConversions
 
 package object repos {
 
