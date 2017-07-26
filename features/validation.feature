@@ -26,7 +26,12 @@ Feature: Candidate Version Validation by Platform
 		And the response body is "valid"
 
 	Scenario: Validation succeeds for a multi-platform binary on Cygwin platform
-		When I attempt validation at endpoint /validate/java/8u111/cygwin_nt-6.3
+		When I attempt validation at endpoint /validate/java/8u111/CYGWIN_NT-6.3
+		Then a 200 status code is received
+		And the response body is "valid"
+
+	Scenario: Validation succeeds for a multi-platform binary on MinGW platform
+		When I attempt validation at endpoint /validate/java/8u111/MINGW64_NT-10.0
 		Then a 200 status code is received
 		And the response body is "valid"
 
