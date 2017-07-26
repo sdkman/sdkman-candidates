@@ -15,7 +15,7 @@ object Platform {
     case _ => None
   }
 
-  private val CygwinPattern = "(cygwin).*".r
+  private val CygwinPattern = "(cygwin|mingw64|msys).*".r
 
   val Linux32 = Platform("LINUX_32", "Linux 32bit")
   val Linux64 = Platform("LINUX_64", "Linux 64bit")

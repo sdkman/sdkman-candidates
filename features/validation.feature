@@ -30,11 +30,6 @@ Feature: Candidate Version Validation by Platform
 		Then a 200 status code is received
 		And the response body is "valid"
 
-	Scenario: Validation fails for a multi-platform binary on minimalist windows shells
-		When I attempt validation at endpoint /validate/java/8u111/MINGW64_NT-6.3
-		Then a 200 status code is received
-		And the response body is "invalid"
-
 	Scenario: Validation fails for a multi-platform binary on an unsupported platform
 		When I attempt validation at endpoint /validate/java/8u111/freebsd
 		Then a 200 status code is received
