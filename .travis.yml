@@ -9,7 +9,7 @@ scala:
   - 2.11.8
 
 before_install:
-  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
   - docker run -d --net=host --name mongo mongo:3.2
 script:
   - ./sbt clean compile docker:publishLocal
