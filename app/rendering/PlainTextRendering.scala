@@ -1,6 +1,6 @@
 package rendering
 
-import repos.Candidate
+import io.sdkman.repos.Candidate
 
 class CandidateListSection(val prettyName: String,
                            val candidate: String,

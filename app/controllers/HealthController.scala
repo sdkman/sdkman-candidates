@@ -1,23 +1,20 @@
 package controllers
 
 import javax.inject._
-
-import db.MongoConnectivity
-import org.mongodb.scala.Document
-import org.mongodb.scala.bson.BsonString
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc._
+import repos.ApplicationRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class HealthController @Inject()(mongo: MongoConnectivity) extends Controller {
+class HealthController @Inject()(appRepo: ApplicationRepository) extends Controller {
 
   def alive = Action.async { request =>
-    mongo.appCollection.find().first().head.map { doc =>
-      extractAlive(doc).fold(NotFound(statusMessage("KO"))) { bs =>
-        val message = statusMessage(bs.getValue)
+    appRepo.findApplication().map { maybeApp =>
+      maybeApp.fold(NotFound(statusMessage("KO"))) { app =>
+        val message = statusMessage(app.alive)
         Logger.info(s"/alive 200 response: $message")
         Ok(message)
       }
@@ -28,8 +25,6 @@ class HealthController @Inject()(mongo: MongoConnectivity) extends Controller {
         ServiceUnavailable(message)
     }
   }
-
-  private def extractAlive(doc: Document) = doc.get[BsonString]("alive")
 
   private def statusMessage(s: String) = Json.obj("status" -> s)
 

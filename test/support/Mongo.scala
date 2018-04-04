@@ -2,13 +2,13 @@ package support
 
 import java.util.concurrent.TimeUnit
 
+import io.sdkman.repos.{Candidate, Version}
 import org.mongodb.scala.{MongoClient, _}
 import org.mongodb.scala.bson.collection.immutable.Document
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import org.mongodb.scala.ScalaObservable
-import repos.{Candidate, Version}
 
 object Mongo {
 

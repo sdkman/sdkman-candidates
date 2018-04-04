@@ -2,8 +2,8 @@ package steps
 
 import cucumber.api.DataTable
 import cucumber.api.scala.{EN, ScalaDsl}
+import io.sdkman.repos.{Candidate, Version}
 import org.scalatest.Matchers
-import repos.{Candidate, Version}
 import support.Mongo
 
 import scala.collection.JavaConverters._

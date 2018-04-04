@@ -2,13 +2,13 @@ package controllers
 
 import com.google.inject.Inject
 import play.api.mvc.{Controller, _}
-import repos.VersionsRepo
+import repos.VersionsRepository
 import utils.Platform
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ValidationController @Inject()(versionsRepo: VersionsRepo) extends Controller {
+class ValidationController @Inject()(versionsRepo: VersionsRepository) extends Controller {
 
   val Invalid = "invalid"
   val Valid = "valid"

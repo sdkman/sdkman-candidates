@@ -1,4 +1,5 @@
 import com.typesafe.config.ConfigFactory
+import sbt.Resolver
 
 enablePlugins(JavaServerAppPackaging)
 
@@ -18,11 +19,16 @@ scalaVersion := "2.11.8"
 
 routesGenerator := InjectedRoutesGenerator
 
+resolvers ++= Seq(
+  Resolver.bintrayRepo("sdkman", "maven"),
+  Resolver.jcenterRepo
+)
+
 libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
-  "org.mongodb.scala" %% "mongo-scala-driver" % "1.1.1",
+  "io.sdkman" %% "sdkman-mongodb-persistence" % "0.1",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0" % Test,
   "info.cukes" %% "cucumber-scala" % "1.2.5" % Test,
   "info.cukes" % "cucumber-junit" % "1.2.5" % Test,

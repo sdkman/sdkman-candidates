@@ -3,11 +3,11 @@ package controllers
 import com.google.inject.Inject
 import play.api.mvc.{Controller, _}
 import rendering.{CandidateListSection, PlainTextRendering}
-import repos.CandidatesRepo
+import repos.CandidatesRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class CandidatesListController @Inject()(candidatesRepo: CandidatesRepo) extends Controller {
+class CandidatesListController @Inject()(candidatesRepo: CandidatesRepository) extends Controller {
 
   def list() = Action.async { _ =>
     candidatesRepo.findAllCandidates().map { candidates =>

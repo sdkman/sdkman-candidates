@@ -1,7 +1,7 @@
 package rendering
 
+import io.sdkman.repos.Candidate
 import org.scalatest.{Matchers, WordSpec}
-import repos.Candidate
 
 class PlainTextRenderingSpec extends WordSpec with Matchers {
 
