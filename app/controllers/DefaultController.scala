@@ -8,7 +8,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class DefaultController @Inject()(candidatesRepo: CandidatesRepository) extends Controller {
   def find(candidate: String) = Action.async(parse.anyContent) { request =>
-    candidatesRepo.findByIdentifier(candidate).map { maybeCandidate =>
+    candidatesRepo.findCandidate(candidate).map { maybeCandidate =>
       maybeCandidate.fold(BadRequest(""))(c => Ok(c.default))
     }
   }
