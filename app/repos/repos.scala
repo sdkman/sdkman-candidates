@@ -5,9 +5,12 @@ import io.sdkman.db.{MongoConfiguration, MongoConnectivity}
 import io.sdkman.repos.{ApplicationRepo, CandidatesRepo, VersionsRepo}
 import javax.inject.Singleton
 
+object Conf {
+  def config: Config = ConfigFactory.load()
+}
 
 trait MongoConn extends MongoConnectivity with MongoConfiguration {
-  override val config: Config = ConfigFactory.load()
+  override lazy val config: Config = Conf.config
 }
 
 @Singleton
