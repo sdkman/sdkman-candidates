@@ -28,7 +28,7 @@ libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
-  "io.sdkman" %% "sdkman-mongodb-persistence" % "0.1",
+  "io.sdkman" %% "sdkman-mongodb-persistence" % "0.7",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0" % Test,
   "info.cukes" %% "cucumber-scala" % "1.2.5" % Test,
   "info.cukes" % "cucumber-junit" % "1.2.5" % Test,
