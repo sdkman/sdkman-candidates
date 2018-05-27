@@ -2,6 +2,7 @@ package steps
 
 import cucumber.api.DataTable
 import cucumber.api.scala.{EN, ScalaDsl}
+import gherkin.formatter.model.DataTableRow
 import io.sdkman.repos.{Candidate, Version}
 import org.scalatest.Matchers
 import support.Mongo
@@ -19,15 +20,32 @@ class DbSteps extends ScalaDsl with EN with Matchers with World {
     Mongo.insertVersion(Version(candidate, version, platform, url))
   }
 
-  And("""^the Candidates$""") { (candidatesTable: DataTable) =>
-    Mongo.insertCandidates(candidatesTable.asList(classOf[Candidate]).asScala)
+  implicit class CandidateDataTable(dataTable: DataTable) {
+
+    import scala.collection.JavaConverters._
+
+    def toCandidates: Seq[Candidate] = dataTable.getGherkinRows.asScala.tail.map(rowToCandidate)
+
+    private def rowToCandidate(row: DataTableRow): Candidate = {
+      val cells = row.getCells.asScala
+      Candidate(candidate = cells.head,
+        name = cells(1),
+        description = cells(2),
+        default = if (cells(3) == "") None else Some(cells(3)),
+        websiteUrl = cells(4),
+        distribution = cells(5))
+    }
   }
 
-  And("""^the Candidate$""") { (candidatesTable: DataTable) =>
-    Mongo.insertCandidates(candidatesTable.asList(classOf[Candidate]).asScala)
+  And("""^the Candidates$""") { candidatesTable: DataTable =>
+    Mongo.insertCandidates(candidatesTable.toCandidates)
   }
 
-  And("""^the Versions""") { (versionsTable: DataTable) =>
+  And("""^the Candidate$""") { candidatesTable: DataTable =>
+    Mongo.insertCandidates(candidatesTable.toCandidates)
+  }
+
+  And("""^the Versions""") { versionsTable: DataTable =>
     Mongo.insertVersions(versionsTable.asList(classOf[Version]).asScala)
   }
 }

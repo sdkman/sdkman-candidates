@@ -5,22 +5,30 @@ import org.scalatest.{Matchers, WordSpec}
 
 class PlainTextRenderingSpec extends WordSpec with Matchers {
 
-  val candidate = Candidate("scala", "Scala", "The Scala Language", "2.12.1", "https://www.scala-lang.org/", "UNIVERSAL")
+  val scala = Candidate("scala", "Scala", "The Scala Language", Some("2.12.1"), "https://www.scala-lang.org/", "UNIVERSAL")
+  val sectionWithDefault = new CandidateListSection(scala) with PlainTextRendering { override val ConsoleWidth = 42}
 
-  val section = new CandidateListSection(candidate) with PlainTextRendering { override val ConsoleWidth = 42}
+  val micronaut = Candidate("micronaut", "Micronaut", "The Micronaut Framework", None, "http://micronaut.io", "UNIVERSAL")
+  val sectionWithoutDefault = new CandidateListSection(micronaut) with PlainTextRendering { override val ConsoleWidth = 44}
 
   "PlainTextSectionRendering" should {
 
-    "render a fixed width header" in {
+    "render a fixed width header with default" in {
       val expectedHeader = "Scala (2.12.1) https://www.scala-lang.org/"
 
-      section.header shouldBe expectedHeader
+      sectionWithDefault.header shouldBe expectedHeader
+    }
+
+    "render a fixed width header without default" in {
+      val expectedHeader = "Micronaut (Coming soon!) http://micronaut.io"
+
+      sectionWithoutDefault.header shouldBe expectedHeader
     }
 
     "render a fixed width footer" in {
       val expectedFooter = "                       $ sdk install scala"
 
-      section.footer shouldBe expectedFooter
+      sectionWithDefault.footer shouldBe expectedFooter
     }
 
     "render a complete section" in {
@@ -31,7 +39,7 @@ class PlainTextRenderingSpec extends WordSpec with Matchers {
           |
           |                       $ sdk install scala""".stripMargin
 
-      section.render() shouldBe expectedSection
+      sectionWithDefault.render() shouldBe expectedSection
     }
   }
 }

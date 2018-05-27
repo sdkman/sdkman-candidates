@@ -8,7 +8,7 @@ class CandidateListSection(val prettyName: String,
                            val defaultVersion: String,
                            val websiteUrl: String) {
 
-  def this(c: Candidate) = this(c.name, c.candidate, c.description, c.default, c.websiteUrl)
+  def this(c: Candidate) = this(c.name, c.candidate, c.description, c.default.getOrElse("Coming soon!"), c.websiteUrl)
 }
 
 trait PlainTextRendering extends WordWrapping {

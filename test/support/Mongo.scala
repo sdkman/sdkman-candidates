@@ -41,14 +41,22 @@ object Mongo {
 
   def insertCandidate(c: Candidate) =
     candidatesCollection.insertOne(
-      Document(
-        "candidate" -> c.candidate,
-        "name" -> c.name,
-        "description" -> c.description,
-        "default" -> c.default,
-        "websiteUrl" -> c.websiteUrl,
-        "distribution" -> c.distribution))
-      .results()
+      c.default.fold(
+        Document(
+          "candidate" -> c.candidate,
+          "name" -> c.name,
+          "description" -> c.description,
+          "websiteUrl" -> c.websiteUrl,
+          "distribution" -> c.distribution)) { default =>
+        Document(
+          "candidate" -> c.candidate,
+          "name" -> c.name,
+          "description" -> c.description,
+          "default" -> default,
+          "websiteUrl" -> c.websiteUrl,
+          "distribution" -> c.distribution)
+      }
+    ).results()
 
   def dropAllCollections() = {
     appCollection.drop().results()
