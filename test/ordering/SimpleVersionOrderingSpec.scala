@@ -7,11 +7,7 @@ import scala.util.Sorting
 
 class SimpleVersionOrderingSpec extends WordSpec with Matchers {
   "Version ordering" should {
-    "accurately sort versions by version string" in new RegexStringComparison {
-
-      implicit object OrderedVersion extends Ordering[Version] with RegexStringComparison {
-        def compare(v1: Version, v2: Version): Int = compareRegexGroups(v1.version, v2.version)
-      }
+    "accurately sort versions by version string" in new RegexStringComparison with VersionOrdering {
 
       val v1 = Version("scala", "2.12.7", "UNIVERSAL", "http://someurl.com")
       val v2 = Version("scala", "2.11.7", "UNIVERSAL", "http://someurl.com")
