@@ -2,12 +2,8 @@ package ordering
 
 import org.scalatest.{Matchers, WordSpec}
 
-import scala.util.matching.Regex
-
 class RegexStringComparisonSpec extends WordSpec with Matchers {
   "comparison of extracted regex groups" when {
-
-    implicit val regex: Regex = """(\d+|\w+)""".r
 
     "groups are numeric" should {
 
@@ -47,6 +43,5 @@ class RegexStringComparisonSpec extends WordSpec with Matchers {
         assert(compareRegexGroups("2.0.0", "2.0.0.RC1") > 0)
       }
     }
-
   }
 }

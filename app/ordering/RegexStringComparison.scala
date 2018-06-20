@@ -5,7 +5,9 @@ import scala.util.matching.Regex
 
 trait RegexStringComparison {
 
-  private val WeightedPlaceholder = "Z"
+  implicit val regex: Regex = """(\d+|\w+)""".r
+
+  val WeightedPlaceholder = "Z"
 
   def compareRegexGroups(s1: String, s2: String)(implicit regex: Regex): Int = {
     val l1 = regex.findAllMatchIn(s1).toList.map(_.toString)
