@@ -1,0 +1,10 @@
+1.0.0-rc1-graal
+6.0.107-zulu
+7.0.181-zulu
+8.0.171-oracle
+8.0.172-zulu
+9.0.4-openjdk
+9.0.7-zulu
+10.0.0-openjdk
+10.0.1-oracle
+10.0.1-zulu
