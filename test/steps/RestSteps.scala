@@ -8,19 +8,19 @@ import scalaj.http.Http
 
 class RestSteps extends ScalaDsl with EN with Matchers with World {
 
-  And("""^a request is made to the (.*) endpoint$""") { (endpoint: String) =>
+  And("""^a request is made to (.*)""") { endpoint: String =>
     response = Http(s"$host$endpoint")
       .timeout(connTimeoutMs = 1000, readTimeoutMs = 10000)
       .asString
   }
 
-  When("""^I attempt validation at endpoint (.*)$""") { (endpoint: String) =>
+  When("""^I attempt validation at endpoint (.*)$""") { endpoint: String =>
     response = Http(s"$host$endpoint")
       .timeout(connTimeoutMs = 1000, readTimeoutMs = 10000)
       .asString
   }
 
-  And("""^a (\d+) status code is received$""") { (status: Int) =>
+  And("""^a (\d+) status code is received$""") { status: Int =>
     response.code shouldBe status
   }
 
@@ -30,11 +30,15 @@ class RestSteps extends ScalaDsl with EN with Matchers with World {
     status shouldBe value
   }
 
-  And("""^the response body is "(.*)"$""") { (body: String) =>
+  And("""^the response body is "(.*)"$""") { body: String =>
     response.body shouldBe body
   }
 
-  And("""^the rendered text is:""") { (expectedBody: String) =>
+  And("""^the response body is$""") { body: String =>
+    response.body shouldBe body.stripMargin.trim
+  }
+
+  And("""^the rendered text is:""") { expectedBody: String =>
     response.body shouldBe expectedBody.stripMargin
   }
 }

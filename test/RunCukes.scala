@@ -7,6 +7,7 @@ import org.junit.runner.RunWith
   features = Array("features"),
   glue = Array("steps"),
   tags = Array("~@pending"),
-  format = Array("pretty", "html:target/reports/cucumber")
+  strict = true,
+  plugin = Array("pretty", "html:target/reports/cucumber")
 )
 class RunCukes

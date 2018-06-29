@@ -8,7 +8,7 @@ Feature: Candidate List
       | java      | Java      | The Java Language       | 8u111     | https://www.oracle.com        | MULTI_PLATFORM |
       | micronaut | Micronaut | The Micronaut Framework |           | http://micronaut.io           | UNIVERSAL      |
 
-    When a request is made to the /candidates/list endpoint
+    When a request is made to /candidates/list
     Then a 200 status code is received
     And the rendered text is:
     """
