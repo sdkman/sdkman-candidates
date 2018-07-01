@@ -8,7 +8,6 @@ import org.scalatest.Matchers
 import support.Mongo
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable.ListBuffer
 
 class DbSteps extends ScalaDsl with EN with Matchers with World {
 
@@ -50,8 +49,11 @@ class DbSteps extends ScalaDsl with EN with Matchers with World {
     val startSegs = startVersion.split("\\.")
     val endSegs = endVersion.split("\\.")
 
-    startSegs.length shouldBe endSegs.length
-    startSegs.take(2) shouldBe endSegs.take(2)
+    withClue("only patch ranges allowed") {
+      startSegs.length shouldBe 3
+      startSegs.length shouldBe endSegs.length
+      startSegs.take(2) shouldBe endSegs.take(2)
+    }
 
     val startPatch = startSegs.last.toInt
     val endPatch = endSegs.last.toInt
