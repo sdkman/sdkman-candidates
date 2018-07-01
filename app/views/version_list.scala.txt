@@ -2,9 +2,8 @@
 @(candidate: String, versions: Seq[Version])================================================================================
 Available @candidate Versions
 ================================================================================
-     @for(v <- versions.dropRight(1)) {@v.version
-     }@versions.last.version
-
+     @for(v <- versions) {@v.version
+     }
 ================================================================================
 + - local version
 * - installed

@@ -3,8 +3,9 @@ package steps
 import cucumber.api.scala.{EN, ScalaDsl}
 import org.scalatest.Matchers
 import play.api.libs.json.Json
-
 import scalaj.http.Http
+
+import scala.annotation.tailrec
 
 class RestSteps extends ScalaDsl with EN with Matchers with World {
 
@@ -35,10 +36,18 @@ class RestSteps extends ScalaDsl with EN with Matchers with World {
   }
 
   And("""^the response body is$""") { body: String =>
-    response.body shouldBe body.stripMargin.trim
+    strip(response.body) shouldBe body.stripMargin
   }
 
   And("""^the rendered text is:""") { expectedBody: String =>
     response.body shouldBe expectedBody.stripMargin
+  }
+
+  private def strip(s: String): String = s.split("\\n").map(trimEnd).mkString("\n")
+
+  @tailrec
+  private def trimEnd(s: String): String = s.takeRight(1) match {
+    case " " => trimEnd(s.dropRight(1))
+    case _ => s
   }
 }
