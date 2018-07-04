@@ -17,6 +17,6 @@ trait VersionOrdering {
 
   def ascendingOrder(versions: Seq[Version]): List[Version] = quickSort(versions.toArray).toList
 
-  def reverseOrder(versions: Seq[Version]): List[Version] = ascendingOrder(versions).reverse
+  def descendingOrder(versions: Seq[Version]): List[Version] = ascendingOrder(versions).reverse
 
 }
