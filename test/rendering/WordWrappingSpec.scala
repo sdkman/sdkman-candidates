@@ -1,10 +1,11 @@
 package rendering
 
 import org.scalacheck.{Gen, Prop}
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.WordSpec
+import org.scalatest.prop.{Checkers, GeneratorDrivenPropertyChecks}
+import play.api.Logger
 
-class WordWrappingSpec extends WordSpec with GeneratorDrivenPropertyChecks with Matchers {
+class WordWrappingSpec extends WordSpec with GeneratorDrivenPropertyChecks with Checkers {
 
   "WordWrapping" should {
 
@@ -23,22 +24,32 @@ class WordWrappingSpec extends WordSpec with GeneratorDrivenPropertyChecks with 
 
       override def ConsoleWidth = 80
 
-      forAll(paragraphGen) { paragraph =>
-        val lines = wrapText(paragraph.mkString(" "))
-        withClue(s"Exceeded max column width: $ConsoleWidth") {
-          lines.foldRight(false)((line, prev) => line.length > ConsoleWidth || prev) shouldBe false
+      check {
+        Prop.forAll(paragraphGen) { paragraph =>
+          val lines = wrapText(paragraph.mkString(" "))
+
+          Logger.info(s"never exceed max console width $ConsoleWidth:- words: ${paragraph.size}, lines: ${lines.size}")
+
+          val consoleWidthExceeded = lines.foldRight(false)((line, prev) => line.length > ConsoleWidth || prev)
+
+          !consoleWidthExceeded
         }
       }
     }
 
-    "wrap text occassionally reaching max column width" in new WordWrapping {
+    "wrap text occasionally reaching max column width" in new WordWrapping {
 
       override def ConsoleWidth = 20
 
-      forAll(paragraphGen) { paragraph =>
-        val lines = wrapText(paragraph.mkString(" "))
-        withClue(s"Never reached max column width: $ConsoleWidth") {
-          lines.foldRight(false)((line, prev) => line.length == ConsoleWidth || prev) shouldBe true
+      check {
+        Prop.forAll(paragraphGen) { paragraph =>
+          val lines = wrapText(paragraph.mkString(" "))
+
+          Logger.info(s"occasionally reach max console width $ConsoleWidth:- words: ${paragraph.size}, lines: ${lines.size}")
+
+          val consoleWidthReached = lines.foldRight(false)((line, prev) => line.length == ConsoleWidth || prev)
+
+          consoleWidthReached
         }
       }
     }
