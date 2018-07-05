@@ -17,16 +17,18 @@ class RandomOrderingSpec extends WordSpec with Matchers {
 
     "accurately order actual versions" in new RegexStringComparison with VersionOrdering {
       candidates.foreach { candidate =>
-        val versions = candidateVersions(candidate)
-          .map(Version(candidate, _, "platform", "url"))
 
-        val versionArray = Random.shuffle(versions).toArray
+        val orderedVersionsFromFile = candidateVersions(candidate).map(Version(candidate, _, "platform", "url"))
 
-        Logger.info(s"Convert $candidate shuffled: ${versionArray.map(_.version).mkString(",")}")
-        Sorting.quickSort(versionArray)
-        Logger.info(s"to $candidate ordered: ${versionArray.map(_.version).mkString(",")}")
+        val randomOrderVersions = Random.shuffle(orderedVersionsFromFile)
 
-        versionArray shouldBe versions.toArray
+        Logger.info(s"Convert $candidate shuffled: ${randomOrderVersions.map(_.version).mkString(",")}")
+
+        val orderedVersions = orderedVersionsFromFile.ascendingOrder
+
+        Logger.info(s"to $candidate ordered: ${orderedVersions.map(_.version).mkString(",")}")
+
+        orderedVersions shouldBe orderedVersionsFromFile
       }
     }
   }

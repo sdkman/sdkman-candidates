@@ -13,7 +13,7 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository) extends
     Action.async(parse.anyContent) { request =>
       //TODO handle platform specific candidates
       versionsRepo.findAllVersionsByCandidatePlatform(candidate, Platform.Universal.identifier).map { versions =>
-        Ok(views.txt.version_list(candidate.capitalize, descendingOrder(versions)))
+        Ok(views.txt.version_list(candidate.capitalize, versions.descendingOrder))
       }
     }
 }
