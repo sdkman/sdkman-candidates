@@ -34,6 +34,9 @@ libraryDependencies ++= Seq(
   "info.cukes" % "cucumber-junit" % "1.2.5" % Test,
   "org.scalaj" %% "scalaj-http" % "2.3.0" % Test,
   "com.github.tomakehurst" % "wiremock" % "2.2.2" % Test,
-  "org.scalacheck" %% "scalacheck" % "1.12.6" % Test
+  "org.scalacheck" %% "scalacheck" % "1.12.6" % Test,
+  "org.pegdown" % "pegdown" % "1.6.0" % Test
 )
 
+logBuffered in Test := false
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/reports/scalatest/")
