@@ -17,8 +17,8 @@ trait VersionOrdering {
 
   implicit class OrderedVersions(versions: Seq[Version]) {
 
-    def ascendingOrder: Seq[Version] = quickSort(versions.toArray).toSeq
+    def ascendingOrder: Seq[Version] = quickSort(versions.toArray).toList
 
-    def descendingOrder: Seq[Version] = quickSort(versions.toArray).toSeq.reverse
+    def descendingOrder: Seq[Version] = quickSort(versions.toArray).toList.reverse
   }
 }

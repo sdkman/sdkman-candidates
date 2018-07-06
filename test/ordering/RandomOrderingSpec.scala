@@ -1,35 +1,43 @@
 package ordering
 
 import io.sdkman.repos.Version
-import org.scalatest.{Matchers, WordSpec}
+import org.scalacheck.{Gen, Prop}
+import org.scalatest.WordSpec
+import org.scalatest.prop.{Checkers, GeneratorDrivenPropertyChecks}
 import play.api.Logger
+import support.OrderingCheck
 
 import scala.io.Source
-import scala.util.{Random, Sorting}
 
-class RandomOrderingSpec extends WordSpec with Matchers {
+class RandomOrderingSpec extends WordSpec with GeneratorDrivenPropertyChecks with Checkers with OrderingCheck {
 
   "regex string ordering" should {
 
-    val candidates = Source.fromFile("test/resources/candidates.txt").getLines.toList
+    val candidateVersions = Source.fromFile(s"test/resources/candidates.csv")
+      .getLines
+      .toList
+      .map((line: String) => line.split(",").head -> line.split(",").tail.toList)
+      .toMap[String, List[String]]
 
-    val candidateVersions = candidates.map(c => c -> Source.fromFile(s"test/resources/candidates/$c.txt").getLines.toList).toMap
+    "accurately order actual versions" in new VersionOrdering {
 
-    "accurately order actual versions" in new RegexStringComparison with VersionOrdering {
-      candidates.foreach { candidate =>
+      candidateVersions.foreach { case (candidate, versions) =>
 
-        val orderedVersionsFromFile = candidateVersions(candidate).map(Version(candidate, _, "platform", "url"))
+        val fullExpected = versions.map(asVersion(candidate))
 
-        val randomOrderVersions = Random.shuffle(orderedVersionsFromFile)
+        check {
+          Prop.forAll(Gen.pick(fullExpected.length - 1, fullExpected.toSet).map(_.toList)) { xs: List[Version] =>
 
-        Logger.info(s"Convert $candidate shuffled: ${randomOrderVersions.map(_.version).mkString(",")}")
+            val partialActual = xs.ascendingOrder
 
-        val orderedVersions = orderedVersionsFromFile.ascendingOrder
+            Logger.info(s"$candidate shuffled: ${xs.map(_.version).mkString(",")} ===> ordered: ${partialActual.map(_.version).mkString(",")}")
 
-        Logger.info(s"to $candidate ordered: ${orderedVersions.map(_.version).mkString(",")}")
-
-        orderedVersions shouldBe orderedVersionsFromFile
+            orderCheck(partialActual, fullExpected)
+          }
+        }
       }
     }
   }
+
+  private def asVersion(candidate: String)(version: String): Version = Version(candidate, version, "UNIVERSAL", s"http://some/$candidate/$version.zip")
 }
