@@ -5,7 +5,7 @@ enablePlugins(JavaServerAppPackaging)
 
 enablePlugins(DockerPlugin)
 
-name := """sdkman-candidates"""
+name := "sdkman-candidates"
 
 val conf = ConfigFactory.parseFile(new File("conf/application.conf")).resolve()
 
@@ -15,7 +15,7 @@ packageName in Docker := "sdkman/sdkman-candidates"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.11.9"
 
 routesGenerator := InjectedRoutesGenerator
 
@@ -29,6 +29,7 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   "io.sdkman" %% "sdkman-mongodb-persistence" % "0.11",
+  "org.typelevel" %% "cats-core" % "1.0.1",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0" % Test,
   "info.cukes" %% "cucumber-scala" % "1.2.5" % Test,
   "info.cukes" % "cucumber-junit" % "1.2.5" % Test,
@@ -39,4 +40,7 @@ libraryDependencies ++= Seq(
 )
 
 logBuffered in Test := false
+
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/reports/scalatest/")
+
+scalacOptions += "-Ypartial-unification"

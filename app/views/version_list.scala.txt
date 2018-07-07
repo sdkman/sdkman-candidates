@@ -1,9 +1,9 @@
 @import io.sdkman.repos.Version
-@(candidate: String, versions: Seq[Version])================================================================================
+@(candidate: String, versions: Seq[String])================================================================================
 Available @candidate Versions
 ================================================================================
-     @for(v <- versions) {@v.version
-     }
+@for(v <- versions) {@v
+}
 ================================================================================
 + - local version
 * - installed
