@@ -1,37 +1,31 @@
 package rendering
 
-import io.sdkman.repos.Version
 import org.scalatest.{Matchers, WordSpec}
 
-class VersionRenderingSpec extends WordSpec with Matchers {
+class VersionItemRenderingSpec extends WordSpec with Matchers {
 
   import cats.syntax.show._
 
-  "versionShow" should {
+  "versionItemShow" should {
 
     "render a standard version padded to 15 chars" in new VersionRendering {
-      Version("scala", "2.12.6", "platform", "url").show shouldBe
-        "2.12.6         "
+      VersionItem("2.12.6").show shouldBe "2.12.6         "
     }
 
     "render an empty version padded to 15 chars" in new VersionRendering {
-      Version("scala", "", "platform", "url").show shouldBe
-        "               "
+      VersionItem("").show shouldBe "               "
     }
 
     "render an exact length version at 14, padded at 15 chars" in new VersionRendering {
-      Version("java", "12345678901234", "platform", "url").show shouldBe
-        "12345678901234 "
+      VersionItem("12345678901234").show shouldBe "12345678901234 "
     }
 
     "render a 15 char version by truncating at 14, padded at 15 chars" in new VersionRendering {
-      Version("java", "12345678901234", "platform", "url").show shouldBe
-        "12345678901234 "
+      VersionItem("12345678901234").show shouldBe "12345678901234 "
     }
 
     "render an excessively long version by truncating at 14, padded at 15 chars" in new VersionRendering {
-      Version("java", "12345678901234567890", "platform", "url").show shouldBe
-        "12345678901234 "
+      VersionItem("12345678901234567890").show shouldBe "12345678901234 "
     }
   }
 
@@ -40,34 +34,34 @@ class VersionRenderingSpec extends WordSpec with Matchers {
     implicit val ctx = VersionContext(None, List.empty)
 
     "render a single version on a row" in new VersionRendering {
-      val v1 = Version("scala", "2.12.6", "platform", "url")
+      val v1 = VersionItem("2.12.6")
 
       val row = VersionRow(Some(v1), None, None, None).show
       row shouldBe "     2.12.6                                                                     "
     }
 
     "render two versions on a row" in new VersionRendering {
-      val v1 = Version("scala", "2.12.5", "platform", "url")
-      val v2 = Version("scala", "2.12.6", "platform", "url")
+      val v1 = VersionItem("2.12.5")
+      val v2 = VersionItem("2.12.6")
 
       val row = VersionRow(Some(v1), Some(v2), None, None).show
       row shouldBe "     2.12.5              2.12.6                                                 "
     }
 
     "render three versions on a row" in new VersionRendering {
-      val v1 = Version("scala", "2.12.5", "platform", "url")
-      val v2 = Version("scala", "2.12.6", "platform", "url")
-      val v3 = Version("scala", "2.12.7", "platform", "url")
+      val v1 = VersionItem("2.12.5")
+      val v2 = VersionItem("2.12.6")
+      val v3 = VersionItem("2.12.7")
 
       val row = VersionRow(Some(v1), Some(v2), Some(v3), None).show
       row shouldBe "     2.12.5              2.12.6              2.12.7                             "
     }
 
    "render four versions on a row" in new VersionRendering {
-      val v1 = Version("scala", "2.12.5", "platform", "url")
-      val v2 = Version("scala", "2.12.6", "platform", "url")
-      val v3 = Version("scala", "2.12.7", "platform", "url")
-      val v4 = Version("scala", "2.12.8", "platform", "url")
+      val v1 = VersionItem("2.12.5")
+      val v2 = VersionItem("2.12.6")
+      val v3 = VersionItem("2.12.7")
+      val v4 = VersionItem("2.12.8")
 
       val row = VersionRow(Some(v1), Some(v2), Some(v3), Some(v4)).show
       row shouldBe "     2.12.5              2.12.6              2.12.7              2.12.8         "
@@ -80,7 +74,7 @@ class VersionRenderingSpec extends WordSpec with Matchers {
 
       implicit val ctx = VersionContext(Some("2.12.6"), List.empty)
 
-      val v1 = Version("scala", "2.12.6", "platform", "url")
+      val v1 = VersionItem("2.12.6")
 
       val row = VersionRow(Some(v1), None, None, None).show
       row shouldBe " >   2.12.6                                                                     "
@@ -90,9 +84,9 @@ class VersionRenderingSpec extends WordSpec with Matchers {
 
       implicit val ctx = VersionContext(Some("2.12.6"), List.empty)
 
-      val v1 = Version("scala", "2.12.5", "platform", "url")
-      val v2 = Version("scala", "2.12.6", "platform", "url")
-      val v3 = Version("scala", "2.12.7", "platform", "url")
+      val v1 = VersionItem("2.12.5")
+      val v2 = VersionItem("2.12.6")
+      val v3 = VersionItem("2.12.7")
 
       val row = VersionRow(Some(v1), Some(v2), Some(v3), None).show
       row shouldBe "     2.12.5          >   2.12.6              2.12.7                             "
@@ -102,7 +96,7 @@ class VersionRenderingSpec extends WordSpec with Matchers {
 
       implicit val ctx = VersionContext(None, List.empty)
 
-      val v1 = Version("scala", "2.12.6", "platform", "url")
+      val v1 = VersionItem("2.12.6")
 
       val row = VersionRow(Some(v1), None, None, None).show
       row shouldBe "     2.12.6                                                                     "
@@ -112,7 +106,7 @@ class VersionRenderingSpec extends WordSpec with Matchers {
 
       implicit val ctx = VersionContext(None, List("2.12.6"))
 
-      val v1 = Version("scala", "2.12.6", "platform", "url")
+      val v1 = VersionItem("2.12.6")
 
       val row = VersionRow(Some(v1), None, None, None).show
       row shouldBe "   * 2.12.6                                                                     "
@@ -122,10 +116,10 @@ class VersionRenderingSpec extends WordSpec with Matchers {
 
       implicit val ctx = VersionContext(None, List("2.12.5", "2.12.6", "2.12.7", "2.12.8"))
 
-      val v1 = Version("scala", "2.12.5", "platform", "url")
-      val v2 = Version("scala", "2.12.6", "platform", "url")
-      val v3 = Version("scala", "2.12.7", "platform", "url")
-      val v4 = Version("scala", "2.12.8", "platform", "url")
+      val v1 = VersionItem("2.12.5")
+      val v2 = VersionItem("2.12.6")
+      val v3 = VersionItem("2.12.7")
+      val v4 = VersionItem("2.12.8")
 
       val row = VersionRow(Some(v1), Some(v2), Some(v3), Some(v4)).show
       row shouldBe "   * 2.12.5            * 2.12.6            * 2.12.7            * 2.12.8         "
@@ -135,10 +129,10 @@ class VersionRenderingSpec extends WordSpec with Matchers {
 
       implicit val ctx = VersionContext(Some("2.12.6"), List("2.12.5", "2.12.6", "2.12.7", "2.12.8"))
 
-      val v1 = Version("scala", "2.12.5", "platform", "url")
-      val v2 = Version("scala", "2.12.6", "platform", "url")
-      val v3 = Version("scala", "2.12.7", "platform", "url")
-      val v4 = Version("scala", "2.12.8", "platform", "url")
+      val v1 = VersionItem("2.12.5")
+      val v2 = VersionItem("2.12.6")
+      val v3 = VersionItem("2.12.7")
+      val v4 = VersionItem("2.12.8")
 
       val row = VersionRow(Some(v1), Some(v2), Some(v3), Some(v4)).show
       row shouldBe "   * 2.12.5          > * 2.12.6            * 2.12.7            * 2.12.8         "

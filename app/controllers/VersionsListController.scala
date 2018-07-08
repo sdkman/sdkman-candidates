@@ -3,7 +3,7 @@ package controllers
 import javax.inject.Inject
 import ordering.VersionOrdering
 import play.api.mvc._
-import rendering.{VersionContext, VersionRendering, VersionRow}
+import rendering.{VersionContext, VersionItem, VersionRendering, VersionRow}
 import repos.VersionsRepository
 import utils.Platform
 
@@ -21,7 +21,7 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository) extends
       //TODO handle platform specific candidates
       versionsRepo.findAllVersionsByCandidatePlatform(candidate, Platform.Universal.identifier).map { versions =>
 
-        val padded = versions.descendingOrder.map(v => Some(v)).padTo(MaxVersions, None)
+        val padded = versions.descendingOrder.map(v => Some(VersionItem(v.version))).padTo(MaxVersions, None)
 
         import cats.syntax.show._
 
