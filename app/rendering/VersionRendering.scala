@@ -5,8 +5,10 @@ trait VersionRendering {
   import cats.Show
   import cats.syntax.show._
 
+  val VersionLength = 15
+
   implicit val versionItemShow = Show.show[VersionItem] { v =>
-    s"${v.version.take(14).padTo(15, " ").mkString}"
+    s"${v.version.take(VersionLength).padTo(VersionLength, " ").mkString}"
   }
 
   implicit val rowShow = Show.show[VersionRow] { row =>

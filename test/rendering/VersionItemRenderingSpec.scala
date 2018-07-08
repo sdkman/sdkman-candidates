@@ -16,16 +16,12 @@ class VersionItemRenderingSpec extends WordSpec with Matchers {
       VersionItem("").show shouldBe "               "
     }
 
-    "render an exact length version at 14, padded at 15 chars" in new VersionRendering {
-      VersionItem("12345678901234").show shouldBe "12345678901234 "
+    "render an exact length version at 15, padded at 15 chars" in new VersionRendering {
+      VersionItem("123456789012345").show shouldBe "123456789012345"
     }
 
-    "render a 15 char version by truncating at 14, padded at 15 chars" in new VersionRendering {
-      VersionItem("12345678901234").show shouldBe "12345678901234 "
-    }
-
-    "render an excessively long version by truncating at 14, padded at 15 chars" in new VersionRendering {
-      VersionItem("12345678901234567890").show shouldBe "12345678901234 "
+    "render an excessively long version by truncating at 15, padded at 15 chars" in new VersionRendering {
+      VersionItem("12345678901234567890").show shouldBe "123456789012345"
     }
   }
 
