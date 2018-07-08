@@ -3,7 +3,7 @@ package controllers
 import javax.inject.Inject
 import ordering.VersionOrdering
 import play.api.mvc._
-import rendering.{VersionRendering, VersionRow}
+import rendering.{VersionContext, VersionRendering, VersionRow}
 import repos.VersionsRepository
 import utils.Platform
 
@@ -24,6 +24,8 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository) extends
         val padded = versions.descendingOrder.map(v => Some(v)).padTo(MaxVersions, None)
 
         import cats.syntax.show._
+
+        implicit val ctx = VersionContext(current, installed)
 
         val rows: Seq[String] = for {
           i <- 0 until ColumnLength
