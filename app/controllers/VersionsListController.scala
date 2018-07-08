@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject.Inject
-import ordering.VersionOrdering
+import ordering.VersionItemOrdering
 import play.api.mvc._
 import rendering.{VersionContext, VersionItem, VersionRendering, VersionRow}
 import repos.VersionsRepository
@@ -9,7 +9,7 @@ import utils.Platform
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class VersionsListController @Inject()(versionsRepo: VersionsRepository) extends Controller with VersionOrdering with VersionRendering {
+class VersionsListController @Inject()(versionsRepo: VersionsRepository) extends Controller with VersionItemOrdering with VersionRendering {
 
   val MaxVersions = 60
 
@@ -21,7 +21,7 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository) extends
       //TODO handle platform specific candidates
       versionsRepo.findAllVersionsByCandidatePlatform(candidate, Platform.Universal.identifier).map { versions =>
 
-        val padded = versions.descendingOrder.map(v => Some(VersionItem(v.version))).padTo(MaxVersions, None)
+        val padded = versions.map(v => VersionItem(v.version)).descendingOrder.map(Some(_)).padTo(MaxVersions, None)
 
         import cats.syntax.show._
 

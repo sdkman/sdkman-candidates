@@ -1,13 +1,13 @@
 package support
 
-import io.sdkman.repos.Version
 import org.scalatest.{FunSpec, Matchers}
+import rendering.VersionItem
 
 import scala.annotation.tailrec
 
 trait OrderingCheck {
   @tailrec
-  final def orderCheck(actual: Seq[Version], expected: Seq[Version]): Boolean = (actual, expected) match {
+  final def orderCheck(actual: Seq[VersionItem], expected: Seq[VersionItem]): Boolean = (actual, expected) match {
     case (a :: Nil, e :: Nil) => a == e
     case (a :: as, e :: Nil) => false
     case (a :: Nil, e:: es) => if(a == e) true else orderCheck(a :: Nil, es)
@@ -71,6 +71,6 @@ class OrderingCheckTest extends FunSpec with OrderingCheck with Matchers {
   }
 
   implicit class VersionString(vs: List[String]) {
-    def versions: List[Version] = vs.map(Version("candidate", _, "platform", "url"))
+    def versions: List[VersionItem] = vs.map(VersionItem(_))
   }
 }
