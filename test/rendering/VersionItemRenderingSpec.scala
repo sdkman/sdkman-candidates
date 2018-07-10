@@ -24,8 +24,16 @@ class VersionItemRenderingSpec extends WordSpec with Matchers {
       VersionItem("12345678901234567890").show shouldBe "     123456789012345"
     }
 
+    "render a local version" in new VersionRendering {
+      VersionItem("2.12.6", local = true).show shouldBe "   + 2.12.6         "
+    }
+
     "render an installed version" in new VersionRendering {
       VersionItem("2.12.6", installed = true).show shouldBe "   * 2.12.6         "
+    }
+
+    "render a current local version" in new VersionRendering {
+      VersionItem("2.12.6", current = true, local = true).show shouldBe " > + 2.12.6         "
     }
 
     "render a current installed version" in new VersionRendering {

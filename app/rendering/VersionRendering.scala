@@ -15,11 +15,13 @@ trait VersionRendering {
 
   val InstalledSymbol = "*"
 
+  val LocalSymbol = "+"
+
   implicit val versionItemShow = Show.show[VersionItem] { v =>
 
     val current = if (v.current) CurrentSymbol else BlankSymbol
 
-    val installed = if (v.installed) InstalledSymbol else BlankSymbol
+    val installed = if (v.installed) InstalledSymbol else if(v.local) LocalSymbol else BlankSymbol
 
     s" $current $installed ${v.version.take(VersionLength).padTo(VersionLength, " ").mkString}"
   }
