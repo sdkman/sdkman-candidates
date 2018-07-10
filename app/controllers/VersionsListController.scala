@@ -25,10 +25,9 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository)
       //TODO handle platform specific candidates
       versionsRepo.findAllVersionsByCandidatePlatform(candidate, Platform.Universal.identifier).map { versions =>
 
-        val padded = pad(items(available(versions), local(installed), current))
-
         import cats.syntax.show._
 
+        val padded = pad(items(available(versions), local(installed), current))
         val rows: Seq[String] = for {
           i <- 0 until ColumnLength
           col1 = padded(i + 0 * ColumnLength)
