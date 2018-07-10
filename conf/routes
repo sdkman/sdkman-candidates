@@ -9,4 +9,4 @@ GET			/validate/:candidate/:version/:platform		    controllers.ValidationControl
 GET			/candidates/all								    controllers.CandidatesController.all()
 GET			/candidates/list                                controllers.CandidatesListController.list()
 GET			/candidates/:candidate/:platform/versions/all   controllers.VersionsController.all(candidate, platform)
-GET			/candidates/:candidate/:platform/versions/list  controllers.VersionsListController.list(candidate: String, platform: String, current: Option[String], installed: List[String])
+GET			/candidates/:candidate/:platform/versions/list  controllers.VersionsListController.list(candidate: String, platform: String, current: Option[String], installed: Option[String])

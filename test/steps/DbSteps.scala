@@ -9,11 +9,13 @@ import support.Mongo
 
 import scala.collection.JavaConverters._
 
-class DbSteps extends ScalaDsl with EN with Matchers with World {
+class DbSteps extends ScalaDsl with EN with Matchers {
 
   Before { s =>
     Mongo.dropAllCollections()
     Mongo.insertAliveOk()
+    World.currentVersion = ""
+    World.installedVersions = List.empty
   }
 
   And("""^a "([^"]*)" Candidate of Version "([^"]*)" for platform "([^"]*)" at "([^"]*)"$""") { (candidate: String, version: String, platform: String, url: String) =>

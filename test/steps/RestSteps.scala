@@ -4,13 +4,28 @@ import cucumber.api.scala.{EN, ScalaDsl}
 import org.scalatest.Matchers
 import play.api.libs.json.Json
 import scalaj.http.Http
+import steps.World._
 
 import scala.annotation.tailrec
 
-class RestSteps extends ScalaDsl with EN with Matchers with World {
+class RestSteps extends ScalaDsl with EN with Matchers {
+
+  And("""^the scala Version (.*) is set as current$""") { version: String =>
+    currentVersion = version
+  }
+
+  And("""^the scala Version (.*) is installed$""") { version: String =>
+    installedVersions = List(version)
+  }
+
+  And("""^the scala Versions (.*) are installed$""") { versions: String =>
+    installedVersions = versions.split(",").toList
+  }
 
   And("""^a request is made to (.*)""") { endpoint: String =>
+    val queryParams = Map("current" -> currentVersion, "installed" -> installedVersions.mkString(",")).filter { case (k: String, v: String) => v != "" }
     response = Http(s"$host$endpoint")
+      .params(queryParams)
       .timeout(connTimeoutMs = 1000, readTimeoutMs = 10000)
       .asString
   }
