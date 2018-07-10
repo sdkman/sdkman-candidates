@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class VersionsListController @Inject()(versionsRepo: VersionsRepository)
   extends Controller
-  with VersionItemOrdering
+    with VersionItemOrdering
     with VersionRendering
     with VersionItemListBuilding {
 
@@ -25,13 +25,7 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository)
       //TODO handle platform specific candidates
       versionsRepo.findAllVersionsByCandidatePlatform(candidate, Platform.Universal.identifier).map { versions =>
 
-        val available = versions.map(_.version)
-
-        val local = installed.toList.flatMap(_.split(","))
-
-        val items = buildItems(available, local, current)
-
-        val padded = items.descendingOrder.map(Some(_)).padTo(MaxVersions, None)
+        val padded = pad(items(available(versions), local(installed), current))
 
         import cats.syntax.show._
 
