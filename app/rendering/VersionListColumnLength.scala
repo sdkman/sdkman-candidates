@@ -11,6 +11,5 @@ trait VersionListColumnLength {
   def toColumnLength(totalSize: Int): Int =
     if(totalSize > DefaultVersionCount)
       defaultColumnLength + ((totalSize - DefaultVersionCount - 1) / DefaultColumnCount) + 1
-    else
-      defaultColumnLength
+    else defaultColumnLength
 }
