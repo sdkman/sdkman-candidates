@@ -1,11 +1,8 @@
 package rendering
 
 import io.sdkman.repos.Version
-import ordering.VersionItemOrdering
 
 trait VersionItemListBuilding {
-
-  self: VersionItemOrdering =>
 
   val MaxVersions: Int
 
@@ -13,9 +10,9 @@ trait VersionItemListBuilding {
 
   def local(installed: Option[String]): Seq[String] = installed.toList.flatMap(_.split(","))
 
-  def pad(items: List[VersionItem]): Seq[Option[VersionItem]] = items.descendingOrder.map(Some(_)).padTo(MaxVersions, None)
+  def pad(items: Seq[VersionItem]): Seq[Option[VersionItem]] = items.map(Some(_)).padTo(MaxVersions, None)
 
-  def items(available: Seq[String], installed: Seq[String], current: Option[String]): List[VersionItem] = {
+  def items(available: Seq[String], installed: Seq[String], current: Option[String]): Seq[VersionItem] = {
     val combined = (available ++ installed).toSet
     combined.map(v =>
       VersionItem(v,
