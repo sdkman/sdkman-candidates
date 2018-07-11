@@ -26,13 +26,13 @@ class RestSteps extends ScalaDsl with EN with Matchers {
     val queryParams = Map("current" -> currentVersion, "installed" -> installedVersions.mkString(",")).filter { case (k: String, v: String) => v != "" }
     response = Http(s"$host$endpoint")
       .params(queryParams)
-      .timeout(connTimeoutMs = 1000, readTimeoutMs = 10000)
+      .timeout(connTimeoutMs = 10000, readTimeoutMs = 10000)
       .asString
   }
 
   When("""^I attempt validation at endpoint (.*)$""") { endpoint: String =>
     response = Http(s"$host$endpoint")
-      .timeout(connTimeoutMs = 1000, readTimeoutMs = 10000)
+      .timeout(connTimeoutMs = 10000, readTimeoutMs = 10000)
       .asString
   }
 
