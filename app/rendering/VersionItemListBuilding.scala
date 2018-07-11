@@ -9,8 +9,6 @@ trait VersionItemListBuilding {
 
   val MaxVersions: Int
 
-  val ColumnLength: Int
-
   def available(v: Seq[Version]): Seq[String] = v.map(_.version)
 
   def local(installed: Option[String]): Seq[String] = installed.toList.flatMap(_.split(","))

@@ -17,8 +17,6 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository)
 
   val MaxVersions = 60
 
-  val ColumnLength = 15
-
   def list(candidate: String, platform: String, current: Option[String], installed: Option[String]) =
     Action.async(parse.anyContent) { request =>
 
@@ -27,13 +25,14 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository)
 
         import cats.syntax.show._
 
+        val columnLength = MaxVersions / 4
         val padded = pad(items(available(versions), local(installed), current))
         val rows: Seq[String] = for {
-          i <- 0 until ColumnLength
-          col1 = padded(i + 0 * ColumnLength)
-          col2 = padded(i + 1 * ColumnLength)
-          col3 = padded(i + 2 * ColumnLength)
-          col4 = padded(i + 3 * ColumnLength)
+          i <- 0 until columnLength
+          col1 = padded(i + 0 * columnLength)
+          col2 = padded(i + 1 * columnLength)
+          col3 = padded(i + 2 * columnLength)
+          col4 = padded(i + 3 * columnLength)
 
         } yield VersionRow(col1, col2, col3, col4).show
 
