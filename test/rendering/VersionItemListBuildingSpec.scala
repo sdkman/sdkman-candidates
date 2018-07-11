@@ -44,6 +44,6 @@ class VersionItemListBuildingSpec extends WordSpec with Matchers {
   }
 
   private class UnderTest extends VersionItemListBuilding with VersionItemOrdering {
-    override val MaxVersions = 60
+    override val DefaultVersionCount = 60
   }
 }
