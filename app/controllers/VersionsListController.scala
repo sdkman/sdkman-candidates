@@ -3,7 +3,7 @@ package controllers
 import javax.inject.Inject
 import ordering.VersionItemOrdering
 import play.api.mvc._
-import rendering.{RowCountCalculator, VersionItemListBuilding, VersionRendering, VersionRow}
+import rendering.{RowCountCalculator, VersionItemListBuilder, VersionRendering, VersionRow}
 import repos.VersionsRepository
 import utils.{Platform, VersionListProperties}
 
@@ -14,7 +14,7 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository)
     with VersionListProperties
     with VersionItemOrdering
     with VersionRendering
-    with VersionItemListBuilding
+    with VersionItemListBuilder
     with RowCountCalculator {
 
   def list(candidate: String, platform: String, current: Option[String], installed: Option[String]) =
@@ -25,8 +25,9 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository)
 
         import cats.syntax.show._
 
-        val padded = pad(items(available(versions), local(installed), current).descendingOrder)
         val rowCount = asRowCount(versions.length)
+        val upperBound = rowCount * DefaultColumnCount
+        val padded = pad(items(available(versions), local(installed), current).descendingOrder, upperBound)
         val rows: Seq[String] = for {
           i <- 0 until rowCount
           col1 = padded(i + 0 * rowCount)

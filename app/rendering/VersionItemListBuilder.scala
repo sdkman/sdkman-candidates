@@ -2,7 +2,7 @@ package rendering
 
 import io.sdkman.repos.Version
 
-trait VersionItemListBuilding {
+trait VersionItemListBuilder {
 
   val MinCountThreshold: Int
 
@@ -10,7 +10,8 @@ trait VersionItemListBuilding {
 
   def local(installed: Option[String]): Seq[String] = installed.toList.flatMap(_.split(","))
 
-  def pad(items: Seq[VersionItem]): Seq[Option[VersionItem]] = items.map(Some(_)).padTo(MinCountThreshold, None)
+  def pad(items: Seq[VersionItem], upperBound: Int): Seq[Option[VersionItem]] =
+    items.map(Some(_)).padTo(Math.max(MinCountThreshold, upperBound), None)
 
   def items(available: Seq[String], installed: Seq[String], current: Option[String]): Seq[VersionItem] = {
     val combined = (available ++ installed).toSet

@@ -179,12 +179,11 @@ Feature: Version List
       |================================================================================
     """
 
-  @pending
   Scenario: Version List expands on overflow
-    Given the scala Versions 2.9.0 thru 2.9.15
+    Given the scala Versions 2.9.0 thru 2.9.14
     And the scala Versions 2.10.0 thru 2.10.15
     And the scala Versions 2.11.0 thru 2.11.15
-    And the scala Versions 2.12.0 thru 2.12.14
+    And the scala Versions 2.12.0 thru 2.12.15
     When a request is made to /candidates/scala/linux64/versions/list
     Then a 200 status code is received
     And the response body is
