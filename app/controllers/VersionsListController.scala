@@ -3,7 +3,7 @@ package controllers
 import javax.inject.Inject
 import ordering.VersionItemOrdering
 import play.api.mvc._
-import rendering.{VersionItemListBuilding, VersionListColumnLength, VersionRendering, VersionRow}
+import rendering.{VersionItemListBuilding, RowCountCalculator, VersionRendering, VersionRow}
 import repos.VersionsRepository
 import utils.Platform
 
@@ -14,9 +14,9 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository)
     with VersionItemOrdering
     with VersionRendering
     with VersionItemListBuilding
-    with VersionListColumnLength {
+    with RowCountCalculator {
 
-  override val DefaultVersionCount = 60
+  override val MinCountThreshold = 60
 
   def list(candidate: String, platform: String, current: Option[String], installed: Option[String]) =
     Action.async(parse.anyContent) { request =>
@@ -27,13 +27,13 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository)
         import cats.syntax.show._
 
         val padded = pad(items(available(versions), local(installed), current).descendingOrder)
-        val columnLength = toColumnLength(versions.length)
+        val rowCount = asRowCount(versions.length)
         val rows: Seq[String] = for {
-          i <- 0 until columnLength
-          col1 = padded(i + 0 * columnLength)
-          col2 = padded(i + 1 * columnLength)
-          col3 = padded(i + 2 * columnLength)
-          col4 = padded(i + 3 * columnLength)
+          i <- 0 until rowCount
+          col1 = padded(i + 0 * rowCount)
+          col2 = padded(i + 1 * rowCount)
+          col3 = padded(i + 2 * rowCount)
+          col4 = padded(i + 3 * rowCount)
 
         } yield VersionRow(col1, col2, col3, col4).show
 
