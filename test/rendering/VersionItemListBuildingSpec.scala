@@ -2,6 +2,7 @@ package rendering
 
 import ordering.VersionItemOrdering
 import org.scalatest.{Matchers, WordSpec}
+import utils.VersionListProperties
 
 class VersionItemListBuildingSpec extends WordSpec with Matchers {
   "VersionItemListBuilding" should {
@@ -43,7 +44,5 @@ class VersionItemListBuildingSpec extends WordSpec with Matchers {
     }
   }
 
-  private class UnderTest extends VersionItemListBuilding with VersionItemOrdering {
-    override val MinCountThreshold = 60
-  }
+  private class UnderTest extends VersionItemListBuilding with VersionItemOrdering with VersionListProperties
 }

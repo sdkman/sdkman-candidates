@@ -3,20 +3,19 @@ package controllers
 import javax.inject.Inject
 import ordering.VersionItemOrdering
 import play.api.mvc._
-import rendering.{VersionItemListBuilding, RowCountCalculator, VersionRendering, VersionRow}
+import rendering.{RowCountCalculator, VersionItemListBuilding, VersionRendering, VersionRow}
 import repos.VersionsRepository
-import utils.Platform
+import utils.{Platform, VersionListProperties}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class VersionsListController @Inject()(versionsRepo: VersionsRepository)
   extends Controller
+    with VersionListProperties
     with VersionItemOrdering
     with VersionRendering
     with VersionItemListBuilding
     with RowCountCalculator {
-
-  override val MinCountThreshold = 60
 
   def list(candidate: String, platform: String, current: Option[String], installed: Option[String]) =
     Action.async(parse.anyContent) { request =>

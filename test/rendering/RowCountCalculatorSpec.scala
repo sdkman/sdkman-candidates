@@ -1,6 +1,7 @@
 package rendering
 
 import org.scalatest.{Matchers, WordSpec}
+import utils.VersionListProperties
 
 class RowCountCalculatorSpec extends WordSpec with Matchers {
   "VersionListColumnLength" should {
@@ -42,7 +43,5 @@ class RowCountCalculatorSpec extends WordSpec with Matchers {
     }
   }
 
-  private class UnderTest extends RowCountCalculator {
-    override val MinCountThreshold = 60
-  }
+  private class UnderTest extends RowCountCalculator with VersionListProperties
 }

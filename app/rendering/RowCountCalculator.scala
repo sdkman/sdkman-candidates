@@ -4,7 +4,7 @@ trait RowCountCalculator {
 
   val MinCountThreshold: Int
 
-  val DefaultColumnCount = 4
+  val DefaultColumnCount: Int
 
   val SingleRowCount = 1
 
