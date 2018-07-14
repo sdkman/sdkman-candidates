@@ -4,12 +4,12 @@ import javax.inject.Inject
 import ordering.VersionItemOrdering
 import play.api.mvc._
 import rendering.{RowCountCalculator, VersionItemListBuilder, VersionRendering, VersionRow}
-import repos.VersionsRepository
+import repos.{CandidatesRepository, VersionsRepository}
 import utils.{Platform, VersionListProperties}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class VersionsListController @Inject()(versionsRepo: VersionsRepository)
+class VersionsListController @Inject()(versionsRepo: VersionsRepository, candidatesRepo: CandidatesRepository)
   extends Controller
     with VersionListProperties
     with VersionItemOrdering
@@ -17,27 +17,32 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository)
     with VersionItemListBuilder
     with RowCountCalculator {
 
-  def list(candidate: String, platform: String, current: Option[String], installed: Option[String]) =
+  def list(candidate: String, uname: String, current: Option[String], installed: Option[String]) =
     Action.async(parse.anyContent) { request =>
 
-      //TODO handle platform specific candidates
-      versionsRepo.findAllVersionsByCandidatePlatform(candidate, Platform.Universal.identifier).map { versions =>
+      candidatesRepo.findCandidate(candidate).flatMap { candidateO =>
 
-        import cats.syntax.show._
+        val universal = candidateO.map(_.distribution).contains("UNIVERSAL")
+        val platform = if (universal) Platform.Universal else Platform(uname).getOrElse(Platform.Universal)
 
-        val rowCount = asRowCount(versions.length)
-        val upperBound = rowCount * DefaultColumnCount
-        val padded = pad(items(available(versions), local(installed), current).descendingOrder, upperBound)
-        val rows: Seq[String] = for {
-          i <- 0 until rowCount
-          col1 = padded(i + 0 * rowCount)
-          col2 = padded(i + 1 * rowCount)
-          col3 = padded(i + 2 * rowCount)
-          col4 = padded(i + 3 * rowCount)
+        versionsRepo.findAllVersionsByCandidatePlatform(candidate, platform.identifier).map { versions =>
 
-        } yield VersionRow(col1, col2, col3, col4).show
+          import cats.syntax.show._
 
-        Ok(views.txt.version_list(candidate.capitalize, rows))
+          val rowCount = asRowCount(versions.length)
+          val upperBound = rowCount * DefaultColumnCount
+          val padded = pad(items(available(versions), local(installed), current).descendingOrder, upperBound)
+          val rows: Seq[String] = for {
+            i <- 0 until rowCount
+            col1 = padded(i + 0 * rowCount)
+            col2 = padded(i + 1 * rowCount)
+            col3 = padded(i + 2 * rowCount)
+            col4 = padded(i + 3 * rowCount)
+
+          } yield VersionRow(col1, col2, col3, col4).show
+
+          Ok(views.txt.version_list(candidate.capitalize, rows))
+        }
       }
     }
 }
