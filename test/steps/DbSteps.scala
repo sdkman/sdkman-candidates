@@ -18,10 +18,6 @@ class DbSteps extends ScalaDsl with EN with Matchers {
     World.installedVersions = List.empty
   }
 
-  And("""^a "([^"]*)" Candidate of Version "([^"]*)" for platform "([^"]*)" at "([^"]*)"$""") { (candidate: String, version: String, platform: String, url: String) =>
-    Mongo.insertVersion(Version(candidate, version, platform, url))
-  }
-
   implicit class CandidateDataTable(dataTable: DataTable) {
 
     import scala.collection.JavaConverters._
