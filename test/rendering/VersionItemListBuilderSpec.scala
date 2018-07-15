@@ -13,7 +13,7 @@ class VersionItemListBuilderSpec extends WordSpec with Matchers {
 
     "build a list of available version items" in new UnderTest {
 
-      items(availableVersions, List.empty, None) shouldBe
+      items(availableVersions, installed = List.empty, current = None) shouldBe
         List(
           VersionItem("2.12.5"),
           VersionItem("2.12.6"))
@@ -21,7 +21,7 @@ class VersionItemListBuilderSpec extends WordSpec with Matchers {
 
     "build a list of available installed version items" in new UnderTest {
 
-      items(availableVersions, installedVersions, None) shouldBe
+      items(availableVersions, installedVersions, current = None) shouldBe
         List(
           VersionItem("2.12.5", installed = true),
           VersionItem("2.12.6", installed = true))
@@ -29,7 +29,7 @@ class VersionItemListBuilderSpec extends WordSpec with Matchers {
 
     "build a list of unavailable installed version items" in new UnderTest {
 
-      items(List.empty, installedVersions, None) shouldBe
+      items(available = List.empty, installedVersions, current = None) shouldBe
         List(
           VersionItem("2.12.5", local = true),
           VersionItem("2.12.6", local = true))
