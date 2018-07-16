@@ -23,7 +23,7 @@ class RestSteps extends ScalaDsl with EN with Matchers {
   }
 
   And("""^a request is made to (.*)""") { endpoint: String =>
-    val queryParams = Map("current" -> currentVersion, "installed" -> installedVersions.mkString(",")).filter { case (k: String, v: String) => v != "" }
+    val queryParams = Map("current" -> currentVersion, "installed" -> installedVersions.mkString(","))
     response = Http(s"$host$endpoint")
       .params(queryParams)
       .timeout(connTimeoutMs = 10000, readTimeoutMs = 10000)

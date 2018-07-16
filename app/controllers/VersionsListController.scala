@@ -29,9 +29,11 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository, candida
 
           import cats.syntax.show._
 
+          def flat(os: Option[String]) = os.filter(_.nonEmpty)
+
           val rowCount = asRowCount(versions.length)
           val upperBound = rowCount * DefaultColumnCount
-          val padded = pad(items(available(versions), local(installed), current).descendingOrder, upperBound)
+          val padded = pad(items(available(versions), local(flat(installed)), flat(current)).descendingOrder, upperBound)
           val rows: Seq[String] = for {
             i <- 0 until rowCount
             col1 = padded(i + 0 * rowCount)

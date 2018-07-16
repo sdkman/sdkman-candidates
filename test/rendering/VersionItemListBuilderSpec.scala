@@ -19,6 +19,13 @@ class VersionItemListBuilderSpec extends WordSpec with Matchers {
           VersionItem("2.12.6"))
     }
 
+    "build a list of available version items with blank current version" in new UnderTest {
+      items(availableVersions, installed = List.empty, current = Some("")) shouldBe
+        List(
+          VersionItem("2.12.5"),
+          VersionItem("2.12.6"))
+    }
+
     "build a list of available installed version items" in new UnderTest {
 
       items(availableVersions, installedVersions, current = None) shouldBe
