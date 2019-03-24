@@ -3,10 +3,10 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET			/alive										    controllers.HealthController.alive
-GET         /default/:candidate                             controllers.DefaultController.find(candidate)
-GET			/validate/:candidate/:version/:platform		    controllers.ValidationController.validate(candidate, version, platform)
-GET			/candidates/all								    controllers.CandidatesController.all()
+GET			/alive                                          controllers.HealthController.alive
+GET			/default/:candidate                             controllers.DefaultController.find(candidate)
+GET			/validate/:candidate/:version/:platform         controllers.ValidationController.validate(candidate, version, platform)
+GET			/candidates/all                                 controllers.CandidatesController.all()
 GET			/candidates/list                                controllers.CandidatesListController.list()
 GET			/candidates/:candidate/:platform/versions/all   controllers.VersionsController.all(candidate, platform)
 GET			/candidates/:candidate/:platform/versions/list  controllers.VersionsListController.list(candidate: String, platform: String, current: Option[String], installed: Option[String])
