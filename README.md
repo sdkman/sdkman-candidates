@@ -1,8 +1,8 @@
-#SDKMAN! Candidates Service
+# SDKMAN! Candidates Service
 
 This service supersedes the [Legacy Candidates Service](https://github.com/sdkman/sdkman-candidates-legacy).
 
-##Running Locally
+## Running Locally
 
 Make sure you have mongodb running locally or in a Docker Container:
 
