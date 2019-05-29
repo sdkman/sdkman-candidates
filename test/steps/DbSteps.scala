@@ -7,8 +7,6 @@ import io.sdkman.repos.{Candidate, Version}
 import org.scalatest.Matchers
 import support.Mongo
 
-import scala.collection.JavaConverters._
-
 class DbSteps extends ScalaDsl with EN with Matchers {
 
   Before { s =>
@@ -32,6 +30,22 @@ class DbSteps extends ScalaDsl with EN with Matchers {
         default = if (cells(3) == "") None else Some(cells(3)),
         websiteUrl = cells(4),
         distribution = cells(5))
+    }
+  }
+
+  implicit class VersionDataTable(dataTable: DataTable) {
+
+    import scala.collection.JavaConverters._
+
+    def toVersions: Seq[Version] = dataTable.getGherkinRows.asScala.tail.map(rowToVersion)
+
+    private def rowToVersion(row: DataTableRow): Version = {
+      val cells = row.getCells.asScala
+      Version(candidate = cells.head,
+        version = cells(1),
+        vendor = if (cells(2) == "") None else Some(cells(2)),
+        platform = cells(3),
+        url = cells(4))
     }
   }
 
@@ -67,7 +81,7 @@ class DbSteps extends ScalaDsl with EN with Matchers {
     }
   }
 
-  And("""^the Versions""") { versionsTable: DataTable =>
-    Mongo.insertVersions(versionsTable.asList(classOf[Version]).asScala)
+  And("""^the Versions$""") { versionsTable: DataTable =>
+    Mongo.insertVersions(versionsTable.toVersions)
   }
 }
