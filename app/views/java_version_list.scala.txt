@@ -1,7 +1,7 @@
 @(vendorVersions: Map[String, Seq[String]])================================================================================
 Available Java Versions
 ================================================================================
- Vendor        | Use | Version       | Dist   | Status     | Identifier
+ Vendor        | Use | Version      | Dist    | Status     | Identifier
 --------------------------------------------------------------------------------
 @for((vendor, versions) <- vendorVersions) { @vendor@versions.head
 @for(version <- versions.tail){               @version

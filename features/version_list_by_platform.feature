@@ -26,12 +26,12 @@ Feature: Version List by Platform
     |================================================================================
     |Available Java Versions
     |================================================================================
-    | Vendor        | Use | Version       | Dist   | Status     | Identifier
+    | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
-    | java.net      |     | 9ea163        | open   |            | 9ea163-open
-    |               |     | 8u131         | open   |            | 8u131-open
-    |               |     | 8u121         | open   |            | 8u121-open
-    |               |     | 8u111         | open   |            | 8u111-open
+    | java.net      |     | 9ea163       | open    |            | 9ea163-open
+    |               |     | 8u131        | open    |            | 8u131-open
+    |               |     | 8u121        | open    |            | 8u121-open
+    |               |     | 8u111        | open    |            | 8u111-open
     |================================================================================
     |Use the Identifier for installation:
     |
@@ -47,10 +47,10 @@ Feature: Version List by Platform
     |================================================================================
     |Available Java Versions
     |================================================================================
-    | Vendor        | Use | Version       | Dist   | Status     | Identifier
+    | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
-    | java.net      |     | 9ea163        | open   |            | 9ea163-open
-    |               |     | 8u131         | open   |            | 8u131-open
+    | java.net      |     | 9ea163       | open    |            | 9ea163-open
+    |               |     | 8u131        | open    |            | 8u131-open
     |================================================================================
     |Use the Identifier for installation:
     |
@@ -66,10 +66,10 @@ Feature: Version List by Platform
     |================================================================================
     |Available Java Versions
     |================================================================================
-    | Vendor        | Use | Version       | Dist   | Status     | Identifier
+    | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
-    | java.net      |     | 8u121         | open   |            | 8u121-open
-    |               |     | 8u111         | open   |            | 8u111-open
+    | java.net      |     | 8u121        | open    |            | 8u121-open
+    |               |     | 8u111        | open    |            | 8u111-open
     |================================================================================
     |Use the Identifier for installation:
     |

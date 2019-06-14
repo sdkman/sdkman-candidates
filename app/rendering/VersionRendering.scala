@@ -45,9 +45,11 @@ trait JavaVersionRendering {
 
   val StatusLength = 10
 
-  val BasicVersionLength = 13
+  val BasicVersionLength = 12
 
   val IdentifierLength = 20
+
+  val DistributionLength = 7
 
   implicit val javaItemShow = show[VersionItem] { vi =>
 
@@ -63,9 +65,9 @@ trait JavaVersionRendering {
 
     def basicVersion = vi.version.split('-').head.padTo(BasicVersionLength, ' ')
 
-    def vendor = vi.vendor.getOrElse("NONE").padTo(6, ' ')
+    def distribution = vi.vendor.getOrElse("NONE").padTo(DistributionLength, ' ')
 
-    s"| $current | $basicVersion | $vendor | $status | $version"
+    s"| $current | $basicVersion | $distribution | $status | $version"
   }
 }
 

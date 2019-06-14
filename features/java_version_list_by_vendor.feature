@@ -40,31 +40,31 @@ Feature: Java Version List by Vendor
     |================================================================================
     |Available Java Versions
     |================================================================================
-    | Vendor        | Use | Version       | Dist   | Status     | Identifier
+    | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
-    | AdoptOpenJDK  |     | 12.0.1.j9     | adpt   |            | 12.0.1.j9-adpt
-    |               |     | 12.0.1.hs     | adpt   |            | 12.0.1.hs-adpt
-    |               | >>> | 11.0.3.j9     | adpt   | installed  | 11.0.3.j9-adpt
-    |               |     | 11.0.3.hs     | adpt   |            | 11.0.3.hs-adpt
-    |               |     | 8.0.212.j9    | adpt   |            | 8.0.212.j9-adpt
-    |               |     | 8.0.212.hs    | adpt   |            | 8.0.212.hs-adpt
-    | Amazon        |     | 11.0.3        | amzn   |            | 11.0.3-amzn
-    |               |     | 8.0.212       | amzn   |            | 8.0.212-amzn
-    | Azul Zulu     |     | 12.0.1        | zulu   | installed  | 12.0.1-zulu
-    |               |     | 11.0.3        | zulu   |            | 11.0.3-zulu
-    |               |     | 10.0.2        | zulu   |            | 10.0.2-zulu
-    |               |     | 9.0.4         | zulu   |            | 9.0.4-zulu
-    |               |     | 8.0.212       | zulu   |            | 8.0.212-zulu
-    |               |     | 8.0.202       | zulu   | local only | 8.0.202-zulu
-    |               |     | 7.0.222       | zulu   |            | 7.0.222-zulu
-    |               |     | 6.0.119       | zulu   |            | 6.0.119-zulu
-    | GraalVM       |     | 19.0.0        | grl    |            | 19.0.0-grl
-    |               |     | 1.0.0         | grl    |            | 1.0.0-rc-16-grl
-    | java.net      |     | 13.ea.20      | open   | installed  | 13.ea.20-open
-    |               |     | 12.0.1        | open   |            | 12.0.1-open
-    |               |     | 11.0.3        | open   |            | 11.0.3-open
-    |               |     | 10.0.2        | open   |            | 10.0.2-open
-    |               |     | 9.0.4         | open   |            | 9.0.4-open
+    | AdoptOpenJDK  |     | 12.0.1.j9    | adpt    |            | 12.0.1.j9-adpt
+    |               |     | 12.0.1.hs    | adpt    |            | 12.0.1.hs-adpt
+    |               | >>> | 11.0.3.j9    | adpt    | installed  | 11.0.3.j9-adpt
+    |               |     | 11.0.3.hs    | adpt    |            | 11.0.3.hs-adpt
+    |               |     | 8.0.212.j9   | adpt    |            | 8.0.212.j9-adpt
+    |               |     | 8.0.212.hs   | adpt    |            | 8.0.212.hs-adpt
+    | Amazon        |     | 11.0.3       | amzn    |            | 11.0.3-amzn
+    |               |     | 8.0.212      | amzn    |            | 8.0.212-amzn
+    | Azul Zulu     |     | 12.0.1       | zulu    | installed  | 12.0.1-zulu
+    |               |     | 11.0.3       | zulu    |            | 11.0.3-zulu
+    |               |     | 10.0.2       | zulu    |            | 10.0.2-zulu
+    |               |     | 9.0.4        | zulu    |            | 9.0.4-zulu
+    |               |     | 8.0.212      | zulu    |            | 8.0.212-zulu
+    |               |     | 8.0.202      | zulu    | local only | 8.0.202-zulu
+    |               |     | 7.0.222      | zulu    |            | 7.0.222-zulu
+    |               |     | 6.0.119      | zulu    |            | 6.0.119-zulu
+    | GraalVM       |     | 19.0.0       | grl     |            | 19.0.0-grl
+    |               |     | 1.0.0        | grl     |            | 1.0.0-rc-16-grl
+    | java.net      |     | 13.ea.20     | open    | installed  | 13.ea.20-open
+    |               |     | 12.0.1       | open    |            | 12.0.1-open
+    |               |     | 11.0.3       | open    |            | 11.0.3-open
+    |               |     | 10.0.2       | open    |            | 10.0.2-open
+    |               |     | 9.0.4        | open    |            | 9.0.4-open
     |================================================================================
     |Use the Identifier for installation:
     |
