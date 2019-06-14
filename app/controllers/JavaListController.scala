@@ -18,12 +18,15 @@ class JavaListController @Inject()(versionRepo: VersionsRepository) extends Cont
   with JavaVersionRendering {
 
   val vendors = Map(
-    "none" -> "Not Available",
     "adpt" -> "AdoptOpenJDK",
-    "open" -> "OpenJDK",
     "amzn" -> "Amazon",
     "grl" -> "Graal",
-    "zulu" -> "Zulu"
+    "librca" -> "Liberica",
+    "none" -> "Name invalid",
+    "open" -> "OpenJDK",
+    "sapmchn" -> "SapMachine",
+    "zulu" -> "Zulu",
+    "zulufx" -> "ZuluFX"
   ).mapValues(_.padTo(14, ' '))
 
   def list(uname: String, current: Option[String], installed: Option[String]) =
