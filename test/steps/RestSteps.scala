@@ -14,11 +14,19 @@ class RestSteps extends ScalaDsl with EN with Matchers {
     currentVersion = version
   }
 
+  And("""^the current Version is (.*)$""") { version: String =>
+    currentVersion = version
+  }
+
   And("""^the scala Version (.*) is installed$""") { version: String =>
     installedVersions = List(version)
   }
 
   And("""^the scala Versions (.*) are installed$""") { versions: String =>
+    installedVersions = versions.split(",").toList
+  }
+
+  And("""^the installed Versions (.*)$""") { versions: String =>
     installedVersions = versions.split(",").toList
   }
 
