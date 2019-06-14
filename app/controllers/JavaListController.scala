@@ -20,13 +20,13 @@ class JavaListController @Inject()(versionRepo: VersionsRepository) extends Cont
   val vendors = Map(
     "adpt" -> "AdoptOpenJDK",
     "amzn" -> "Amazon",
-    "grl" -> "Graal",
-    "librca" -> "Liberica",
+    "grl" -> "GraalVM",
+    "librca" -> "BellSoft",
     "none" -> "Name invalid",
-    "open" -> "OpenJDK",
-    "sapmchn" -> "SapMachine",
-    "zulu" -> "Zulu",
-    "zulufx" -> "ZuluFX"
+    "open" -> "java.net",
+    "sapmchn" -> "SAP",
+    "zulu" -> "Azul Zulu",
+    "zulufx" -> "Azul ZuluFX"
   ).mapValues(_.padTo(14, ' '))
 
   def list(uname: String, current: Option[String], installed: Option[String]) =

@@ -26,9 +26,9 @@ Feature: Version List by Platform
     |================================================================================
     |Available Java Versions
     |================================================================================
-    | Vendor name   | Use | Version       | Vendor | Status     | Identifier
+    | Vendor        | Use | Version       | Dist   | Status     | Identifier
     |--------------------------------------------------------------------------------
-    | OpenJDK       |     | 9ea163        | open   |            | 9ea163-open
+    | java.net      |     | 9ea163        | open   |            | 9ea163-open
     |               |     | 8u131         | open   |            | 8u131-open
     |               |     | 8u121         | open   |            | 8u121-open
     |               |     | 8u111         | open   |            | 8u111-open
@@ -47,9 +47,9 @@ Feature: Version List by Platform
     |================================================================================
     |Available Java Versions
     |================================================================================
-    | Vendor name   | Use | Version       | Vendor | Status     | Identifier
+    | Vendor        | Use | Version       | Dist   | Status     | Identifier
     |--------------------------------------------------------------------------------
-    | OpenJDK       |     | 9ea163        | open   |            | 9ea163-open
+    | java.net      |     | 9ea163        | open   |            | 9ea163-open
     |               |     | 8u131         | open   |            | 8u131-open
     |================================================================================
     |Use the Identifier for installation:
@@ -66,9 +66,9 @@ Feature: Version List by Platform
     |================================================================================
     |Available Java Versions
     |================================================================================
-    | Vendor name   | Use | Version       | Vendor | Status     | Identifier
+    | Vendor        | Use | Version       | Dist   | Status     | Identifier
     |--------------------------------------------------------------------------------
-    | OpenJDK       |     | 8u121         | open   |            | 8u121-open
+    | java.net      |     | 8u121         | open   |            | 8u121-open
     |               |     | 8u111         | open   |            | 8u111-open
     |================================================================================
     |Use the Identifier for installation:
