@@ -65,7 +65,7 @@ trait JavaVersionRendering {
 
     def basicVersion = vi.version.split('-').head.padTo(BasicVersionLength, ' ')
 
-    def distribution = vi.vendor.getOrElse("NONE").padTo(DistributionLength, ' ')
+    def distribution = vi.vendor.getOrElse("none").padTo(DistributionLength, ' ')
 
     s"| $current | $basicVersion | $distribution | $status | $version"
   }

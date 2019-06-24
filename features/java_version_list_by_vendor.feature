@@ -2,8 +2,8 @@ Feature: Java Version List by Vendor
 
   Background:
     Given the Candidate
-      | candidate | name  | description        | default | vendor | websiteUrl                  | distribution       |
-      | java      | Java  | The Java  Language | 11.0.3  | adpt   | https://adoptopenjdk.net/   | PLATFORM_SPECIFIC  |
+      | candidate | name  | description        | default      | websiteUrl                  | distribution       |
+      | java      | Java  | The Java  Language | 11.0.3-open  | https://adoptopenjdk.net/   | PLATFORM_SPECIFIC  |
     And the Versions
       | candidate | version          | vendor | platform   | url                                            |
       | java      | 12.0.1.j9-adpt   | adpt   | LINUX_64   | http://adopt.example.org/jdk-12.0.1.j9.tar.gz  |
@@ -32,7 +32,7 @@ Feature: Java Version List by Vendor
 
   Scenario: List all Java Versions
     Given the current Version is 11.0.3.j9-adpt
-    And the installed Versions 8.0.202-zulu,11.0.3.j9-adpt,12.0.1-zulu,13.ea.20-open
+    And the installed Versions 8.0.202-zulu,11.0.3.j9-adpt,12.0.1-zulu,13.ea.20-open,11.0.3-local
     When a request is made to /candidates/java/linux64/versions/list
     Then a 200 status code is received
     And the response body is
@@ -60,11 +60,12 @@ Feature: Java Version List by Vendor
     |               |     | 6.0.119      | zulu    |            | 6.0.119-zulu
     | GraalVM       |     | 19.0.0       | grl     |            | 19.0.0-grl
     |               |     | 1.0.0        | grl     |            | 1.0.0-rc-16-grl
-    | java.net      |     | 13.ea.20     | open    | installed  | 13.ea.20-open
+    | Java.net      |     | 13.ea.20     | open    | installed  | 13.ea.20-open
     |               |     | 12.0.1       | open    |            | 12.0.1-open
     |               |     | 11.0.3       | open    |            | 11.0.3-open
     |               |     | 10.0.2       | open    |            | 10.0.2-open
     |               |     | 9.0.4        | open    |            | 9.0.4-open
+    | Unclassified  |     | 11.0.3       | none    | local only | 11.0.3-local
     |================================================================================
     |Use the Identifier for installation:
     |

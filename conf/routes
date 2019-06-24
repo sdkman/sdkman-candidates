@@ -9,5 +9,5 @@ GET			/validate/:candidate/:version/:platform         controllers.ValidationCont
 GET			/candidates/all                                 controllers.CandidatesController.all()
 GET			/candidates/list                                controllers.CandidatesListController.list()
 GET			/candidates/:candidate/:platform/versions/all   controllers.VersionsController.all(candidate, platform)
-GET         /candidates/java/:platform/versions/list        controllers.JavaListController.list(platform: String, current: Option[String], installed: Option[String])
+GET         /candidates/java/:platform/versions/list        controllers.JavaListController.list(platform: String, current: Option[String], installed: String)
 GET			/candidates/:candidate/:platform/versions/list  controllers.VersionsListController.list(candidate: String, platform: String, current: Option[String], installed: Option[String])
