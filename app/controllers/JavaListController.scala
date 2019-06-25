@@ -36,7 +36,7 @@ class JavaListController @Inject()(versionRepo: VersionsRepository) extends Cont
             toVendorItems(ven, vs, vendorInstalledVersions.filter(_.endsWith(s"-$ven")), current)
           }
 
-        val combinedItems = allLocalVersions.headOption.filter(_.trim.nonEmpty).fold(vendorsToItems) { _ =>
+        val combinedItems = localInstalledVersions.headOption.filter(_.trim.nonEmpty).fold(vendorsToItems) { _ =>
           val localInstalledItems = toVendorItems("none", Seq.empty, localInstalledVersions, current)
           vendorsToItems + localInstalledItems
         }
