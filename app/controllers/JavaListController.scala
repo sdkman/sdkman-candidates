@@ -26,7 +26,7 @@ class JavaListController @Inject()(versionRepo: VersionsRepository) extends Cont
 
         val allLocalVersions: Seq[String] = installed.split(",")
 
-        val localInstalledVersions = allLocalVersions.filter(_.endsWith("-local"))
+        val localInstalledVersions = findAllNotEndingWith(allLocalVersions, vendors.keySet)
 
         val vendorInstalledVersions = allLocalVersions.diff(localInstalledVersions)
 
@@ -44,6 +44,9 @@ class JavaListController @Inject()(versionRepo: VersionsRepository) extends Cont
         Ok(views.txt.java_version_list(sortItems(combinedItems)))
       }
     }
+
+  private[controllers] def findAllNotEndingWith(all: Seq[String], endings: Set[String]) =
+    all.filter(name => !endings.exists(ending => name.endsWith(ending)))
 
   private def vendorKey(version: Version): String = version.vendor.getOrElse("none")
 

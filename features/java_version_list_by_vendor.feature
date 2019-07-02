@@ -102,7 +102,7 @@ Feature: Java Version List by Vendor
       | candidate | version          | vendor | platform   | url                                            |
       | java      | 10.0.2-open      | open   | LINUX_64   | http://open.example.org/jdk-10.0.2.tar.gz      |
 
-    And the installed Versions 10.0.2-open,10.0.1-local
+    And the installed Versions 10.0.2-open,10.0.1-local,8.0.212-oracle,8.0.212-xyz
     When a request is made to /candidates/java/linux64/versions/list
     Then a 200 status code is received
     And the response body is
@@ -114,29 +114,8 @@ Feature: Java Version List by Vendor
     |--------------------------------------------------------------------------------
     | Java.net      |     | 10.0.2       | open    | installed  | 10.0.2-open
     | Unclassified  |     | 10.0.1       | none    | local only | 10.0.1-local
-    |================================================================================
-    |Use the Identifier for installation:
-    |
-    |    $ sdk install java 11.0.3.hs-adpt
-    |================================================================================
-    """
-
-  Scenario: An unknown versions is omitted
-    Given the Versions
-      | candidate | version          | vendor | platform   | url                                            |
-      | java      | 10.0.2-open      | open   | LINUX_64   | http://open.example.org/jdk-10.0.2.tar.gz      |
-
-    And the installed Versions 10.0.2-open,10.0.1-oracle
-    When a request is made to /candidates/java/linux64/versions/list
-    Then a 200 status code is received
-    And the response body is
-    """
-    |================================================================================
-    |Available Java Versions
-    |================================================================================
-    | Vendor        | Use | Version      | Dist    | Status     | Identifier
-    |--------------------------------------------------------------------------------
-    | Java.net      |     | 10.0.2       | open    | installed  | 10.0.2-open
+    |               |     | 8.0.212      | none    | local only | 8.0.212-xyz
+    |               |     | 8.0.212      | none    | local only | 8.0.212-oracle
     |================================================================================
     |Use the Identifier for installation:
     |
@@ -168,7 +147,7 @@ Feature: Java Version List by Vendor
     """
 
   Scenario: Only local versions are displayed
-    And the installed Versions 10.0.2-local
+    And the installed Versions 10.0.2-oracle
     When a request is made to /candidates/java/linux64/versions/list
     Then a 200 status code is received
     And the response body is
@@ -178,7 +157,7 @@ Feature: Java Version List by Vendor
     |================================================================================
     | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
-    | Unclassified  |     | 10.0.2       | none    | local only | 10.0.2-local
+    | Unclassified  |     | 10.0.2       | none    | local only | 10.0.2-oracle
     |================================================================================
     |Use the Identifier for installation:
     |
