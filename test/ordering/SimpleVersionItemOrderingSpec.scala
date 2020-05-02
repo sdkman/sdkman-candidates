@@ -50,5 +50,19 @@ class SimpleVersionItemOrderingSpec extends WordSpec with Matchers {
 
       versions.ascendingOrder shouldBe List(v2, v3, v1)
     }
+
+    "accurately sort with patch number" in new RegexStringComparison with VersionItemOrdering {
+      val v1 = VersionItem("14.0.1.2.j9-adpt")
+      val v2 = VersionItem("14.0.1.0.j9-adpt")
+      val v3 = VersionItem("8.0.252.0.j9-adpt")
+      val v4 = VersionItem("11.0.7.2.j9-adpt")
+      val v5 = VersionItem("8.0.242.0.j9-adpt")
+      val v6 = VersionItem("14.0.1.0.j9-adpt")
+      val v7 = VersionItem("8.0.252.1.j9-adpt")
+
+      val versions = List(v1, v2, v3, v4, v5, v6, v7)
+
+      versions.ascendingOrder shouldBe List(v5, v3, v7, v4, v2, v6, v1)
+    }
   }
 }
