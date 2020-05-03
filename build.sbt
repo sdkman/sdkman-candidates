@@ -15,7 +15,7 @@ packageName in Docker := "sdkman/sdkman-candidates"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.9"
+scalaVersion := "2.11.12"
 
 routesGenerator := InjectedRoutesGenerator
 
