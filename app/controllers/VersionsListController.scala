@@ -22,8 +22,7 @@ class VersionsListController @Inject()(versionsRepo: VersionsRepository, candida
 
       candidatesRepo.findCandidate(candidate).flatMap { candidateO =>
 
-        val universal = candidateO.map(_.distribution).contains("UNIVERSAL")
-        val platform = if (universal) Platform.Universal else Platform(uname).getOrElse(Platform.Universal)
+        val platform = Platform(uname).getOrElse(Platform.Universal)
 
         versionsRepo.findAllVersionsByCandidatePlatform(candidate, platform.identifier).map { versions =>
 

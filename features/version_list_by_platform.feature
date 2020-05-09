@@ -2,9 +2,10 @@ Feature: Version List by Platform
 
   Background:
     Given the Candidate
-      | candidate | name  | description        | default    | websiteUrl                  | distribution      |
-      | java      | Java  | The Java Language  | 8u111-open | https://www.oracle.com      | PLATFORM_SPECIFIC |
-      | scala     | Scala | The Scala Language | 2.12.6     | https://www.scala-lang.org/ | UNIVERSAL         |
+      | candidate | name      | description         | default    | websiteUrl                  | distribution      |
+      | java      | Java      | The Java Language   | 8u111-open | https://www.oracle.com      | PLATFORM_SPECIFIC |
+      | scala     | Scala     | The Scala Language  | 2.12.6     | https://www.scala-lang.org/ | UNIVERSAL         |
+      | micronaut | Micronaut | Micronaut framework | 2.0.0      | https://micronaut.io/       | MIXED             |
 
     And the Versions
       | candidate | version      | vendor | platform   | url                                                                                       |
@@ -17,6 +18,10 @@ Feature: Version List by Platform
       | java      | 8u111-open   | open   | WINDOWS_64 | http://download.oracle.com/otn-pub/java/jdk/8u111-b14/jdk-8u111-windows-x64.tar.gz        |
       | java      | 8u121-open   | open   | WINDOWS_64 | http://download.oracle.com/otn-pub/java/jdk/8u121-b14/jdk-8u121-windows-x64.tar.gz        |
       | scala     | 2.12.6       |        | UNIVERSAL  | http://dl/scala/2.12.0/scala-2.12.0.zip                                                   |
+      | micronaut | 2.0.0        |        | LINUX_64   | http://dl/micronaut/2.0.0/mn-1.3.5-linux.zip                                              |
+      | micronaut | 2.0.0        |        | MAC_OSX    | http://dl/micronaut/2.0.0/mn-1.3.5-osx.zip                                                |
+      | micronaut | 2.0.0        |        | WINDOWS_64 | http://dl/micronaut/2.0.0/mn-1.3.5-windows.zip                                            |
+      | micronaut | 1.3.5        |        | UNIVERSAL  | http://dl/micronaut/1.3.5/mn-1.3.5.zip                                                    |
 
   Scenario: Show a Version List of a Platform Specific Linux 64 Candidate
     When a request is made to /candidates/java/linux64/versions/list
@@ -87,6 +92,37 @@ Feature: Version List by Platform
       |================================================================================
       |     2.12.6
       |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |================================================================================
+      |+ - local version
+      |* - installed
+      |> - currently in use
+      |================================================================================
+    """
+
+  Scenario: Show a Version List for a Mixed Platform and Universal Candidate
+    When a request is made to /candidates/micronaut/darwin/versions/list
+    Then a 200 status code is received
+    And the response body is
+    """
+      |================================================================================
+      |Available Micronaut Versions
+      |================================================================================
+      |     2.0.0
+      |     1.3.5
       |
       |
       |
