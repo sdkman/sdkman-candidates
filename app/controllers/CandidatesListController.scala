@@ -13,7 +13,7 @@ class CandidatesListController @Inject()(candidatesRepo: CandidatesRepository) e
     candidatesRepo.findAllCandidates().map { candidates =>
       Ok {
         views.txt.candidate_list {
-          candidates.map { candidate =>
+          candidates.filterNot(c => c.candidate == "test").map { candidate =>
             new CandidateListSection(candidate) with PlainTextRendering
           }
         }
