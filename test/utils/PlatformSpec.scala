@@ -17,6 +17,8 @@ class PlatformSpec extends WordSpec with Matchers {
       Platform("Linux") shouldBe Some(Platform.Linux64)
       Platform("Linux32") shouldBe Some(Platform.Linux32)
       Platform("Linux64") shouldBe Some(Platform.Linux64)
+      Platform("LinuxARM32") shouldBe Some(Platform.LinuxARM32)
+      Platform("LinuxARM64") shouldBe Some(Platform.LinuxARM64)
       Platform("MINGW32_NT-6.1") shouldBe None
       Platform("MINGW32_NT-6.1-WOW") shouldBe None
       Platform("MINGW32_NT-6.2") shouldBe None
@@ -42,6 +44,8 @@ class PlatformSpec extends WordSpec with Matchers {
       Platform("linux") shouldBe Some(Platform.Linux64)
       Platform("linux32") shouldBe Some(Platform.Linux32)
       Platform("linux64") shouldBe Some(Platform.Linux64)
+      Platform("linuxarm32") shouldBe Some(Platform.LinuxARM32)
+      Platform("linuxarm64") shouldBe Some(Platform.LinuxARM64)
       Platform("mingw32_nt-6.1") shouldBe None
       Platform("mingw32_nt-6.1-wow") shouldBe None
       Platform("mingw32_nt-6.2") shouldBe None
