@@ -14,8 +14,8 @@ Feature: Java Version List by Vendor
       | java      | 11.0.3.hs-adpt   | adpt   | LINUX_64   | http://adopt.example.org/jdk-11.0.3.hs.tar.gz  |
       | java      | 8.0.212.j9-adpt  | adpt   | LINUX_64   | http://adopt.example.org/jdk-8.0.212.j9.tar.gz |
       | java      | 8.0.212.hs-adpt  | adpt   | LINUX_64   | http://adopt.example.org/jdk-8.0.212.hs.tar.gz |
-      | java      | 11.0.3-amzn      | albba  | LINUX_64   | albba://amzn.example.org/jdk-11.0.3.j9.tar.gz  |
-      | java      | 8.0.212-amzn     | albba  | LINUX_64   | albba://amzn.example.org/jdk-8.0.212.tar.gz    |
+      | java      | 11.0.3-albba     | albba  | LINUX_64   | http://albba.example.org/jdk-11.0.3.j9.tar.gz  |
+      | java      | 8.0.212-albba    | albba  | LINUX_64   | http://albba.example.org/jdk-8.0.212.tar.gz    |
       | java      | 11.0.3-amzn      | amzn   | LINUX_64   | http://amzn.example.org/jdk-11.0.3.j9.tar.gz   |
       | java      | 8.0.212-amzn     | amzn   | LINUX_64   | http://amzn.example.org/jdk-8.0.212.tar.gz     |
       | java      | 19.0.0-grl       | grl    | LINUX_64   | http://graal.example.org/graal-19.0.0.tar.gz   |
