@@ -66,6 +66,7 @@ class JavaListController @Inject()(versionRepo: VersionsRepository) extends Cont
   val vendors = Map(
     "adpt" -> "AdoptOpenJDK",
     "amzn" -> "Amazon",
+    "dwell" -> "Dragonwell",
     "grl" -> "GraalVM",
     "librca" -> "BellSoft",
     "none" -> "Unclassified",
