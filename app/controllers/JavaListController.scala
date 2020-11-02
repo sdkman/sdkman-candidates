@@ -71,6 +71,7 @@ class JavaListController @Inject()(versionRepo: VersionsRepository) extends Cont
     "librca" -> "BellSoft",
     "none" -> "Unclassified",
     "open" -> "Java.net",
+    "mandrel" -> "Mandrel",
     "sapmchn" -> "SAP",
     "zulu" -> "Azul Zulu",
     "zulufx" -> "Azul ZuluFX"
