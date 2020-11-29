@@ -45,7 +45,8 @@ class DbSteps extends ScalaDsl with EN with Matchers {
         version = cells(1),
         vendor = if (cells(2) == "") None else Some(cells(2)),
         platform = cells(3),
-        url = cells(4))
+        url = cells(4),
+        visible = if (cells.size == 6 && cells(5).nonEmpty) Some(cells(5).toBoolean) else Some(true))
     }
   }
 

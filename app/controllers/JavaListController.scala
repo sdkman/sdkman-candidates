@@ -22,7 +22,7 @@ class JavaListController @Inject()(versionRepo: VersionsRepository) extends Cont
 
       val platform = Platform(uname).getOrElse(Platform.Universal).identifier
 
-      versionRepo.findAllVersionsByCandidatePlatform("java", platform).map { versions =>
+      versionRepo.findAllVisibleVersionsByCandidatePlatform("java", platform).map { versions =>
 
         val allLocalVersions: Seq[String] = installed.split(",")
 
