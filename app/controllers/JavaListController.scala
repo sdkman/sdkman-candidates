@@ -77,6 +77,7 @@ class JavaListController @Inject() (versionRepo: VersionsRepository, cc: Control
     "mandrel" -> "Mandrel",
     "ms"      -> "Microsoft",
     "sapmchn" -> "SAP",
+    "tem"     -> "Temurin",
     "trava"   -> "TravaOpenJDK",
     "zulu"    -> "Azul Zulu",
     "zulufx"  -> "Azul ZuluFX"
