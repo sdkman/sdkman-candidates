@@ -4,34 +4,14 @@ import org.scalatest.{Matchers, WordSpec}
 
 class PlatformSpec extends WordSpec with Matchers {
   "platform" should {
-    "return some platform identifier when presented with a valid unnormalised uname" in {
-      Platform("CYGWIN_NT-6.1") shouldBe Some(Platform.Windows64)
-      Platform("CYGWIN_NT-6.1-WOW") shouldBe Some(Platform.Windows64)
-      Platform("CYGWIN_NT-6.1-WOW64") shouldBe Some(Platform.Windows64)
-      Platform("CYGWIN_NT-6.3") shouldBe Some(Platform.Windows64)
-      Platform("CYGWIN_NT-6.3-WOW") shouldBe Some(Platform.Windows64)
-      Platform("CYGWIN_NT-10.0") shouldBe Some(Platform.Windows64)
-      Platform("CYGWIN_NT-10.0-WOW") shouldBe Some(Platform.Windows64)
-      Platform("Darwin") shouldBe Some(Platform.MacOSX)
-      Platform("FreeBSD") shouldBe Some(Platform.FreeBSD)
-      Platform("Linux") shouldBe Some(Platform.Linux64)
-      Platform("Linux32") shouldBe Some(Platform.Linux32)
-      Platform("Linux64") shouldBe Some(Platform.Linux64)
-      Platform("LinuxARM32") shouldBe Some(Platform.LinuxARM32)
-      Platform("LinuxARM64") shouldBe Some(Platform.LinuxARM64)
-      Platform("MINGW32_NT-6.1") shouldBe None
-      Platform("MINGW32_NT-6.1-WOW") shouldBe None
-      Platform("MINGW32_NT-6.2") shouldBe None
-      Platform("MINGW64_NT-6.1") shouldBe Some(Platform.Windows64)
-      Platform("MINGW64_NT-6.3") shouldBe Some(Platform.Windows64)
-      Platform("MINGW64_NT-10.0") shouldBe Some(Platform.Windows64)
-      Platform("MSYS_NT-6.1") shouldBe Some(Platform.Windows64)
-      Platform("MSYS_NT-6.3") shouldBe Some(Platform.Windows64)
-      Platform("MSYS_NT-10.0") shouldBe Some(Platform.Windows64)
-      Platform("SunOS") shouldBe Some(Platform.SunOS)
-    }
+    "return some identifier when presented with a valid lowercase platform" in {
+      Platform("darwinx64") shouldBe Some(Platform.MacX64)
+      Platform("darwinarm64") shouldBe Some(Platform.MacARM64)
+      Platform("linuxx32") shouldBe Some(Platform.LinuxX32)
+      Platform("linuxx64") shouldBe Some(Platform.LinuxX64)
+      Platform("linuxarm32") shouldBe Some(Platform.LinuxARM32)
+      Platform("linuxarm64") shouldBe Some(Platform.LinuxARM64)
 
-    "return some platform identifier when presented with a valid normalised uname" in {
       Platform("cygwin_nt-6.1") shouldBe Some(Platform.Windows64)
       Platform("cygwin_nt-6.1-wow") shouldBe Some(Platform.Windows64)
       Platform("cygwin_nt-6.1-wow64") shouldBe Some(Platform.Windows64)
@@ -39,13 +19,11 @@ class PlatformSpec extends WordSpec with Matchers {
       Platform("cygwin_nt-6.3-wow") shouldBe Some(Platform.Windows64)
       Platform("cygwin_nt-10.0") shouldBe Some(Platform.Windows64)
       Platform("cygwin_nt-10.0-wow") shouldBe Some(Platform.Windows64)
-      Platform("darwin") shouldBe Some(Platform.MacOSX)
+      Platform("darwin") shouldBe Some(Platform.MacX64)
       Platform("freebsd") shouldBe Some(Platform.FreeBSD)
-      Platform("linux") shouldBe Some(Platform.Linux64)
-      Platform("linux32") shouldBe Some(Platform.Linux32)
-      Platform("linux64") shouldBe Some(Platform.Linux64)
-      Platform("linuxarm32") shouldBe Some(Platform.LinuxARM32)
-      Platform("linuxarm64") shouldBe Some(Platform.LinuxARM64)
+      Platform("linux") shouldBe Some(Platform.LinuxX64)
+      Platform("linux32") shouldBe Some(Platform.LinuxX32)
+      Platform("linux64") shouldBe Some(Platform.LinuxX64)
       Platform("mingw32_nt-6.1") shouldBe None
       Platform("mingw32_nt-6.1-wow") shouldBe None
       Platform("mingw32_nt-6.2") shouldBe None
