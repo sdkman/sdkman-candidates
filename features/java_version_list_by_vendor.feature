@@ -33,6 +33,7 @@ Feature: Java Version List by Vendor
       | java      | 7.0.222-zulu     | zulu    | LINUX_64   | http://zulu.example.org/jdk-7.0.222.tar.gz         |
       | java      | 6.0.119-zulu     | zulu    | LINUX_64   | http://zulu.example.org/jdk-6.0.119.tar.gz         |
       | java      | 20.1.0.1-mandrel | mandrel | LINUX_64   | http://mandrel.example.org/mandrel-20.1.0.1.tar.gz |
+      | java      | 11.0.9-ms        | ms      | LINUX_64   | http://ms.example.org/ms-11.0.9.tar.gz       |
       | java      | 11.0.9-trava     | trava   | LINUX_64   | http://trava.example.org/trava-11.0.9.tar.gz       |
 
     And the current Version is 11.0.3.j9-adpt
@@ -72,6 +73,7 @@ Feature: Java Version List by Vendor
     |               |     | 10.0.2       | open    |            | 10.0.2-open
     |               |     | 9.0.4        | open    |            | 9.0.4-open
     | Mandrel       |     | 20.1.0.1     | mandrel |            | 20.1.0.1-mandrel
+    | Microsoft     |     | 11.0.9       | ms      |            | 11.0.9-ms
     | TravaOpenJDK  |     | 11.0.9       | trava   |            | 11.0.9-trava
     | Unclassified  |     | 11.0.3       | none    | local only | 11.0.3-local
     |================================================================================
