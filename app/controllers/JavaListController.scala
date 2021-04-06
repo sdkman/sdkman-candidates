@@ -72,6 +72,7 @@ class JavaListController @Inject()(versionRepo: VersionsRepository) extends Cont
     "none" -> "Unclassified",
     "open" -> "Java.net",
     "mandrel" -> "Mandrel",
+    "ms" -> "Microsoft",
     "sapmchn" -> "SAP",
     "trava" -> "TravaOpenJDK",
     "zulu" -> "Azul Zulu",
