@@ -35,6 +35,7 @@ Feature: Java Version List by Vendor
       | java      | 20.1.0.1-mandrel | mandrel | LINUX_64   | http://mandrel.example.org/mandrel-20.1.0.1.tar.gz |
       | java      | 11.0.9-ms        | ms      | LINUX_64   | http://ms.example.org/ms-11.0.9.tar.gz       |
       | java      | 11.0.9-trava     | trava   | LINUX_64   | http://trava.example.org/trava-11.0.9.tar.gz       |
+      | java      | 8.0.212-tem      | tem     | LINUX_64   | http://tem.example.org/jdk-8.0.212.tar.gz        |
 
     And the current Version is 11.0.3.j9-adpt
     And the installed Versions 8.0.202-zulu,11.0.3.j9-adpt,12.0.1-zulu,13.ea.20-open,11.0.3-local
@@ -65,6 +66,7 @@ Feature: Java Version List by Vendor
     |               |     | 8.0.202      | zulu    | local only | 8.0.202-zulu
     |               |     | 7.0.222      | zulu    |            | 7.0.222-zulu
     |               |     | 6.0.119      | zulu    |            | 6.0.119-zulu
+    | Temurin       |     | 11.0.9       | tem     |            | 8.0.212-tem
     | GraalVM       |     | 19.0.0       | grl     |            | 19.0.0-grl
     |               |     | 1.0.0        | grl     |            | 1.0.0-rc-16-grl
     | Java.net      |     | 13.ea.20     | open    | installed  | 13.ea.20-open

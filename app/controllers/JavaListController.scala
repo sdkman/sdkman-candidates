@@ -74,6 +74,7 @@ class JavaListController @Inject()(versionRepo: VersionsRepository) extends Cont
     "mandrel" -> "Mandrel",
     "ms" -> "Microsoft",
     "sapmchn" -> "SAP",
+    "tem" -> "Temurin",
     "trava" -> "TravaOpenJDK",
     "zulu" -> "Azul Zulu",
     "zulufx" -> "Azul ZuluFX"
