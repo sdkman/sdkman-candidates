@@ -7,7 +7,7 @@ import utils.Platform
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class VersionsController @Inject()(versionsRepo: VersionsRepository, candidatesRepo: CandidatesRepository) extends Controller {
+class VersionsController @Inject()(versionsRepo: VersionsRepository, candidatesRepo: CandidatesRepository, cc: ControllerComponents) extends AbstractController(cc) {
 
   def all(candidate: String, uname: String) = Action.async(parse.anyContent) { request =>
     candidatesRepo.findCandidate(candidate).flatMap { candidateO =>

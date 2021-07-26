@@ -9,8 +9,8 @@ import utils.{Platform, VersionListProperties}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class VersionsListController @Inject()(versionsRepo: VersionsRepository, candidatesRepo: CandidatesRepository)
-  extends Controller
+class VersionsListController @Inject()(versionsRepo: VersionsRepository, candidatesRepo: CandidatesRepository, cc: ControllerComponents)
+  extends AbstractController(cc)
     with VersionListProperties
     with VersionItemOrdering
     with VersionRendering
