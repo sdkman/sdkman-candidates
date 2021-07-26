@@ -27,8 +27,7 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  jdbc,
-  cache,
+  guice,
   ws,
   "com.github.sdkman" % "sdkman-mongodb-persistence" % "1.9",
   "org.typelevel" %% "cats-core" % "1.0.1",
@@ -37,8 +36,8 @@ libraryDependencies ++= Seq(
   "info.cukes" % "cucumber-junit" % "1.2.5" % Test,
   "org.scalaj" %% "scalaj-http" % "2.3.0" % Test,
   "com.github.tomakehurst" % "wiremock" % "2.2.2" % Test,
-  "org.scalacheck" %% "scalacheck" % "1.12.6" % Test,
-  "org.pegdown" % "pegdown" % "1.6.0" % Test
+  "org.pegdown" % "pegdown" % "1.6.0" % Test,
+  "com.vladsch.flexmark" % "flexmark-all" % "0.36.8" % Test
 )
 
 logBuffered in Test := false

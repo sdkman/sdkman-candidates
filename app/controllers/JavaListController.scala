@@ -11,7 +11,7 @@ import utils.{Platform, VersionListProperties}
 import scala.collection.immutable.ListMap
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class JavaListController @Inject()(versionRepo: VersionsRepository) extends Controller
+class JavaListController @Inject()(versionRepo: VersionsRepository, cc: ControllerComponents) extends AbstractController(cc)
   with VersionItemOrdering
   with VersionItemListBuilder
   with VersionListProperties
