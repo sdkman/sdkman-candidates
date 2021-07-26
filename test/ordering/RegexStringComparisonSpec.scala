@@ -1,8 +1,9 @@
 package ordering
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class RegexStringComparisonSpec extends WordSpec with Matchers {
+class RegexStringComparisonSpec extends AnyWordSpec with Matchers {
   "comparison of extracted regex groups" when {
 
     "groups are numeric" should {
@@ -56,6 +57,8 @@ class RegexStringComparisonSpec extends WordSpec with Matchers {
   }
 
   private def assertPositive(i: Int) = assert(i > 0)
+
   private def assertNegative(i: Int) = assert(i < 0)
+
   private def assertZero(i: Int) = assert(i == 0)
 }

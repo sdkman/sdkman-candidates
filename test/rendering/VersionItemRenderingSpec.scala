@@ -1,8 +1,9 @@
 package rendering
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class VersionItemRenderingSpec extends WordSpec with Matchers {
+class VersionItemRenderingSpec extends AnyWordSpec with Matchers {
 
   import cats.syntax.show._
 

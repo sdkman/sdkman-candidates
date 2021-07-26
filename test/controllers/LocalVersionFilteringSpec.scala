@@ -1,19 +1,20 @@
 package controllers
 
 import org.scalacheck.{Gen, Prop}
-import org.scalatest.prop.{Checkers, GeneratorDrivenPropertyChecks}
-import org.scalatest.{Matchers, WordSpec}
-import play.api.Logger
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.scalacheck.{Checkers, ScalaCheckDrivenPropertyChecks}
+import play.api.Logging
 
 import scala.util.Random
 
-class LocalVersionFilteringSpec extends WordSpec with Matchers with GeneratorDrivenPropertyChecks with Checkers {
+class LocalVersionFilteringSpec extends AnyWordSpec with Matchers with ScalaCheckDrivenPropertyChecks with Checkers with Logging {
 
   "Local version filtering" should {
 
-    val known= Seq("amzn", "open", "zulu")
+    val known = Seq("amzn", "open", "zulu")
 
-    val unknown= Seq("local", "oracle", "myxyz")
+    val unknown = Seq("local", "oracle", "myxyz")
 
     val versionGen: Gen[String] = for {
       maj <- Gen.numChar
@@ -35,7 +36,7 @@ class LocalVersionFilteringSpec extends WordSpec with Matchers with GeneratorDri
       unknownVersions <- Gen.listOfN(5, identifiers(suffixes(unknown)))
     } yield (knownVersions, unknownVersions)
 
-    "filter names not ending certain suffixes" in new JavaListController(null) {
+    "filter names not ending certain suffixes" in new JavaListController(null, null) {
 
       check {
         Prop.forAll(combinedVersions) { case (kvs: Seq[String], ukvs: Seq[String]) =>
@@ -44,7 +45,7 @@ class LocalVersionFilteringSpec extends WordSpec with Matchers with GeneratorDri
 
           val names = findAllNotEndingWith(allVersions, known.toSet)
 
-          Logger.info(allVersions + " -> " + names + " : ")
+          logger.info(allVersions + " -> " + names + " : ")
 
           (names diff ukvs).isEmpty
         }

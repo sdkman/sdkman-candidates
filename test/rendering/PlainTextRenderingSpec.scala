@@ -1,9 +1,10 @@
 package rendering
 
 import io.sdkman.repos.Candidate
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class PlainTextRenderingSpec extends WordSpec with Matchers {
+class PlainTextRenderingSpec extends AnyWordSpec with Matchers {
 
   val scala = Candidate("scala", "Scala", "The Scala Language", Some("2.12.1"), "https://www.scala-lang.org/", "UNIVERSAL")
   val sectionWithDefault = new CandidateListSection(scala) with PlainTextRendering { override val ConsoleWidth = 42}

@@ -1,10 +1,11 @@
 package rendering
 
 import ordering.VersionItemOrdering
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import utils.VersionListProperties
 
-class VersionItemListBuilderSpec extends WordSpec with Matchers {
+class VersionItemListBuilderSpec extends AnyWordSpec with Matchers {
   "VersionItemListBuilder" should {
 
     val availableVersions = Seq("2.12.5", "2.12.6")
