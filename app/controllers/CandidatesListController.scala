@@ -7,7 +7,10 @@ import repos.CandidatesRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class CandidatesListController @Inject()(candidatesRepo: CandidatesRepository, cc: ControllerComponents) extends AbstractController(cc) {
+class CandidatesListController @Inject() (
+    candidatesRepo: CandidatesRepository,
+    cc: ControllerComponents
+) extends AbstractController(cc) {
 
   def list() = Action.async { _ =>
     candidatesRepo.findAllCandidates().map { candidates =>

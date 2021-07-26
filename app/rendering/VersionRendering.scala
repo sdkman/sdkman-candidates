@@ -19,16 +19,14 @@ trait VersionRendering {
   val LocalSymbol = "+"
 
   implicit val versionItemShow = show[VersionItem] { v =>
-
     val current = if (v.current) CurrentSymbol else BlankSymbol
 
-    val installed = if (v.installed) InstalledSymbol else if(v.local) LocalSymbol else BlankSymbol
+    val installed = if (v.installed) InstalledSymbol else if (v.local) LocalSymbol else BlankSymbol
 
     s" $current $installed ${v.version.take(VersionLength).padTo(VersionLength, " ").mkString}"
   }
 
   implicit val rowShow = show[VersionRow] { row =>
-
     def padSegment(str: String = ""): String = str.padTo(SegmentLength, " ").mkString
 
     def expand(ov: Option[VersionItem]): String = ov.map(_.show).getOrElse(padSegment())
@@ -52,13 +50,12 @@ trait JavaVersionRendering {
   val DistributionLength = 7
 
   implicit val javaItemShow = show[VersionItem] { vi =>
-
     def current = if (vi.current) CurrentSymbol else BlankSymbol
 
     val status = vi match {
       case VersionItem(_, _, true, false, _) => "installed".padTo(StatusLength, ' ')
       case VersionItem(_, _, false, true, _) => "local only".padTo(StatusLength, ' ')
-      case _ => "".padTo(StatusLength, ' ')
+      case _                                 => "".padTo(StatusLength, ' ')
     }
 
     val version = vi.version.padTo(IdentifierLength, ' ')
@@ -71,6 +68,17 @@ trait JavaVersionRendering {
   }
 }
 
-case class VersionItem(version: String, current: Boolean = false, installed: Boolean = false, local: Boolean = false, vendor: Option[String] = None)
+case class VersionItem(
+    version: String,
+    current: Boolean = false,
+    installed: Boolean = false,
+    local: Boolean = false,
+    vendor: Option[String] = None
+)
 
-case class VersionRow(col1: Option[VersionItem], col2: Option[VersionItem], col3: Option[VersionItem], col4: Option[VersionItem])
+case class VersionRow(
+    col1: Option[VersionItem],
+    col2: Option[VersionItem],
+    col3: Option[VersionItem],
+    col4: Option[VersionItem]
+)

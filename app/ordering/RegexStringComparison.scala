@@ -40,14 +40,14 @@ trait RegexStringComparison {
   }
 
   private def rank(seg: String): Int = seg.toLowerCase match {
-    case s if s == "0" => 0
+    case s if s == "0"                => 0
     case s if s.startsWith("release") => 0
-    case s if s.startsWith("final") => 0
-    case s if s.startsWith("rc") => -1
-    case s if s.startsWith("m") => -2
-    case s if s.startsWith("beta") => -3
-    case s if s.startsWith("alpha") => -4
-    case s => s.hashCode
+    case s if s.startsWith("final")   => 0
+    case s if s.startsWith("rc")      => -1
+    case s if s.startsWith("m")       => -2
+    case s if s.startsWith("beta")    => -3
+    case s if s.startsWith("alpha")   => -4
+    case s                            => s.hashCode
   }
 
 }
