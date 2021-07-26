@@ -22,15 +22,15 @@ scalaVersion := "2.12.13"
 routesGenerator := InjectedRoutesGenerator
 
 resolvers ++= Seq(
-  Resolver.bintrayRepo("sdkman", "maven"),
-  Resolver.jcenterRepo
+  Resolver.mavenCentral,
+  "jitpack" at "https://jitpack.io"
 )
 
 libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
-  "io.sdkman" %% "sdkman-mongodb-persistence" % "1.5",
+  "com.github.sdkman" % "sdkman-mongodb-persistence" % "1.9",
   "org.typelevel" %% "cats-core" % "1.0.1",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0" % Test,
   "info.cukes" %% "cucumber-scala" % "1.2.5" % Test,
