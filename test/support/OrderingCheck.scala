@@ -1,6 +1,7 @@
 package support
 
-import org.scalatest.{FunSpec, Matchers}
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import rendering.VersionItem
 
 import scala.annotation.tailrec
@@ -15,7 +16,7 @@ trait OrderingCheck {
   }
 }
 
-class OrderingCheckTest extends FunSpec with OrderingCheck with Matchers {
+class OrderingCheckTest extends AnyFunSpec with OrderingCheck with Matchers {
 
   it("should successfully compare sub-list ordering") {
     orderCheck(List("1").versions, List("1").versions) shouldBe true

@@ -1,8 +1,9 @@
 package utils
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class PlatformSpec extends WordSpec with Matchers {
+class PlatformSpec extends AnyWordSpec with Matchers {
   "platform" should {
     "return some identifier when presented with a valid lowercase platform" in {
       Platform("darwinx64") shouldBe Some(Platform.MacX64)

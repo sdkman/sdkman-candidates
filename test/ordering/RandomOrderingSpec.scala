@@ -1,15 +1,15 @@
 package ordering
 
 import org.scalacheck.{Gen, Prop}
-import org.scalatest.WordSpec
-import org.scalatest.prop.{Checkers, GeneratorDrivenPropertyChecks}
-import play.api.Logger
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.scalacheck.{Checkers, ScalaCheckDrivenPropertyChecks}
+import play.api.Logging
 import rendering.VersionItem
 import support.OrderingCheck
 
 import scala.io.Source
 
-class RandomOrderingSpec extends WordSpec with GeneratorDrivenPropertyChecks with Checkers with OrderingCheck {
+class RandomOrderingSpec extends AnyWordSpec with ScalaCheckDrivenPropertyChecks with Checkers with OrderingCheck with Logging {
 
   "regex string ordering" should {
 
@@ -30,7 +30,7 @@ class RandomOrderingSpec extends WordSpec with GeneratorDrivenPropertyChecks wit
 
             val partialActual = xs.ascendingOrder
 
-            Logger.info(s"$candidate shuffled: ${xs.map(_.version).mkString(",")} ===> ordered: ${partialActual.map(_.version).mkString(",")}")
+            logger.info(s"$candidate shuffled: ${xs.map(_.version).mkString(",")} ===> ordered: ${partialActual.map(_.version).mkString(",")}")
 
             orderCheck(partialActual, fullExpected)
           }

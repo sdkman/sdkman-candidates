@@ -1,11 +1,11 @@
 package rendering
 
 import org.scalacheck.{Gen, Prop}
-import org.scalatest.WordSpec
-import org.scalatest.prop.{Checkers, GeneratorDrivenPropertyChecks}
-import play.api.Logger
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.scalacheck.{Checkers, ScalaCheckDrivenPropertyChecks}
+import play.api.Logging
 
-class WordWrappingSpec extends WordSpec with GeneratorDrivenPropertyChecks with Checkers {
+class WordWrappingSpec extends AnyWordSpec with ScalaCheckDrivenPropertyChecks with Checkers with Logging {
 
   "WordWrapping" should {
 
@@ -28,7 +28,7 @@ class WordWrappingSpec extends WordSpec with GeneratorDrivenPropertyChecks with 
         Prop.forAll(paragraphGen) { paragraph =>
           val lines = wrapText(paragraph.mkString(" "))
 
-          Logger.info(s"never exceed max console width $ConsoleWidth:- words: ${paragraph.size}, lines: ${lines.size}")
+          logger.info(s"never exceed max console width $ConsoleWidth:- words: ${paragraph.size}, lines: ${lines.size}")
 
           val consoleWidthExceeded = lines.foldRight(false)((line, prev) => line.length > ConsoleWidth || prev)
 
@@ -45,7 +45,7 @@ class WordWrappingSpec extends WordSpec with GeneratorDrivenPropertyChecks with 
         Prop.forAll(paragraphGen) { paragraph =>
           val lines = wrapText(paragraph.mkString(" "))
 
-          Logger.info(s"occasionally reach max console width $ConsoleWidth:- words: ${paragraph.size}, lines: ${lines.size}")
+          logger.info(s"occasionally reach max console width $ConsoleWidth:- words: ${paragraph.size}, lines: ${lines.size}")
 
           val consoleWidthReached = lines.foldRight(false)((line, prev) => line.length == ConsoleWidth || prev)
 

@@ -1,9 +1,10 @@
 package rendering
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import utils.VersionListProperties
 
-class RowCountCalculatorSpec extends WordSpec with Matchers {
+class RowCountCalculatorSpec extends AnyWordSpec with Matchers {
   "VersionListColumnLength" should {
 
     "calculate column length for an empty version list" in new UnderTest {

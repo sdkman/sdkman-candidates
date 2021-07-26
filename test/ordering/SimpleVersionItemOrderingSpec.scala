@@ -1,9 +1,10 @@
 package ordering
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import rendering.VersionItem
 
-class SimpleVersionItemOrderingSpec extends WordSpec with Matchers {
+class SimpleVersionItemOrderingSpec extends AnyWordSpec with Matchers {
   "VersionItem ordering" should {
     "accurately sort versions by version string ascending" in new RegexStringComparison with VersionItemOrdering {
 
