@@ -10,9 +10,9 @@ trait RowCountCalculator {
 
   private lazy val minRowCount = MinCountThreshold / DefaultColumnCount
 
-  def asRowCount(totalCount: Int): Int ={
-    if(totalCount > MinCountThreshold) {
-      val excessCount = totalCount - MinCountThreshold
+  def asRowCount(totalCount: Int): Int = {
+    if (totalCount > MinCountThreshold) {
+      val excessCount         = totalCount - MinCountThreshold
       val zeroShiftedRowCount = (excessCount - 1) / DefaultColumnCount
       minRowCount + zeroShiftedRowCount + SingleRowCount
 

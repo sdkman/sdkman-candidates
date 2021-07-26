@@ -11,19 +11,18 @@ import utils.{Platform, VersionListProperties}
 import scala.collection.immutable.ListMap
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class JavaListController @Inject()(versionRepo: VersionsRepository, cc: ControllerComponents) extends AbstractController(cc)
-  with VersionItemOrdering
-  with VersionItemListBuilder
-  with VersionListProperties
-  with JavaVersionRendering {
+class JavaListController @Inject() (versionRepo: VersionsRepository, cc: ControllerComponents)
+    extends AbstractController(cc)
+    with VersionItemOrdering
+    with VersionItemListBuilder
+    with VersionListProperties
+    with JavaVersionRendering {
 
   def list(uname: String, current: Option[String], installed: String) =
     Action.async(parse.anyContent) { _ =>
-
       val platform = Platform(uname).getOrElse(Platform.Universal).identifier
 
       versionRepo.findAllVisibleVersionsByCandidatePlatform("java", platform).map { versions =>
-
         val allLocalVersions: Seq[String] = installed.split(",")
 
         val localInstalledVersions = findAllNotEndingWith(allLocalVersions, vendors.keySet)
@@ -36,10 +35,12 @@ class JavaListController @Inject()(versionRepo: VersionsRepository, cc: Controll
             toVendorItems(ven, vs, vendorInstalledVersions.filter(_.endsWith(s"-$ven")), current)
           }
 
-        val combinedItems = localInstalledVersions.headOption.filter(_.trim.nonEmpty).fold(vendorsToItems) { _ =>
-          val localInstalledItems = toVendorItems("none", Seq.empty, localInstalledVersions, current)
-          vendorsToItems + localInstalledItems
-        }
+        val combinedItems =
+          localInstalledVersions.headOption.filter(_.trim.nonEmpty).fold(vendorsToItems) { _ =>
+            val localInstalledItems =
+              toVendorItems("none", Seq.empty, localInstalledVersions, current)
+            vendorsToItems + localInstalledItems
+          }
 
         Ok(views.txt.java_version_list(sortItems(combinedItems)))
       }
@@ -52,10 +53,12 @@ class JavaListController @Inject()(versionRepo: VersionsRepository, cc: Controll
 
   import cats.syntax.show._
 
-  private def toVendorItems(vendor: String,
-                            versions: Seq[Version],
-                            installed: Seq[String],
-                            current: Option[String]): (String, Seq[String]) =
+  private def toVendorItems(
+      vendor: String,
+      versions: Seq[Version],
+      installed: Seq[String],
+      current: Option[String]
+  ): (String, Seq[String]) =
     vendors(vendor) -> items(
       available(versions),
       installed,
@@ -64,19 +67,19 @@ class JavaListController @Inject()(versionRepo: VersionsRepository, cc: Controll
     ).descendingOrder.map(_.show)
 
   val vendors = Map(
-    "adpt" -> "AdoptOpenJDK",
-    "albba" -> "Alibaba",
-    "amzn" -> "Amazon",
-    "grl" -> "GraalVM",
-    "librca" -> "BellSoft",
-    "none" -> "Unclassified",
-    "open" -> "Java.net",
+    "adpt"    -> "AdoptOpenJDK",
+    "albba"   -> "Alibaba",
+    "amzn"    -> "Amazon",
+    "grl"     -> "GraalVM",
+    "librca"  -> "BellSoft",
+    "none"    -> "Unclassified",
+    "open"    -> "Java.net",
     "mandrel" -> "Mandrel",
-    "ms" -> "Microsoft",
+    "ms"      -> "Microsoft",
     "sapmchn" -> "SAP",
-    "trava" -> "TravaOpenJDK",
-    "zulu" -> "Azul Zulu",
-    "zulufx" -> "Azul ZuluFX"
+    "trava"   -> "TravaOpenJDK",
+    "zulu"    -> "Azul Zulu",
+    "zulufx"  -> "Azul ZuluFX"
   ).mapValues(_.padTo(14, ' '))
 
   private def sortItems(versionsToItems: Map[String, Seq[String]]): ListMap[String, Seq[String]] =

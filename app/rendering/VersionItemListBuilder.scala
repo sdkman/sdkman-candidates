@@ -13,13 +13,23 @@ trait VersionItemListBuilder {
   def pad(items: Seq[VersionItem], upperBound: Int): Seq[Option[VersionItem]] =
     items.map(Some(_)).padTo(Math.max(MinCountThreshold, upperBound), None)
 
-  def items(available: Seq[String], installed: Seq[String], current: Option[String], vendor: Option[String] = None): Seq[VersionItem] = {
+  def items(
+      available: Seq[String],
+      installed: Seq[String],
+      current: Option[String],
+      vendor: Option[String] = None
+  ): Seq[VersionItem] = {
     val combined = (available ++ installed).toSet
-    combined.map(v =>
-      VersionItem(v,
-        installed = installed.contains(v) && available.contains(v),
-        local = installed.contains(v) && !available.contains(v),
-        current = current.contains(v),
-        vendor = vendor)).toList
+    combined
+      .map(v =>
+        VersionItem(
+          v,
+          installed = installed.contains(v) && available.contains(v),
+          local = installed.contains(v) && !available.contains(v),
+          current = current.contains(v),
+          vendor = vendor
+        )
+      )
+      .toList
   }
 }
