@@ -1,29 +1,22 @@
 package steps
 
-import cucumber.api.DataTable
 import cucumber.api.scala.{EN, ScalaDsl}
 import gherkin.formatter.model.DataTableRow
+import io.cucumber.datatable.DataTable
 import io.sdkman.repos.{Candidate, Version}
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import support.Mongo
 
 class DbSteps extends ScalaDsl with EN with Matchers {
-
-  Before { s =>
-    Mongo.dropAllCollections()
-    Mongo.insertAliveOk()
-    World.currentVersion = ""
-    World.installedVersions = List.empty
-  }
 
   implicit class CandidateDataTable(dataTable: DataTable) {
 
     import scala.collection.JavaConverters._
 
-    def toCandidates: Seq[Candidate] = dataTable.getGherkinRows.asScala.tail.map(rowToCandidate)
+    def toCandidates: Seq[Candidate] = dataTable.asLists().asScala.tail.map(x => rowToCandidate(x.asScala.toList))
 
-    private def rowToCandidate(row: DataTableRow): Candidate = {
-      val cells = row.getCells.asScala
+    private def rowToCandidate(row: List[String]): Candidate = {
+      val cells = row
       Candidate(candidate = cells.head,
         name = cells(1),
         description = cells(2),
@@ -37,10 +30,10 @@ class DbSteps extends ScalaDsl with EN with Matchers {
 
     import scala.collection.JavaConverters._
 
-    def toVersions: Seq[Version] = dataTable.getGherkinRows.asScala.tail.map(rowToVersion)
+    def toVersions: Seq[Version] = dataTable.asLists().asScala.tail.map(x => rowToVersion(x.asScala.toList))
 
-    private def rowToVersion(row: DataTableRow): Version = {
-      val cells = row.getCells.asScala
+    private def rowToVersion(row: List[String]): Version = {
+      val cells = row
       Version(candidate = cells.head,
         version = cells(1),
         vendor = if (cells(2) == "") None else Some(cells(2)),
@@ -71,7 +64,7 @@ class DbSteps extends ScalaDsl with EN with Matchers {
     val startPatch = startSegs.last.toInt
     val endPatch = endSegs.last.toInt
 
-    for(patch <- startPatch to endPatch) {
+    for (patch <- startPatch to endPatch) {
       val version = s"${startSegs.take(2).mkString(".")}.$patch"
       Mongo.insertVersion(
         Version(

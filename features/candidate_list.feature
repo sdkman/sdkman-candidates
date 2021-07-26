@@ -13,7 +13,6 @@ Feature: Candidate List
     Then a 200 status code is received
     And the rendered text is:
     """
-      |
       |================================================================================
       |Available Candidates
       |================================================================================
