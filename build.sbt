@@ -11,7 +11,9 @@ Docker / packageName := "sdkman/sdkman-hooks"
 
 dockerBaseImage := "openjdk:11"
 
-packageName in Docker := "sdkman/sdkman-candidates"
+Universal / javaOptions ++= Seq(
+  "-Dpidfile.path=/dev/null"
+)
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
