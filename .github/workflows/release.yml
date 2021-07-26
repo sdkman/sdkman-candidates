@@ -24,4 +24,6 @@ jobs:
       with:
         token: '${{ secrets.GITHUB_TOKEN }}'
     - name: Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
       run: ./sbt "release with-defaults"
