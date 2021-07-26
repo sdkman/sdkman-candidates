@@ -10,6 +10,8 @@ Docker / packageName := "sdkman/sdkman-hooks"
 
 dockerBaseImage := "openjdk:11"
 
+dockerExposedPorts ++= Seq(9000)
+
 Universal / javaOptions ++= Seq(
   "-Dpidfile.path=/dev/null"
 )
