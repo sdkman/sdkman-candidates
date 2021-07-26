@@ -39,7 +39,7 @@ class WordWrappingSpec extends AnyWordSpec with ScalaCheckDrivenPropertyChecks w
 
     "wrap text occasionally reaching max column width" in new WordWrapping {
 
-      override def ConsoleWidth = 20
+      override def ConsoleWidth = 80
 
       check {
         Prop.forAll(paragraphGen) { paragraph =>
