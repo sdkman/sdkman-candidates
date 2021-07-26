@@ -1,0 +1,27 @@
+name: Release
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: "Stable Release"
+    runs-on: ubuntu-latest
+    environment: production
+    services:
+      mongodb:
+        image: mongo:3.2
+        ports:
+          - 27017:27017
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Log in to Docker Hub
+      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+    - uses: oleksiyrudenko/gha-git-credentials@v2.1
+      with:
+        token: '${{ secrets.GITHUB_TOKEN }}'
+    - name: Release
+      run: ./sbt "release with-defaults"

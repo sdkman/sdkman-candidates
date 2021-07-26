@@ -1,0 +1,10 @@
+---
+addReviewers: true
+addAssignees: author
+
+reviewers:
+  - marc0der
+  - helpermethod
+  - eddumelendez
+
+numberOfReviewers: 0
