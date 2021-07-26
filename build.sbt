@@ -1,4 +1,3 @@
-import com.typesafe.config.ConfigFactory
 import sbt.Resolver
 
 enablePlugins(JavaServerAppPackaging)
@@ -47,3 +46,19 @@ logBuffered in Test := false
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/reports/scalatest/")
 
 scalacOptions += "-Ypartial-unification"
+
+import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  ReleaseStep(releaseStepTask(publish in Docker)),
+  setNextVersion,
+  commitNextVersion,
+  pushChanges
+)
