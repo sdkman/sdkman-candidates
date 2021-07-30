@@ -66,7 +66,7 @@ Feature: Java Version List by Vendor
     |               |     | 8.0.202      | zulu    | local only | 8.0.202-zulu
     |               |     | 7.0.222      | zulu    |            | 7.0.222-zulu
     |               |     | 6.0.119      | zulu    |            | 6.0.119-zulu
-    | Temurin       |     | 11.0.9       | tem     |            | 8.0.212-tem
+    | Temurin       |     | 8.0.212      | tem     |            | 8.0.212-tem
     | GraalVM       |     | 19.0.0       | grl     |            | 19.0.0-grl
     |               |     | 1.0.0        | grl     |            | 1.0.0-rc-16-grl
     | Java.net      |     | 13.ea.20     | open    | installed  | 13.ea.20-open
