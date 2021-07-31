@@ -4,12 +4,17 @@
 
 This service supersedes the [Legacy Candidates Service](https://github.com/sdkman/sdkman-candidates-legacy).
 
-## Running Locally
+## Tests
+
+    $ ./sbt test
+
+## Run local
 
 Make sure you have mongodb running locally or in a Docker Container:
 
     $ docker run -d --net=host --name mongo mongo:3.2
 
-Run all tests:
+Start the app:
 
-    $ sbt test
+	$ ./sbt run
+
