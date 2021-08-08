@@ -1,5 +1,6 @@
 # SDKMAN! Candidates Service
 
+![Build status](https://github.com/sdkman/sdkman-candidates/actions/workflows/release.yml/badge.svg)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/sdkman/sdkman-candidates)
 
 This service supersedes the [Legacy Candidates Service](https://github.com/sdkman/sdkman-candidates-legacy).
