@@ -72,6 +72,7 @@ class JavaListController @Inject() (versionRepo: VersionsRepository, cc: Control
     "amzn"    -> "Amazon",
     "grl"     -> "GraalVM",
     "librca"  -> "BellSoft",
+    "nik"     -> "NativeImageKit",
     "none"    -> "Unclassified",
     "open"    -> "Java.net",
     "mandrel" -> "Mandrel",
