@@ -73,7 +73,6 @@ Feature: Java Version List by Vendor
     | Semeru        |     | 8.0.212      | sem     |            | 8.0.212-sem
     | Temurin       |     | 8.0.212      | tem     |            | 8.0.212-tem
     | Trava         |     | 11.0.9       | trava   |            | 11.0.9-trava
-    | Unclassified  |     | 11.0.3       | none    | local only | 11.0.3-local
     | Zulu          |     | 12.0.1       | zulu    | installed  | 12.0.1-zulu
     |               |     | 11.0.3       | zulu    |            | 11.0.3-zulu
     |               |     | 10.0.2       | zulu    |            | 10.0.2-zulu
@@ -82,6 +81,7 @@ Feature: Java Version List by Vendor
     |               |     | 8.0.202      | zulu    | local only | 8.0.202-zulu
     |               |     | 7.0.222      | zulu    |            | 7.0.222-zulu
     |               |     | 6.0.119      | zulu    |            | 6.0.119-zulu
+    | Unclassified  |     | 11.0.3       | none    | local only | 11.0.3-local
     |================================================================================
     |Use the Identifier for installation:
     |

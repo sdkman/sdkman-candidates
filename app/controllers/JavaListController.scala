@@ -39,10 +39,10 @@ class JavaListController @Inject() (versionRepo: VersionsRepository, cc: Control
           localInstalledVersions.headOption.filter(_.trim.nonEmpty).fold(vendorsToItems) { _ =>
             val localInstalledItems =
               toVendorItems("none", Seq.empty, localInstalledVersions, current)
-            vendorsToItems + localInstalledItems
+            sortItems(vendorsToItems) + localInstalledItems
           }
 
-        Ok(views.txt.java_version_list(sortItems(combinedItems)))
+        Ok(views.txt.java_version_list(combinedItems))
       }
     }
 
