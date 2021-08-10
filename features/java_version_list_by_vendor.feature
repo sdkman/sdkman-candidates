@@ -75,9 +75,9 @@ Feature: Java Version List by Vendor
     |               |     | 11.0.3       | open    |            | 11.0.3-open
     |               |     | 10.0.2       | open    |            | 10.0.2-open
     |               |     | 9.0.4        | open    |            | 9.0.4-open
+    | Liberica NIK  |     | 19.0.0       | nik     |            | 19.0.0-nik
     | Mandrel       |     | 20.1.0.1     | mandrel |            | 20.1.0.1-mandrel
     | Microsoft     |     | 11.0.9       | ms      |            | 11.0.9-ms
-    | Liberica NIK  |     | 19.0.0       | nik     |            | 19.0.0-nik
     | Semeru        |     | 8.0.212      | sem     |            | 8.0.212-sem
     | Temurin       |     | 8.0.212      | tem     |            | 8.0.212-tem
     | TravaOpenJDK  |     | 11.0.9       | trava   |            | 11.0.9-trava
