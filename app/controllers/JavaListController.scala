@@ -68,21 +68,21 @@ class JavaListController @Inject() (versionRepo: VersionsRepository, cc: Control
 
   val vendors = Map(
     "adpt"    -> "AdoptOpenJDK",
-    "albba"   -> "Alibaba",
-    "amzn"    -> "Amazon",
+    "albba"   -> "Dragonwell",
+    "amzn"    -> "Corretto",
     "grl"     -> "GraalVM",
-    "librca"  -> "BellSoft",
+    "librca"  -> "Liberica",
     "nik"     -> "Liberica NIK",
     "none"    -> "Unclassified",
     "open"    -> "Java.net",
     "mandrel" -> "Mandrel",
     "ms"      -> "Microsoft",
-    "sapmchn" -> "SAP",
+    "sapmchn" -> "SapMachine",
     "sem"     -> "Semeru",
     "tem"     -> "Temurin",
-    "trava"   -> "TravaOpenJDK",
-    "zulu"    -> "Azul Zulu",
-    "zulufx"  -> "Azul ZuluFX"
+    "trava"   -> "Trava",
+    "zulu"    -> "Zulu",
+    "zulufx"  -> "ZuluFX"
   ).mapValues(_.padTo(14, ' '))
 
   private def sortItems(versionsToItems: Map[String, Seq[String]]): ListMap[String, Seq[String]] =

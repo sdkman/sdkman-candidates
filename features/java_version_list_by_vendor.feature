@@ -56,18 +56,10 @@ Feature: Java Version List by Vendor
     |               |     | 11.0.3.hs    | adpt    |            | 11.0.3.hs-adpt
     |               |     | 8.0.212.j9   | adpt    |            | 8.0.212.j9-adpt
     |               |     | 8.0.212.hs   | adpt    |            | 8.0.212.hs-adpt
-    | Alibaba       |     | 11.0.3       | albba   |            | 11.0.3-albba
-    |               |     | 8.0.212      | albba   |            | 8.0.212-albba
-    | Amazon        |     | 11.0.3       | amzn    |            | 11.0.3-amzn
+    | Corretto      |     | 11.0.3       | amzn    |            | 11.0.3-amzn
     |               |     | 8.0.212      | amzn    |            | 8.0.212-amzn
-    | Azul Zulu     |     | 12.0.1       | zulu    | installed  | 12.0.1-zulu
-    |               |     | 11.0.3       | zulu    |            | 11.0.3-zulu
-    |               |     | 10.0.2       | zulu    |            | 10.0.2-zulu
-    |               |     | 9.0.4        | zulu    |            | 9.0.4-zulu
-    |               |     | 8.0.212      | zulu    |            | 8.0.212-zulu
-    |               |     | 8.0.202      | zulu    | local only | 8.0.202-zulu
-    |               |     | 7.0.222      | zulu    |            | 7.0.222-zulu
-    |               |     | 6.0.119      | zulu    |            | 6.0.119-zulu
+    | Dragonwell    |     | 11.0.3       | albba   |            | 11.0.3-albba
+    |               |     | 8.0.212      | albba   |            | 8.0.212-albba
     | GraalVM       |     | 19.0.0       | grl     |            | 19.0.0-grl
     |               |     | 1.0.0        | grl     |            | 1.0.0-rc-16-grl
     | Java.net      |     | 13.ea.20     | open    | installed  | 13.ea.20-open
@@ -80,8 +72,16 @@ Feature: Java Version List by Vendor
     | Microsoft     |     | 11.0.9       | ms      |            | 11.0.9-ms
     | Semeru        |     | 8.0.212      | sem     |            | 8.0.212-sem
     | Temurin       |     | 8.0.212      | tem     |            | 8.0.212-tem
-    | TravaOpenJDK  |     | 11.0.9       | trava   |            | 11.0.9-trava
+    | Trava         |     | 11.0.9       | trava   |            | 11.0.9-trava
     | Unclassified  |     | 11.0.3       | none    | local only | 11.0.3-local
+    | Zulu          |     | 12.0.1       | zulu    | installed  | 12.0.1-zulu
+    |               |     | 11.0.3       | zulu    |            | 11.0.3-zulu
+    |               |     | 10.0.2       | zulu    |            | 10.0.2-zulu
+    |               |     | 9.0.4        | zulu    |            | 9.0.4-zulu
+    |               |     | 8.0.212      | zulu    |            | 8.0.212-zulu
+    |               |     | 8.0.202      | zulu    | local only | 8.0.202-zulu
+    |               |     | 7.0.222      | zulu    |            | 7.0.222-zulu
+    |               |     | 6.0.119      | zulu    |            | 6.0.119-zulu
     |================================================================================
     |Use the Identifier for installation:
     |
