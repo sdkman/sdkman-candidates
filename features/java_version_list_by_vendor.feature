@@ -34,7 +34,8 @@ Feature: Java Version List by Vendor
       | java      | 6.0.119-zulu     | zulu    | LINUX_64   | http://zulu.example.org/jdk-6.0.119.tar.gz         |
       | java      | 20.1.0.1-mandrel | mandrel | LINUX_64   | http://mandrel.example.org/mandrel-20.1.0.1.tar.gz |
       | java      | 11.0.9-ms        | ms      | LINUX_64   | http://ms.example.org/ms-11.0.9.tar.gz             |
-      | java      | 19.0.0-nik       | nik     | LINUX_64   | http://nik.example.org/nik-19.0.0.tar.gz       |
+      | java      | 11.0.9-oracle    | oracle  | LINUX_64   | http://oracle.example.org/oracle-11.0.9.tar.gz     |
+      | java      | 19.0.0-nik       | nik     | LINUX_64   | http://nik.example.org/nik-19.0.0.tar.gz           |
       | java      | 8.0.212-sem      | sem     | LINUX_64   | http://sem.example.org/sem-8.0.212.tar.gz          |
       | java      | 8.0.212-tem      | tem     | LINUX_64   | http://tem.example.org/tem-8.0.212.tar.gz          |
       | java      | 11.0.9-trava     | trava   | LINUX_64   | http://trava.example.org/trava-11.0.9.tar.gz       |
@@ -70,6 +71,7 @@ Feature: Java Version List by Vendor
     | Liberica NIK  |     | 19.0.0       | nik     |            | 19.0.0-nik
     | Mandrel       |     | 20.1.0.1     | mandrel |            | 20.1.0.1-mandrel
     | Microsoft     |     | 11.0.9       | ms      |            | 11.0.9-ms
+    | Oracle        |     | 11.0.9       | oracle  |            | 11.0.9-oracle
     | Semeru        |     | 8.0.212      | sem     |            | 8.0.212-sem
     | Temurin       |     | 8.0.212      | tem     |            | 8.0.212-tem
     | Trava         |     | 11.0.9       | trava   |            | 11.0.9-trava
@@ -118,7 +120,7 @@ Feature: Java Version List by Vendor
       | candidate | version          | vendor | platform   | url                                            |
       | java      | 10.0.2-open      | open   | LINUX_64   | http://open.example.org/jdk-10.0.2.tar.gz      |
 
-    And the installed Versions 10.0.2-open,10.0.1-local,8.0.212-oracle,8.0.212-xyz
+    And the installed Versions 10.0.2-open,10.0.1-local,8.0.212-vendor,8.0.212-xyz
     When a request is made to /candidates/java/LinuxX64/versions/list
     Then a 200 status code is received
     And the response body is
@@ -131,7 +133,7 @@ Feature: Java Version List by Vendor
     | Java.net      |     | 10.0.2       | open    | installed  | 10.0.2-open
     | Unclassified  |     | 10.0.1       | none    | local only | 10.0.1-local
     |               |     | 8.0.212      | none    | local only | 8.0.212-xyz
-    |               |     | 8.0.212      | none    | local only | 8.0.212-oracle
+    |               |     | 8.0.212      | none    | local only | 8.0.212-vendor
     |================================================================================
     |Use the Identifier for installation:
     |
@@ -163,7 +165,7 @@ Feature: Java Version List by Vendor
     """
 
   Scenario: Only local versions are displayed
-    And the installed Versions 10.0.2-oracle
+    And the installed Versions 10.0.2-vendor
     When a request is made to /candidates/java/LinuxX64/versions/list
     Then a 200 status code is received
     And the response body is
@@ -173,7 +175,7 @@ Feature: Java Version List by Vendor
     |================================================================================
     | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
-    | Unclassified  |     | 10.0.2       | none    | local only | 10.0.2-oracle
+    | Unclassified  |     | 10.0.2       | none    | local only | 10.0.2-vendor
     |================================================================================
     |Use the Identifier for installation:
     |
