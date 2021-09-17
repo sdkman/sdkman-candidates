@@ -77,6 +77,7 @@ class JavaListController @Inject() (versionRepo: VersionsRepository, cc: Control
     "nik"     -> "Liberica NIK",
     "none"    -> "Unclassified",
     "open"    -> "Java.net",
+    "oracle"  -> "Oracle",
     "mandrel" -> "Mandrel",
     "ms"      -> "Microsoft",
     "sapmchn" -> "SapMachine",
