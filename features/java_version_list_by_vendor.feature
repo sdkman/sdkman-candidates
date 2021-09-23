@@ -2,8 +2,8 @@ Feature: Java Version List by Vendor
 
   Background:
     Given the Candidate
-      | candidate | name  | description        | default      | websiteUrl                  | distribution       |
-      | java      | Java  | The Java  Language | 11.0.3-open  | https://adoptopenjdk.net/   | PLATFORM_SPECIFIC  |
+      | candidate | name  | description        | default      | websiteUrl           | distribution       |
+      | java      | Java  | The Java Language  | 17.0.0-tem   | https://adoptium.net | PLATFORM_SPECIFIC  |
 
   Scenario: List all Java Versions
     Given the Versions
@@ -85,9 +85,13 @@ Feature: Java Version List by Vendor
     |               |     | 6.0.119      | zulu    |            | 6.0.119-zulu
     | Unclassified  |     | 11.0.3       | none    | local only | 11.0.3-local
     |================================================================================
-    |Use the Identifier for installation:
-    |
-    |    $ sdk install java 11.0.3.hs-adpt
+    |Omit Identifier to install default version 17.0.0-tem:
+    |    $ sdk install java
+    |Use TAB completion to discover available versions
+    |    $ sdk install java [TAB]
+    |Or install a specific version by Identifier:
+    |    $ sdk install java 17.0.0-tem
+    |Hit Q to exit this list view
     |================================================================================
     """
 
@@ -109,9 +113,13 @@ Feature: Java Version List by Vendor
     | Java.net      |     | 10.0.2       | open    | installed  | 10.0.2-open
     |               |     | 10.0.1       | open    | local only | 10.0.1-open
     |================================================================================
-    |Use the Identifier for installation:
-    |
-    |    $ sdk install java 11.0.3.hs-adpt
+    |Omit Identifier to install default version 17.0.0-tem:
+    |    $ sdk install java
+    |Use TAB completion to discover available versions
+    |    $ sdk install java [TAB]
+    |Or install a specific version by Identifier:
+    |    $ sdk install java 17.0.0-tem
+    |Hit Q to exit this list view
     |================================================================================
     """
 
@@ -135,9 +143,13 @@ Feature: Java Version List by Vendor
     |               |     | 8.0.212      | none    | local only | 8.0.212-xyz
     |               |     | 8.0.212      | none    | local only | 8.0.212-vendor
     |================================================================================
-    |Use the Identifier for installation:
-    |
-    |    $ sdk install java 11.0.3.hs-adpt
+    |Omit Identifier to install default version 17.0.0-tem:
+    |    $ sdk install java
+    |Use TAB completion to discover available versions
+    |    $ sdk install java [TAB]
+    |Or install a specific version by Identifier:
+    |    $ sdk install java 17.0.0-tem
+    |Hit Q to exit this list view
     |================================================================================
     """
 
@@ -158,9 +170,13 @@ Feature: Java Version List by Vendor
     |--------------------------------------------------------------------------------
     | Java.net      |     | 10.0.2       | open    | installed  | 10.0.2-open
     |================================================================================
-    |Use the Identifier for installation:
-    |
-    |    $ sdk install java 11.0.3.hs-adpt
+    |Omit Identifier to install default version 17.0.0-tem:
+    |    $ sdk install java
+    |Use TAB completion to discover available versions
+    |    $ sdk install java [TAB]
+    |Or install a specific version by Identifier:
+    |    $ sdk install java 17.0.0-tem
+    |Hit Q to exit this list view
     |================================================================================
     """
 
@@ -177,9 +193,13 @@ Feature: Java Version List by Vendor
     |--------------------------------------------------------------------------------
     | Unclassified  |     | 10.0.2       | none    | local only | 10.0.2-vendor
     |================================================================================
-    |Use the Identifier for installation:
-    |
-    |    $ sdk install java 11.0.3.hs-adpt
+    |Omit Identifier to install default version 17.0.0-tem:
+    |    $ sdk install java
+    |Use TAB completion to discover available versions
+    |    $ sdk install java [TAB]
+    |Or install a specific version by Identifier:
+    |    $ sdk install java 17.0.0-tem
+    |Hit Q to exit this list view
     |================================================================================
     """
 
@@ -194,8 +214,12 @@ Feature: Java Version List by Vendor
     | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
     |================================================================================
-    |Use the Identifier for installation:
-    |
-    |    $ sdk install java 11.0.3.hs-adpt
+    |Omit Identifier to install default version 17.0.0-tem:
+    |    $ sdk install java
+    |Use TAB completion to discover available versions
+    |    $ sdk install java [TAB]
+    |Or install a specific version by Identifier:
+    |    $ sdk install java 17.0.0-tem
+    |Hit Q to exit this list view
     |================================================================================
     """

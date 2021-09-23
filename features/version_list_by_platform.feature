@@ -38,9 +38,13 @@ Feature: Version List by Platform
     |               |     | 8u121        | open    |            | 8u121-open
     |               |     | 8u111        | open    |            | 8u111-open
     |================================================================================
-    |Use the Identifier for installation:
-    |
-    |    $ sdk install java 11.0.3.hs-adpt
+    |Omit Identifier to install default version 8u111-open:
+    |    $ sdk install java
+    |Use TAB completion to discover available versions
+    |    $ sdk install java [TAB]
+    |Or install a specific version by Identifier:
+    |    $ sdk install java 8u111-open
+    |Hit Q to exit this list view
     |================================================================================
     """
 
@@ -57,9 +61,13 @@ Feature: Version List by Platform
     | Java.net      |     | 9ea163       | open    |            | 9ea163-open
     |               |     | 8u131        | open    |            | 8u131-open
     |================================================================================
-    |Use the Identifier for installation:
-    |
-    |    $ sdk install java 11.0.3.hs-adpt
+    |Omit Identifier to install default version 8u111-open:
+    |    $ sdk install java
+    |Use TAB completion to discover available versions
+    |    $ sdk install java [TAB]
+    |Or install a specific version by Identifier:
+    |    $ sdk install java 8u111-open
+    |Hit Q to exit this list view
     |================================================================================
     """
 
@@ -76,9 +84,13 @@ Feature: Version List by Platform
     | Java.net      |     | 8u121        | open    |            | 8u121-open
     |               |     | 8u111        | open    |            | 8u111-open
     |================================================================================
-    |Use the Identifier for installation:
-    |
-    |    $ sdk install java 11.0.3.hs-adpt
+    |Omit Identifier to install default version 8u111-open:
+    |    $ sdk install java
+    |Use TAB completion to discover available versions
+    |    $ sdk install java [TAB]
+    |Or install a specific version by Identifier:
+    |    $ sdk install java 8u111-open
+    |Hit Q to exit this list view
     |================================================================================
     """
 
