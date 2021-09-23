@@ -1,50 +1,60 @@
 package controllers
 
 import io.sdkman.repos.Version
+
 import javax.inject.Inject
 import ordering.VersionItemOrdering
 import play.api.mvc._
 import rendering.{JavaVersionRendering, VersionItemListBuilder}
-import repos.VersionsRepository
+import repos.{CandidatesRepository, VersionsRepository}
 import utils.{Platform, VersionListProperties}
 
 import scala.collection.immutable.ListMap
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class JavaListController @Inject() (versionRepo: VersionsRepository, cc: ControllerComponents)
-    extends AbstractController(cc)
+class JavaListController @Inject() (
+    versionsRepo: VersionsRepository,
+    candidatesRepo: CandidatesRepository,
+    cc: ControllerComponents
+) extends AbstractController(cc)
     with VersionItemOrdering
     with VersionItemListBuilder
     with VersionListProperties
     with JavaVersionRendering {
 
-  def list(uname: String, current: Option[String], installed: String) =
+  val Candidate = "java"
+
+  def list(uname: String, current: Option[String], installed: String): Action[AnyContent] =
     Action.async(parse.anyContent) { _ =>
       val platform = Platform(uname).getOrElse(Platform.Universal).identifier
 
-      versionRepo.findAllVisibleVersionsByCandidatePlatform("java", platform).map { versions =>
-        val allLocalVersions: Seq[String] = installed.split(",")
+      candidatesRepo.findCandidate(Candidate).flatMap { candidate =>
+        versionsRepo.findAllVisibleVersionsByCandidatePlatform(Candidate, platform).map {
+          versions =>
+            val allLocalVersions: Seq[String] = installed.split(",")
 
-        val localInstalledVersions = findAllNotEndingWith(allLocalVersions, vendors.keySet)
+            val localInstalledVersions = findAllNotEndingWith(allLocalVersions, vendors.keySet)
 
-        val vendorInstalledVersions = allLocalVersions.diff(localInstalledVersions)
+            val vendorInstalledVersions = allLocalVersions.diff(localInstalledVersions)
 
-        val vendorsToItems = versions
-          .groupBy(vendorKey)
-          .map { case (ven, vs) =>
-            toVendorItems(ven, vs, vendorInstalledVersions.filter(_.endsWith(s"-$ven")), current)
-          }
+            val vendorsToItems = versions.groupBy(vendorKey).map { case (ven, vs) =>
+              toVendorItems(ven, vs, vendorInstalledVersions.filter(_.endsWith(s"-$ven")), current)
+            }
 
-        val sortedVendorToItems = sortItems(vendorsToItems)
+            val sortedVendorToItems = sortItems(vendorsToItems)
 
-        val combinedItems =
-          localInstalledVersions.headOption.filter(_.trim.nonEmpty).fold(sortedVendorToItems) { _ =>
-            val localInstalledItems =
-              toVendorItems("none", Seq.empty, localInstalledVersions, current)
-            sortedVendorToItems + localInstalledItems
-          }
+            val combinedItems =
+              localInstalledVersions.headOption.filter(_.trim.nonEmpty).fold(sortedVendorToItems) {
+                _ =>
+                  val localInstalledItems =
+                    toVendorItems("none", Seq.empty, localInstalledVersions, current)
+                  sortedVendorToItems + localInstalledItems
+              }
 
-        Ok(views.txt.java_version_list(combinedItems))
+            val defaultVersion = candidate.flatMap(_.default).getOrElse("17.0.0-tem")
+
+            Ok(views.txt.java_version_list(combinedItems, defaultVersion))
+        }
       }
     }
 
@@ -68,7 +78,7 @@ class JavaListController @Inject() (versionRepo: VersionsRepository, cc: Control
       Some(vendor)
     ).descendingOrder.map(_.show)
 
-  val vendors = Map(
+  private val vendors = Map(
     "adpt"    -> "AdoptOpenJDK",
     "albba"   -> "Dragonwell",
     "amzn"    -> "Corretto",
