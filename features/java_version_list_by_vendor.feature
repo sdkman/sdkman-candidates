@@ -47,7 +47,7 @@ Feature: Java Version List by Vendor
     And the response body is
     """
     |================================================================================
-    |Available Java Versions
+    |Available Java Versions for Linux 64bit
     |================================================================================
     | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ Feature: Java Version List by Vendor
     And the response body is
     """
     |================================================================================
-    |Available Java Versions
+    |Available Java Versions for Linux 64bit
     |================================================================================
     | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
@@ -134,7 +134,7 @@ Feature: Java Version List by Vendor
     And the response body is
     """
     |================================================================================
-    |Available Java Versions
+    |Available Java Versions for Linux 64bit
     |================================================================================
     | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ Feature: Java Version List by Vendor
     And the response body is
     """
     |================================================================================
-    |Available Java Versions
+    |Available Java Versions for Linux 64bit
     |================================================================================
     | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ Feature: Java Version List by Vendor
     And the response body is
     """
     |================================================================================
-    |Available Java Versions
+    |Available Java Versions for Linux 64bit
     |================================================================================
     | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
@@ -209,7 +209,7 @@ Feature: Java Version List by Vendor
     And the response body is
     """
     |================================================================================
-    |Available Java Versions
+    |Available Java Versions for Linux 64bit
     |================================================================================
     | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------

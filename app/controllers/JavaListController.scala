@@ -26,10 +26,10 @@ class JavaListController @Inject() (
 
   def list(uname: String, current: Option[String], installed: String): Action[AnyContent] =
     Action.async(parse.anyContent) { _ =>
-      val platform = Platform(uname).getOrElse(Platform.Universal).identifier
+      val platform = Platform(uname).getOrElse(Platform.Universal)
 
       candidatesRepo.findCandidate(Candidate).flatMap { candidate =>
-        versionsRepo.findAllVisibleVersionsByCandidatePlatform(Candidate, platform).map {
+        versionsRepo.findAllVisibleVersionsByCandidatePlatform(Candidate, platform.identifier).map {
           versions =>
             val allLocalVersions: Seq[String] = installed.split(",")
 
@@ -53,7 +53,7 @@ class JavaListController @Inject() (
 
             val defaultVersion = candidate.flatMap(_.default).getOrElse("17.0.0-tem")
 
-            Ok(views.txt.java_version_list(combinedItems, defaultVersion))
+            Ok(views.txt.java_version_list(combinedItems, defaultVersion, platform.name))
         }
       }
     }

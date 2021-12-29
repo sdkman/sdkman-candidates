@@ -1,5 +1,5 @@
-@(vendorVersions: Map[String, Seq[String]], defaultVersion: String)================================================================================
-Available Java Versions
+@(vendorVersions: Map[String, Seq[String]], defaultVersion: String, platform: String)================================================================================
+Available Java Versions for @platform
 ================================================================================
  Vendor        | Use | Version      | Dist    | Status     | Identifier
 --------------------------------------------------------------------------------
