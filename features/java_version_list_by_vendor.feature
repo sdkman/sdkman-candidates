@@ -213,6 +213,7 @@ Feature: Java Version List by Vendor
     |================================================================================
     | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
+    |No versions available for your platform at this time.
     |================================================================================
     |Omit Identifier to install default version 17.0.0-tem:
     |    $ sdk install java

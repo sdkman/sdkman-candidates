@@ -3,9 +3,10 @@ Available Java Versions for @platform
 ================================================================================
  Vendor        | Use | Version      | Dist    | Status     | Identifier
 --------------------------------------------------------------------------------
-@for((vendor, versions) <- vendorVersions) { @vendor@versions.head
+@if(vendorVersions.nonEmpty) {@for((vendor, versions) <- vendorVersions) { @vendor@versions.head
 @for(version <- versions.tail){               @version
-}}================================================================================
+}}} else {No versions available for your platform at this time.
+}================================================================================
 Omit Identifier to install default version @defaultVersion:
     $ sdk install java
 Use TAB completion to discover available versions
