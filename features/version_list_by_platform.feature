@@ -54,7 +54,7 @@ Feature: Version List by Platform
     And the response body is
     """
     |================================================================================
-    |Available Java Versions for Mac OSX
+    |Available Java Versions for macOS 64bit
     |================================================================================
     | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
