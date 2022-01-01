@@ -64,3 +64,7 @@ releaseProcess := Seq[ReleaseStep](
   commitNextVersion,
   pushChanges
 )
+
+PlayKeys.devSettings := Seq(
+  "akka.http.parsing.max-uri-length" -> "4k"
+)
