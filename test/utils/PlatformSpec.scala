@@ -10,7 +10,8 @@ class PlatformSpec extends AnyWordSpec with Matchers {
       Platform("darwinarm64") shouldBe Some(Platform.MacARM64)
       Platform("linuxx32") shouldBe Some(Platform.LinuxX32)
       Platform("linuxx64") shouldBe Some(Platform.LinuxX64)
-      Platform("linuxarm32") shouldBe Some(Platform.LinuxARM32)
+      Platform("linuxarm32sf") shouldBe Some(Platform.LinuxARM32SF)
+      Platform("linuxarm32hf") shouldBe Some(Platform.LinuxARM32HF)
       Platform("linuxarm64") shouldBe Some(Platform.LinuxARM64)
 
       Platform("cygwin_nt-6.1") shouldBe Some(Platform.Windows64)
