@@ -18,6 +18,7 @@ Feature: Java Version List by Vendor
       | java      | 8.0.212-albba    | albba   | LINUX_64   | http://albba.example.org/jdk-8.0.212.tar.gz        |
       | java      | 11.0.3-amzn      | amzn    | LINUX_64   | http://amzn.example.org/jdk-11.0.3.j9.tar.gz       |
       | java      | 8.0.212-amzn     | amzn    | LINUX_64   | http://amzn.example.org/jdk-8.0.212.tar.gz         |
+      | java      | 19.0.0-gln       | gln     | LINUX_64   | http://graal.example.org/graal-19.0.0.tar.gz       |
       | java      | 19.0.0-grl       | grl     | LINUX_64   | http://graal.example.org/graal-19.0.0.tar.gz       |
       | java      | 1.0.0-rc-16-grl  | grl     | LINUX_64   | http://graal.example.org/grl-1.0.0-rc16.tar.gz     |
       | java      | 13.ea.20-open    | open    | LINUX_64   | http://open.example.org/jdk-13.ea.20.tar.gz        |
@@ -61,6 +62,7 @@ Feature: Java Version List by Vendor
     |               |     | 8.0.212      | amzn    |            | 8.0.212-amzn
     | Dragonwell    |     | 11.0.3       | albba   |            | 11.0.3-albba
     |               |     | 8.0.212      | albba   |            | 8.0.212-albba
+    | Gluon         |     | 19.0.0       | gln     |            | 19.0.0-gln
     | GraalVM       |     | 19.0.0       | grl     |            | 19.0.0-grl
     |               |     | 1.0.0        | grl     |            | 1.0.0-rc-16-grl
     | Java.net      |     | 13.ea.20     | open    | installed  | 13.ea.20-open
