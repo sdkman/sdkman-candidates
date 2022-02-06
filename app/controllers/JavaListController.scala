@@ -82,6 +82,7 @@ class JavaListController @Inject() (
     "adpt"    -> "AdoptOpenJDK",
     "albba"   -> "Dragonwell",
     "amzn"    -> "Corretto",
+    "gln"     -> "Gluon",
     "grl"     -> "GraalVM",
     "librca"  -> "Liberica",
     "nik"     -> "Liberica NIK",
