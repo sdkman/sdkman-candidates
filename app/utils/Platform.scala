@@ -1,25 +1,25 @@
 package utils
 
-case class Platform(identifier: String, name: String)
+case class Platform(distribution: String, name: String)
 
 object Platform {
 
-  def apply(uname: String): Option[Platform] = uname.toLowerCase match {
-    case "linuxx64"       => Some(LinuxX64)
-    case "linuxx32"       => Some(LinuxX32)
-    case "linuxarm64"     => Some(LinuxARM64)
-    case "linuxarm32sf"   => Some(LinuxARM32SF)
-    case "linuxarm32hf"   => Some(LinuxARM32HF)
-    case "darwinx64"      => Some(MacX64)
-    case "darwinarm64"    => Some(MacARM64)
-    case "linux"          => Some(LinuxX64)
-    case "linux64"        => Some(LinuxX64)
-    case "linux32"        => Some(LinuxX32)
-    case "darwin"         => Some(MacX64)
-    case "freebsd"        => Some(FreeBSD)
-    case "sunos"          => Some(SunOS)
-    case CygwinPattern(c) => Some(Windows64)
-    case _                => None
+  def apply(platformId: String): Platform = platformId.toLowerCase match {
+    case "linuxx64"       => LinuxX64
+    case "linuxx32"       => LinuxX32
+    case "linuxarm64"     => LinuxARM64
+    case "linuxarm32sf"   => LinuxARM32SF
+    case "linuxarm32hf"   => LinuxARM32HF
+    case "darwinx64"      => MacX64
+    case "darwinarm64"    => MacARM64
+    case "linux"          => LinuxX64
+    case "linux64"        => LinuxX64
+    case "linux32"        => LinuxX32
+    case "darwin"         => MacX64
+    case "freebsd"        => FreeBSD
+    case "sunos"          => SunOS
+    case CygwinPattern(c) => Windows64
+    case _                => Exotic
   }
 
   private val CygwinPattern = "(cygwin|mingw64|msys).*".r
@@ -34,5 +34,8 @@ object Platform {
   val Windows64    = Platform("WINDOWS_64", "Cygwin")
   val FreeBSD      = Platform("FREE_BSD", "FreeBSD")
   val SunOS        = Platform("SUN_OS", "Solaris")
-  val Universal    = Platform("UNIVERSAL", "Universal")
+
+  //fallback to UNIVERSAL for exotic (unsupported) platforms
+  //allows exotic platforms to install only UNIVERSAL candidates
+  val Exotic = Platform("UNIVERSAL", "Universal")
 }

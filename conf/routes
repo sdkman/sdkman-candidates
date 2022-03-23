@@ -5,9 +5,9 @@
 # An example controller showing a sample home page
 GET			/alive                                          controllers.HealthController.alive
 GET			/default/:candidate                             controllers.DefaultController.find(candidate)
-GET			/validate/:candidate/:version/:platform         controllers.ValidationController.validate(candidate, version, platform)
+GET			/validate/:candidate/:version/:platformId         controllers.ValidationController.validate(candidate, version, platformId)
 GET			/candidates/all                                 controllers.CandidatesController.all()
 GET			/candidates/list                                controllers.CandidatesListController.list()
-GET			/candidates/:candidate/:platform/versions/all   controllers.VersionsController.all(candidate, platform)
-GET         /candidates/java/:platform/versions/list        controllers.JavaListController.list(platform: String, current: Option[String], installed: String)
-GET			/candidates/:candidate/:platform/versions/list  controllers.VersionsListController.list(candidate: String, platform: String, current: Option[String], installed: Option[String])
+GET			/candidates/:candidate/:platformId/versions/all   controllers.VersionsController.all(candidate, platformId)
+GET         /candidates/java/:platformId/versions/list        controllers.JavaListController.list(platformId: String, current: Option[String], installed: String)
+GET			/candidates/:candidate/:platformId/versions/list  controllers.VersionsListController.list(candidate: String, platformId: String, current: Option[String], installed: Option[String])

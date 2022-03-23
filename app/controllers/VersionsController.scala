@@ -13,15 +13,13 @@ class VersionsController @Inject() (
     cc: ControllerComponents
 ) extends AbstractController(cc) {
 
-  def all(candidate: String, uname: String) = Action.async(parse.anyContent) { request =>
+  def all(candidate: String, platformId: String) = Action.async(parse.anyContent) { request =>
     candidatesRepo.findCandidate(candidate).flatMap { candidateO =>
-      val universal = candidateO.map(_.distribution).contains("UNIVERSAL")
-      val platform =
-        if (universal) Platform.Universal else Platform(uname).getOrElse(Platform.Universal)
+      val universal    = candidateO.map(_.distribution).contains("UNIVERSAL")
+      val distribution = if (universal) "UNIVERSAL" else Platform(platformId).distribution
 
-      versionsRepo.findAllVersionsByCandidatePlatform(candidate, platform.identifier).map {
-        versions =>
-          Ok(versions.map(_.version).mkString(","))
+      versionsRepo.findAllVersionsByCandidatePlatform(candidate, distribution).map { versions =>
+        Ok(versions.map(_.version).mkString(","))
       }
     }
   }

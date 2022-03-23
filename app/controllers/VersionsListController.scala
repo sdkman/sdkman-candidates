@@ -20,13 +20,17 @@ class VersionsListController @Inject() (
     with VersionItemListBuilder
     with RowCountCalculator {
 
-  def list(candidate: String, uname: String, current: Option[String], installed: Option[String]) =
-    Action.async(parse.anyContent) { request =>
-      candidatesRepo.findCandidate(candidate).flatMap { candidateO =>
-        val platform = Platform(uname).getOrElse(Platform.Universal)
-
-        versionsRepo.findAllVersionsByCandidatePlatform(candidate, platform.identifier).map {
-          versions =>
+  def list(
+      candidate: String,
+      platformId: String,
+      current: Option[String],
+      installed: Option[String]
+  ) =
+    Action.async(parse.anyContent) { _ =>
+      candidatesRepo.findCandidate(candidate).flatMap { _ =>
+        versionsRepo
+          .findAllVersionsByCandidatePlatform(candidate, Platform(platformId).distribution)
+          .map { versions =>
             import cats.syntax.show._
 
             def flat(os: Option[String]) = os.filter(_.nonEmpty)
@@ -47,7 +51,7 @@ class VersionsListController @Inject() (
             } yield VersionRow(col1, col2, col3, col4).show
 
             Ok(views.txt.version_list(candidate.capitalize, rows))
-        }
+          }
       }
     }
 }
