@@ -37,5 +37,5 @@ object Platform {
 
   //fallback to UNIVERSAL for exotic (unsupported) platforms
   //allows exotic platforms to install only UNIVERSAL candidates
-  val Exotic = Platform("UNIVERSAL", "Universal")
+  val Exotic = Platform("UNIVERSAL", "Exotic")
 }
