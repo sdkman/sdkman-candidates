@@ -95,6 +95,7 @@ class JavaListController @Inject() (
     "sapmchn" -> "SapMachine",
     "sem"     -> "Semeru",
     "tem"     -> "Temurin",
+    "tencent" -> "Kona",
     "trava"   -> "Trava",
     "zulu"    -> "Zulu",
     "zulufx"  -> "ZuluFX"
