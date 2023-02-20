@@ -30,6 +30,10 @@ class HealthController @Inject() (appRepo: ApplicationRepository, cc: Controller
       }
   }
 
+  def ping = Action { _ =>
+    Ok("000000000000000000000000")
+  }
+
   private def statusMessage(s: String) = Json.obj("status" -> s)
 
   private def errorMessage(e: Throwable) = Json.obj("status" -> "KO", "error" -> e.getMessage)

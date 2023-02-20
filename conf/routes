@@ -4,6 +4,7 @@
 
 # An example controller showing a sample home page
 GET			/alive                                          controllers.HealthController.alive
+GET			/ping                                           controllers.HealthController.ping
 GET			/default/:candidate                             controllers.DefaultController.find(candidate)
 GET			/validate/:candidate/:version/:platformId         controllers.ValidationController.validate(candidate, version, platformId)
 GET			/candidates/all                                 controllers.CandidatesController.all()
