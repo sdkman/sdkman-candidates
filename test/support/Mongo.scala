@@ -17,11 +17,9 @@ object Mongo {
   import Helpers._
 
   val codecRegistry = fromRegistries(
-    fromProviders(
-      classOf[Version],
-      classOf[Candidate],
-      classOf[Application]),
-    DEFAULT_CODEC_REGISTRY)
+    fromProviders(classOf[Version], classOf[Candidate], classOf[Application]),
+    DEFAULT_CODEC_REGISTRY
+  )
 
   lazy val mongoClient = MongoClient("mongodb://localhost:27017")
 
@@ -52,7 +50,8 @@ object Mongo {
 
 object Helpers {
 
-  implicit class DocumentObservable[C](val observable: Observable[Document]) extends ImplicitObservable[Document] {
+  implicit class DocumentObservable[C](val observable: Observable[Document])
+      extends ImplicitObservable[Document] {
     override val converter: (Document) => String = (doc) => doc.toJson
   }
 

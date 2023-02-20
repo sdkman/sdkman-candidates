@@ -3,7 +3,6 @@ package rendering
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-
 class VersionItemListPaddingSpec extends AnyWordSpec with Matchers {
   "VersionItemListBuilding" should {
     "pad a list within MinCountThreshold" in new UnderTest {

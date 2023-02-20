@@ -46,15 +46,14 @@ class LocalVersionFilteringSpec
     "filter names not ending certain suffixes" in new JavaListController(null, null, null) {
 
       check {
-        Prop.forAll(combinedVersions) {
-          case (kvs: Seq[String], ukvs: Seq[String]) =>
-            val allVersions = Random.shuffle(kvs ++ ukvs)
+        Prop.forAll(combinedVersions) { case (kvs: Seq[String], ukvs: Seq[String]) =>
+          val allVersions = Random.shuffle(kvs ++ ukvs)
 
-            val names = findAllNotEndingWith(allVersions, known.toSet)
+          val names = findAllNotEndingWith(allVersions, known.toSet)
 
-            logger.info(allVersions + " -> " + names + " : ")
+          logger.info(allVersions + " -> " + names + " : ")
 
-            (names diff ukvs).isEmpty
+          (names diff ukvs).isEmpty
         }
       }
     }

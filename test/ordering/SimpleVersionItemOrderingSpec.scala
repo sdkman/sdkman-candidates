@@ -6,7 +6,8 @@ import rendering.VersionItem
 
 class SimpleVersionItemOrderingSpec extends AnyWordSpec with Matchers {
   "VersionItem ordering" should {
-    "accurately sort versions by version string ascending" in new RegexStringComparison with VersionItemOrdering {
+    "accurately sort versions by version string ascending" in new RegexStringComparison
+      with VersionItemOrdering {
 
       val v1 = VersionItem("2.12.7")
       val v2 = VersionItem("2.11.7")
@@ -19,7 +20,8 @@ class SimpleVersionItemOrderingSpec extends AnyWordSpec with Matchers {
       versions.ascendingOrder shouldBe List(v2, v4, v3, v5, v1)
     }
 
-    "accurately sort versions by version string descending" in new RegexStringComparison with VersionItemOrdering {
+    "accurately sort versions by version string descending" in new RegexStringComparison
+      with VersionItemOrdering {
 
       val v1 = VersionItem("2.12.7")
       val v2 = VersionItem("2.11.7")
@@ -32,7 +34,8 @@ class SimpleVersionItemOrderingSpec extends AnyWordSpec with Matchers {
       versions.descendingOrder shouldBe List(v1, v5, v3, v4, v2)
     }
 
-    "accurately sort 10 and 9 version ranges" in new RegexStringComparison with VersionItemOrdering {
+    "accurately sort 10 and 9 version ranges" in new RegexStringComparison
+      with VersionItemOrdering {
       val v1 = VersionItem("10.0.0-oracle")
       val v2 = VersionItem("1.0.0-graal")
       val v3 = VersionItem("9.0.0-zulu")

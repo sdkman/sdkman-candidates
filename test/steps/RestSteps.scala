@@ -32,7 +32,8 @@ class RestSteps extends ScalaDsl with EN with Matchers {
   }
 
   And("""^a request is made to (.*)""") { endpoint: String =>
-    val queryParams = Map("current" -> currentVersion, "installed" -> installedVersions.mkString(","))
+    val queryParams =
+      Map("current" -> currentVersion, "installed" -> installedVersions.mkString(","))
     response = Http(s"$host$endpoint")
       .params(queryParams)
       .timeout(connTimeoutMs = 10000, readTimeoutMs = 10000)
@@ -50,7 +51,7 @@ class RestSteps extends ScalaDsl with EN with Matchers {
   }
 
   And("""^the payload has a "(.*)" of "(.*)"$""") { (key: String, value: String) =>
-    val json = Json.parse(response.body)
+    val json   = Json.parse(response.body)
     val status = (json \ key).as[String]
     status shouldBe value
   }
@@ -72,6 +73,6 @@ class RestSteps extends ScalaDsl with EN with Matchers {
   @tailrec
   private def trimEnd(s: String): String = s.takeRight(1) match {
     case " " => trimEnd(s.dropRight(1))
-    case _ => s
+    case _   => s
   }
 }

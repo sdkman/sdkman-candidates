@@ -15,32 +15,24 @@ class VersionItemListBuilderSpec extends AnyWordSpec with Matchers {
     "build a list of available version items" in new UnderTest {
 
       items(availableVersions, installed = List.empty, current = None) shouldBe
-        List(
-          VersionItem("2.12.5"),
-          VersionItem("2.12.6"))
+        List(VersionItem("2.12.5"), VersionItem("2.12.6"))
     }
 
     "build a list of available version items with blank current version" in new UnderTest {
       items(availableVersions, installed = List.empty, current = Some("")) shouldBe
-        List(
-          VersionItem("2.12.5"),
-          VersionItem("2.12.6"))
+        List(VersionItem("2.12.5"), VersionItem("2.12.6"))
     }
 
     "build a list of available installed version items" in new UnderTest {
 
       items(availableVersions, installedVersions, current = None) shouldBe
-        List(
-          VersionItem("2.12.5", installed = true),
-          VersionItem("2.12.6", installed = true))
+        List(VersionItem("2.12.5", installed = true), VersionItem("2.12.6", installed = true))
     }
 
     "build a list of unavailable installed version items" in new UnderTest {
 
       items(available = List.empty, installedVersions, current = None) shouldBe
-        List(
-          VersionItem("2.12.5", local = true),
-          VersionItem("2.12.6", local = true))
+        List(VersionItem("2.12.5", local = true), VersionItem("2.12.6", local = true))
     }
 
     "build a list of available installed version items with a current version set" in new UnderTest {
@@ -48,9 +40,13 @@ class VersionItemListBuilderSpec extends AnyWordSpec with Matchers {
       items(availableVersions, installedVersions, current) shouldBe
         List(
           VersionItem("2.12.5", installed = true),
-          VersionItem("2.12.6", installed = true, current = true))
+          VersionItem("2.12.6", installed = true, current = true)
+        )
     }
   }
 
-  private class UnderTest extends VersionItemListBuilder with VersionItemOrdering with VersionListProperties
+  private class UnderTest
+      extends VersionItemListBuilder
+      with VersionItemOrdering
+      with VersionListProperties
 }

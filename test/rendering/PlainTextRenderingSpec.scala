@@ -6,11 +6,29 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class PlainTextRenderingSpec extends AnyWordSpec with Matchers {
 
-  val scala = Candidate("scala", "Scala", "The Scala Language", Some("2.12.1"), "https://www.scala-lang.org/", "UNIVERSAL")
-  val sectionWithDefault = new CandidateListSection(scala) with PlainTextRendering { override val ConsoleWidth = 42}
+  val scala = Candidate(
+    "scala",
+    "Scala",
+    "The Scala Language",
+    Some("2.12.1"),
+    "https://www.scala-lang.org/",
+    "UNIVERSAL"
+  )
+  val sectionWithDefault = new CandidateListSection(scala) with PlainTextRendering {
+    override val ConsoleWidth = 42
+  }
 
-  val micronaut = Candidate("micronaut", "Micronaut", "The Micronaut Framework", None, "http://micronaut.io", "UNIVERSAL")
-  val sectionWithoutDefault = new CandidateListSection(micronaut) with PlainTextRendering { override val ConsoleWidth = 44}
+  val micronaut = Candidate(
+    "micronaut",
+    "Micronaut",
+    "The Micronaut Framework",
+    None,
+    "http://micronaut.io",
+    "UNIVERSAL"
+  )
+  val sectionWithoutDefault = new CandidateListSection(micronaut) with PlainTextRendering {
+    override val ConsoleWidth = 44
+  }
 
   "PlainTextSectionRendering" should {
 
