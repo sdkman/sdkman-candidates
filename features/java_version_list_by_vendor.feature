@@ -21,6 +21,8 @@ Feature: Java Version List by Vendor
       | java      | 19.0.0-gln       | gln     | LINUX_64   | http://graal.example.org/graal-19.0.0.tar.gz       |
       | java      | 19.0.0-grl       | grl     | LINUX_64   | http://graal.example.org/graal-19.0.0.tar.gz       |
       | java      | 1.0.0-rc-16-grl  | grl     | LINUX_64   | http://graal.example.org/grl-1.0.0-rc16.tar.gz     |
+      | java      | 11.0.8-jbr       | jbr     | LINUX_64   | http://jbr.example.org/jbr-11.0.8.tar.gz           |
+      | java      | 17.0.7-jbr       | jbr     | LINUX_64   | http://jbr.example.org/jbr-17.0.7.tar.gz           |
       | java      | 13.ea.20-open    | open    | LINUX_64   | http://open.example.org/jdk-13.ea.20.tar.gz        |
       | java      | 12.0.1-open      | open    | LINUX_64   | http://open.example.org/jdk-12.0.1.tar.gz          |
       | java      | 11.0.3-open      | open    | LINUX_64   | http://open.example.org/jdk-11.0.3.tar.gz          |
@@ -70,6 +72,8 @@ Feature: Java Version List by Vendor
     |               |     | 11.0.3       | open    |            | 11.0.3-open
     |               |     | 10.0.2       | open    |            | 10.0.2-open
     |               |     | 9.0.4        | open    |            | 9.0.4-open
+    | JetBrains     |     | 17.0.7       | jbr     |            | 17.0.7-jbr
+    |               |     | 11.0.8       | jbr     |            | 11.0.8-jbr
     | Liberica NIK  |     | 19.0.0       | nik     |            | 19.0.0-nik
     | Mandrel       |     | 20.1.0.1     | mandrel |            | 20.1.0.1-mandrel
     | Microsoft     |     | 11.0.9       | ms      |            | 11.0.9-ms
