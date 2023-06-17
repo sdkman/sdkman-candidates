@@ -85,6 +85,7 @@ class JavaListController @Inject() (
     "amzn"    -> "Corretto",
     "gln"     -> "Gluon",
     "grl"     -> "GraalVM",
+    "jbr"     -> "JetBrains",
     "librca"  -> "Liberica",
     "nik"     -> "Liberica NIK",
     "none"    -> "Unclassified",
