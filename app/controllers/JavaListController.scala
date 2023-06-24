@@ -99,9 +99,9 @@ class JavaListController @Inject() (
     "sem"     -> "Semeru",
     "tem"     -> "Temurin",
     "tencent" -> "Kona",
-    "trava"      -> "Trava",
-    "zulu"       -> "Zulu",
-    "zulufx"     -> "ZuluFX"
+    "trava"   -> "Trava",
+    "zulu"    -> "Zulu",
+    "zulufx"  -> "ZuluFX"
   ).mapValues(_.padTo(14, ' '))
 
   private def sortItems(versionsToItems: Map[String, Seq[String]]): ListMap[String, Seq[String]] =
