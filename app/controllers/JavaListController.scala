@@ -88,6 +88,7 @@ class JavaListController @Inject() (
     "graal"   -> "GraalVM Oracle",
     "grl"     -> "GraalVM",
     "jbr"     -> "JetBrains",
+    "kona"    -> "Tencent",
     "librca"  -> "Liberica",
     "nik"     -> "Liberica NIK",
     "none"    -> "Unclassified",
@@ -98,7 +99,6 @@ class JavaListController @Inject() (
     "sapmchn" -> "SapMachine",
     "sem"     -> "Semeru",
     "tem"     -> "Temurin",
-    "tencent" -> "Kona",
     "trava"   -> "Trava",
     "zulu"    -> "Zulu",
     "zulufx"  -> "ZuluFX"
