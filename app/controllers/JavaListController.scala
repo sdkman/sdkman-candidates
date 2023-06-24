@@ -80,26 +80,26 @@ class JavaListController @Inject() (
     ).descendingOrder.map(_.show)
 
   private val vendors = Map(
-    "adpt"       -> "AdoptOpenJDK",
-    "albba"      -> "Dragonwell",
-    "amzn"       -> "Corretto",
-    "gln"        -> "Gluon",
-    "graalvm-ce" -> "GraalVM CE",
-    "graalvm"    -> "GraalVM Oracle",
-    "grl"        -> "GraalVM",
-    "librca"     -> "Liberica",
-    "nik"        -> "Liberica NIK",
-    "none"       -> "Unclassified",
-    "open"       -> "Java.net",
-    "oracle"     -> "Oracle",
-    "mandrel"    -> "Mandrel",
-    "ms"         -> "Microsoft",
-    "sapmchn"    -> "SapMachine",
-    "sem"        -> "Semeru",
-    "tem"        -> "Temurin",
-    "trava"      -> "Trava",
-    "zulu"       -> "Zulu",
-    "zulufx"     -> "ZuluFX"
+    "adpt"    -> "AdoptOpenJDK",
+    "albba"   -> "Dragonwell",
+    "amzn"    -> "Corretto",
+    "gln"     -> "Gluon",
+    "graalce" -> "GraalVM CE",
+    "graal"   -> "GraalVM Oracle",
+    "grl"     -> "GraalVM",
+    "librca"  -> "Liberica",
+    "nik"     -> "Liberica NIK",
+    "none"    -> "Unclassified",
+    "open"    -> "Java.net",
+    "oracle"  -> "Oracle",
+    "mandrel" -> "Mandrel",
+    "ms"      -> "Microsoft",
+    "sapmchn" -> "SapMachine",
+    "sem"     -> "Semeru",
+    "tem"     -> "Temurin",
+    "trava"   -> "Trava",
+    "zulu"    -> "Zulu",
+    "zulufx"  -> "ZuluFX"
   ).mapValues(_.padTo(14, ' '))
 
   private def sortItems(versionsToItems: Map[String, Seq[String]]): ListMap[String, Seq[String]] =
