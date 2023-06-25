@@ -45,8 +45,8 @@ Feature: Java Version List by Vendor
 
     And the current Version is 11.0.3.j9-adpt
     And the installed Versions 8.0.202-zulu,11.0.3.j9-adpt,12.0.1-zulu,13.ea.20-open,11.0.3-local
-    When a request is made to /candidates/java/LinuxX64/versions/list
-#    Then a 200 status code is received
+    When a request is made to /candidates/java/linuxx64/versions/list
+    Then a 200 status code is received
     And the response body is
     """
     |================================================================================
@@ -107,7 +107,7 @@ Feature: Java Version List by Vendor
       | java      | 10.0.2-open      | open   | LINUX_64   | http://open.example.org/jdk-10.0.2.tar.gz      |
 
     And the installed Versions 10.0.2-open,10.0.1-open
-    When a request is made to /candidates/java/LinuxX64/versions/list
+    When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
     """
@@ -135,7 +135,7 @@ Feature: Java Version List by Vendor
       | java      | 10.0.2-open      | open   | LINUX_64   | http://open.example.org/jdk-10.0.2.tar.gz      |
 
     And the installed Versions 10.0.2-open,10.0.1-local,8.0.212-vendor,8.0.212-xyz
-    When a request is made to /candidates/java/LinuxX64/versions/list
+    When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
     """
@@ -165,7 +165,7 @@ Feature: Java Version List by Vendor
       | java      | 10.0.2-open      | open   | LINUX_64   | http://open.example.org/jdk-10.0.2.tar.gz      |
 
     And the installed Versions 10.0.2-open
-    When a request is made to /candidates/java/LinuxX64/versions/list
+    When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
     """
@@ -188,7 +188,7 @@ Feature: Java Version List by Vendor
 
   Scenario: Only local versions are displayed
     And the installed Versions 10.0.2-vendor
-    When a request is made to /candidates/java/LinuxX64/versions/list
+    When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
     """
@@ -210,7 +210,7 @@ Feature: Java Version List by Vendor
     """
 
   Scenario: No local or remote versions are displayed
-    When a request is made to /candidates/java/LinuxX64/versions/list
+    When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
     """

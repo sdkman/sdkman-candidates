@@ -5,24 +5,25 @@ case class Platform(distribution: String, name: String)
 object Platform {
 
   def apply(platformId: String): Platform = platformId.toLowerCase match {
-    case "linuxx64"       => LinuxX64
-    case "linuxx32"       => LinuxX32
-    case "linuxarm64"     => LinuxARM64
-    case "linuxarm32sf"   => LinuxARM32SF
-    case "linuxarm32hf"   => LinuxARM32HF
-    case "darwinx64"      => MacX64
-    case "darwinarm64"    => MacARM64
-    case "linux"          => LinuxX64
-    case "linux64"        => LinuxX64
-    case "linux32"        => LinuxX32
-    case "darwin"         => MacX64
-    case "freebsd"        => FreeBSD
-    case "sunos"          => SunOS
-    case CygwinPattern(c) => Windows64
-    case _                => Exotic
+    case "linuxx64"              => LinuxX64
+    case "linuxx32"              => LinuxX32
+    case "linuxarm64"            => LinuxARM64
+    case "linuxarm32sf"          => LinuxARM32SF
+    case "linuxarm32hf"          => LinuxARM32HF
+    case "darwinx64"             => MacX64
+    case "darwinarm64"           => MacARM64
+    case "windowsx64"            => Windows64
+    case "linux"                 => LinuxX64
+    case "linux64"               => LinuxX64
+    case "linux32"               => LinuxX32
+    case "darwin"                => MacX64
+    case "freebsd"               => FreeBSD
+    case "sunos"                 => SunOS
+    case LegacyWindowsPattern(c) => Windows64
+    case _                       => Exotic
   }
 
-  private val CygwinPattern = "(cygwin|mingw64|msys).*".r
+  private val LegacyWindowsPattern = "(cygwin|mingw64|msys).*".r
 
   val LinuxX32     = Platform("LINUX_32", "Linux 32bit")
   val LinuxX64     = Platform("LINUX_64", "Linux 64bit")

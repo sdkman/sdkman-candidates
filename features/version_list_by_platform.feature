@@ -24,7 +24,7 @@ Feature: Version List by Platform
       | micronaut | 1.3.5        |        | UNIVERSAL  | http://dl/micronaut/1.3.5/mn-1.3.5.zip                                                    |
 
   Scenario: Show a Version List of a Platform Specific Linux 64 Candidate
-    When a request is made to /candidates/java/LinuxX64/versions/list
+    When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
     """
@@ -49,7 +49,7 @@ Feature: Version List by Platform
     """
 
   Scenario: Show a Version List of a Platform Specific Mac OSX Candidate
-    When a request is made to /candidates/java/DarwinX64/versions/list
+    When a request is made to /candidates/java/darwinx64/versions/list
     Then a 200 status code is received
     And the response body is
     """
@@ -71,8 +71,8 @@ Feature: Version List by Platform
     |================================================================================
     """
 
-  Scenario: Show a Version List of a Platform Specific Cygwin Candidate
-    When a request is made to /candidates/java/CYGWIN_NT-6.3/versions/list
+  Scenario: Show a Version List of a Platform Specific Windows Candidate
+    When a request is made to /candidates/java/windowsx64/versions/list
     Then a 200 status code is received
     And the response body is
     """
@@ -95,7 +95,7 @@ Feature: Version List by Platform
     """
 
   Scenario: Show a Version List for a Universal Candidate
-    When a request is made to /candidates/scala/CYGWIN_NT-6.3/versions/list
+    When a request is made to /candidates/scala/windowsx64/versions/list
     Then a 200 status code is received
     And the response body is
     """
@@ -126,7 +126,7 @@ Feature: Version List by Platform
     """
 
   Scenario: Show a Version List for a Mixed Platform and Universal Candidate
-    When a request is made to /candidates/micronaut/DarwinX64/versions/list
+    When a request is made to /candidates/micronaut/darwinx64/versions/list
     Then a 200 status code is received
     And the response body is
     """

@@ -14,69 +14,64 @@ Feature: Candidate Version Validation by Platform
         | scala     | 2.12.0  | open   | UNIVERSAL     | http://dl/scala/2.12.0/scala-2.12.0.zip             |
 
 	Scenario: Validation succeeds for a multi-platform binary on Linux 32 bit platform
-		When I attempt validation at endpoint /validate/java/8u111/LinuxX32
+		When I attempt validation at endpoint /validate/java/8u111/linuxx32
 		Then a 200 status code is received
 		And the response body is "valid"
 
 	Scenario: Validation succeeds for a multi-platform binary on Linux 64 bit platform
-		When I attempt validation at endpoint /validate/java/8u111/LinuxX64
+		When I attempt validation at endpoint /validate/java/8u111/linuxx64
 		Then a 200 status code is received
 		And the response body is "valid"
-		When I attempt validation at endpoint /validate/java/8u111/Linux
+		When I attempt validation at endpoint /validate/java/8u111/linux
 		Then a 200 status code is received
 		And the response body is "valid"
 
 	Scenario: Validation succeeds for a multi-platform binary on Linux 32 bit ARM soft float platform
-		When I attempt validation at endpoint /validate/java/8u111/LinuxARM32SF
+		When I attempt validation at endpoint /validate/java/8u111/linuxarm32sf
 		Then a 200 status code is received
 		And the response body is "valid"
 
 	Scenario: Validation succeeds for a multi-platform binary on Linux 32 bit ARM hard float platform
-		When I attempt validation at endpoint /validate/java/8u111/LinuxARM32HF
+		When I attempt validation at endpoint /validate/java/8u111/linuxarm32hf
 		Then a 200 status code is received
 		And the response body is "valid"
 
 	Scenario: Validation succeeds for a multi-platform binary on Linux 64 bit ARM platform
-		When I attempt validation at endpoint /validate/java/8u111/LinuxARM64
+		When I attempt validation at endpoint /validate/java/8u111/linuxarm64
 		Then a 200 status code is received
 		And the response body is "valid"
 
 	Scenario: Validation succeeds for a multi-platform binary on Mac OSX X86 platform
-		When I attempt validation at endpoint /validate/java/8u111/DarwinX64
+		When I attempt validation at endpoint /validate/java/8u111/darwinx64
 		Then a 200 status code is received
 		And the response body is "valid"
 
 	Scenario: Validation succeeds for a multi-platform binary on Mac OSX Silicon ARM platform
-		When I attempt validation at endpoint /validate/java/8u111/DarwinARM64
+		When I attempt validation at endpoint /validate/java/8u111/darwinarm64
 		Then a 200 status code is received
 		And the response body is "valid"
 
 	Scenario: Validation succeeds for a multi-platform binary on Cygwin platform
-		When I attempt validation at endpoint /validate/java/8u111/CYGWIN_NT-6.3
-		Then a 200 status code is received
-		And the response body is "valid"
-
-	Scenario: Validation succeeds for a multi-platform binary on MinGW platform
-		When I attempt validation at endpoint /validate/java/8u111/MINGW64_NT-10.0
+		When I attempt validation at endpoint /validate/java/8u111/windowsx64
 		Then a 200 status code is received
 		And the response body is "valid"
 
 	Scenario: Validation fails for a multi-platform binary on an unsupported platform
-		When I attempt validation at endpoint /validate/java/8u111/FreeBSD
+		When I attempt validation at endpoint /validate/java/8u111/freebdd
 		Then a 200 status code is received
 		And the response body is "invalid"
 
 	Scenario: Validation fails for a multi-platform binary on an unknown platform
-		When I attempt validation at endpoint /validate/java/8u111/Exotic
+		When I attempt validation at endpoint /validate/java/8u111/exotic
 		Then a 200 status code is received
 		And the response body is "invalid"
 
 	Scenario: Validation succeeds for a universal binary on a know platform
-		When I attempt validation at endpoint /validate/scala/2.12.0/LinuxX64
+		When I attempt validation at endpoint /validate/scala/2.12.0/linuxx64
 		Then a 200 status code is received
 		And the response body is "valid"
 
 	Scenario: Validation succeeds for a universal binary on an unknown platform
-		When I attempt validation at endpoint /validate/scala/2.12.0/Exotic
+		When I attempt validation at endpoint /validate/scala/2.12.0/exotic
 		Then a 200 status code is received
 		And the response body is "valid"

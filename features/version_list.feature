@@ -8,7 +8,7 @@ Feature: Version List
   Scenario: A single column list of available uninstalled Versions are displayed
     Given the scala Versions 2.11.1 thru 2.11.8
     And the scala Versions 2.12.0 thru 2.12.6
-    When a request is made to /candidates/scala/linux64/versions/list
+    When a request is made to /candidates/scala/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
     """
@@ -43,7 +43,7 @@ Feature: Version List
     And the scala Versions 2.10.0 thru 2.10.14
     And the scala Versions 2.11.0 thru 2.11.14
     And the scala Versions 2.12.0 thru 2.12.14
-    When a request is made to /candidates/scala/linux64/versions/list
+    When a request is made to /candidates/scala/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
     """
@@ -80,7 +80,7 @@ Feature: Version List
     And the scala Versions 2.12.0 thru 2.12.14
     And the scala Version 2.12.14 is installed
     And the scala Version 2.12.14 is set as current
-    When a request is made to /candidates/scala/linux64/versions/list
+    When a request is made to /candidates/scala/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
     """
@@ -116,7 +116,7 @@ Feature: Version List
     And the scala Versions 2.11.0 thru 2.11.14
     And the scala Versions 2.12.0 thru 2.12.14
     And the scala Versions 2.12.14,2.12.13,2.12.12,2.11.14,2.10.14,2.9.14 are installed
-    When a request is made to /candidates/scala/linux64/versions/list
+    When a request is made to /candidates/scala/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
     """
@@ -149,7 +149,7 @@ Feature: Version List
   Scenario: Local versions are displayed
     Given the scala Versions 2.12.0 thru 2.12.13
     And the scala Versions 2.12.14,2.12.13,2.12.12,2.11.14,2.10.14,2.9.14 are installed
-    When a request is made to /candidates/scala/linux64/versions/list
+    When a request is made to /candidates/scala/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
     """
@@ -184,7 +184,7 @@ Feature: Version List
     And the scala Versions 2.10.0 thru 2.10.30
     And the scala Versions 2.11.0 thru 2.11.30
     And the scala Versions 2.12.0 thru 2.12.30
-    When a request is made to /candidates/scala/linux64/versions/list
+    When a request is made to /candidates/scala/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
     """
