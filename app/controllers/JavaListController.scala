@@ -86,7 +86,6 @@ class JavaListController @Inject() (
     "gln"     -> "Gluon",
     "graalce" -> "GraalVM CE",
     "graal"   -> "GraalVM Oracle",
-    "grl"     -> "GraalVM",
     "jbr"     -> "JetBrains",
     "kona"    -> "Tencent",
     "librca"  -> "Liberica",
