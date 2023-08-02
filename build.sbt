@@ -43,9 +43,9 @@ libraryDependencies ++= Seq(
   "com.vladsch.flexmark" % "flexmark-all" % "0.36.8" % Test
 )
 
-logBuffered in Test := false
+(Test / logBuffered) := false
 
-testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/reports/scalatest/")
+(Test / testOptions) += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/reports/scalatest/")
 
 scalacOptions += "-Ypartial-unification"
 
@@ -59,7 +59,7 @@ releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  ReleaseStep(releaseStepTask(publish in Docker)),
+  ReleaseStep(releaseStepTask((Docker / publish))),
   setNextVersion,
   commitNextVersion,
   pushChanges
