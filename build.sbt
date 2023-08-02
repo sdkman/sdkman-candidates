@@ -34,7 +34,7 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % "1.0.1",
   "org.scalatest" %% "scalatest" % "3.1.0" % Test,
   "org.scalatestplus" %% "scalacheck-1-15" % "3.2.9.0" % Test,
-  "io.cucumber" %% "cucumber-scala" % "4.7.1" % Test,
+  "io.cucumber" %% "cucumber-scala" % "8.16.0" % Test,
   "io.cucumber" % "cucumber-junit" % "4.7.1" % Test,
   "info.cukes" % "gherkin" % "2.7.3" % Test,
   "org.scalaj" %% "scalaj-http" % "2.3.0" % Test,
