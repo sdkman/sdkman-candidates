@@ -33,7 +33,7 @@ libraryDependencies ++= Seq(
   "com.github.sdkman" % "sdkman-mongodb-persistence" % "1.9",
   "org.typelevel" %% "cats-core" % "1.0.1",
   "org.scalatest" %% "scalatest" % "3.1.0" % Test,
-  "org.scalatestplus" %% "scalacheck-1-15" % "3.2.9.0" % Test,
+  "org.scalatestplus" %% "scalacheck-1-15" % "3.2.11.0" % Test,
   "io.cucumber" %% "cucumber-scala" % "4.7.1" % Test,
   "io.cucumber" % "cucumber-junit" % "4.7.1" % Test,
   "info.cukes" % "gherkin" % "2.7.3" % Test,
