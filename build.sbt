@@ -18,7 +18,7 @@ Universal / javaOptions ++= Seq(
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.12.13"
+scalaVersion := "2.12.18"
 
 routesGenerator := InjectedRoutesGenerator
 
