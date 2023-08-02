@@ -38,7 +38,7 @@ libraryDependencies ++= Seq(
   "io.cucumber" % "cucumber-junit" % "4.7.1" % Test,
   "info.cukes" % "gherkin" % "2.7.3" % Test,
   "org.scalaj" %% "scalaj-http" % "2.3.0" % Test,
-  "com.github.tomakehurst" % "wiremock" % "2.2.2" % Test,
+  "com.github.tomakehurst" % "wiremock" % "2.33.2" % Test,
   "org.pegdown" % "pegdown" % "1.6.0" % Test,
   "com.vladsch.flexmark" % "flexmark-all" % "0.36.8" % Test
 )
