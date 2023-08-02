@@ -40,7 +40,7 @@ libraryDependencies ++= Seq(
   "org.scalaj" %% "scalaj-http" % "2.3.0" % Test,
   "com.github.tomakehurst" % "wiremock" % "2.2.2" % Test,
   "org.pegdown" % "pegdown" % "1.6.0" % Test,
-  "com.vladsch.flexmark" % "flexmark-all" % "0.36.8" % Test
+  "com.vladsch.flexmark" % "flexmark-all" % "0.64.8" % Test
 )
 
 logBuffered in Test := false
