@@ -3,7 +3,7 @@ package controllers
 import io.sdkman.repos.Version
 
 import javax.inject.Inject
-import ordering.VersionItemOrdering
+import ordering.JavaVersionItemOrdering
 import play.api.mvc._
 import rendering.{JavaVersionRendering, VersionItemListBuilder}
 import repos.{CandidatesRepository, VersionsRepository}
@@ -17,7 +17,7 @@ class JavaListController @Inject() (
     candidatesRepo: CandidatesRepository,
     cc: ControllerComponents
 ) extends AbstractController(cc)
-    with VersionItemOrdering
+    with JavaVersionItemOrdering
     with VersionItemListBuilder
     with VersionListProperties
     with JavaVersionRendering {
