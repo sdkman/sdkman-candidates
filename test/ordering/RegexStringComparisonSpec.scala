@@ -9,7 +9,10 @@ class RegexStringComparisonSpec extends AnyWordSpec with Matchers {
     "groups are numeric" should {
 
       "determine equality by regex" in new RegexStringComparison {
-        compareRegexGroups("1.2.3", "1.2.3") shouldBe 0
+        assertZero(compareRegexGroups("1.2.3", "1.2.3"))
+        assertZero(compareRegexGroups("21", "21.0"))
+        assertZero(compareRegexGroups("21", "21.0.0"))
+        assertZero(compareRegexGroups("21.0", "21.0.0"))
       }
 
       "determine lexicographic inequality by regex in first segment" in new RegexStringComparison {
@@ -35,6 +38,17 @@ class RegexStringComparisonSpec extends AnyWordSpec with Matchers {
 
       "determine ordering of 10 and 9 in equal length groups" in new RegexStringComparison {
         assertPositive(compareRegexGroups("10.0.0", "9.0.0"))
+      }
+
+      "determine lexicographic inequality by regex in different segment lengths" in new RegexStringComparison {
+        assertNegative(compareRegexGroups("21", "21.0.1"))
+        assertPositive(compareRegexGroups("21.0.1", "21"))
+
+        assertNegative(compareRegexGroups("21", "21.1"))
+        assertPositive(compareRegexGroups("21.1", "21"))
+
+        assertNegative(compareRegexGroups("21.0", "21.1.0"))
+        assertPositive(compareRegexGroups("21.1.0", "21.0"))
       }
     }
 
