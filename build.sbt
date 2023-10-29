@@ -8,6 +8,8 @@ name := "sdkman-candidates"
 
 Docker / packageName := "sdkman/sdkman-candidates"
 
+dockerRepository := Some("registry.digitalocean.com/sdkman/sdkman-candidates")
+
 dockerBaseImage := "openjdk:11"
 
 dockerExposedPorts ++= Seq(9000)
