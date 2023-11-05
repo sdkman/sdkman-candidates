@@ -6,9 +6,7 @@ enablePlugins(DockerPlugin)
 
 name := "sdkman-candidates"
 
-packageName in Docker := "sdkman/sdkman-candidates"
-
-dockerRepository := Some("registry.digitalocean.com")
+Docker / packageName := "sdkman/sdkman-candidates"
 
 dockerBaseImage := "openjdk:11"
 
