@@ -18,6 +18,9 @@ Feature: Java Version List by Vendor
       | java      | 8.0.212-albba    | albba   | LINUX_64   | http://albba.example.org/jdk-8.0.212.tar.gz        |
       | java      | 11.0.3-amzn      | amzn    | LINUX_64   | http://amzn.example.org/jdk-11.0.3.j9.tar.gz       |
       | java      | 8.0.212-amzn     | amzn    | LINUX_64   | http://amzn.example.org/jdk-8.0.212.tar.gz         |
+      | java      | 17.0.9-bisheng   | bisheng | LINUX_64   | http://bisheng.example.org/jdk-17.0.9.tar.gz          |
+      | java      | 11.0.21-bisheng  | bisheng | LINUX_64   | http://bisheng.example.org/jdk-11.0.21.tar.gz         |
+      | java      | 8.0.392-bisheng  | bisheng | LINUX_64   | http://bisheng.example.org/jdk-8.0.392.tar.gz         |
       | java      | 19.0.0-gln       | gln     | LINUX_64   | http://graal.example.org/graal-19.0.0.tar.gz       |
       | java      | 17.0.7-graal     | graal   | LINUX_64   | http://graal.example.org/graal-17.0.7.tar.gz       |
       | java      | 17.0.7-graalce   | graalce | LINUX_64   | http://graal.example.org/graal-ce-17.0.7.tar.gz    |
@@ -59,6 +62,9 @@ Feature: Java Version List by Vendor
     |               |     | 11.0.3.hs    | adpt    |            | 11.0.3.hs-adpt
     |               |     | 8.0.212.j9   | adpt    |            | 8.0.212.j9-adpt
     |               |     | 8.0.212.hs   | adpt    |            | 8.0.212.hs-adpt
+    | Huawei        |     | 17.0.9       | bisheng |            | 17.0.9-bisheng
+    |               |     | 11.0.21      | bisheng |            | 11.0.21-bisheng
+    |               |     | 8.0.392      | bisheng |            | 8.0.392-bisheng
     | Corretto      |     | 11.0.3       | amzn    |            | 11.0.3-amzn
     |               |     | 8.0.212      | amzn    |            | 8.0.212-amzn
     | Dragonwell    |     | 11.0.3       | albba   |            | 11.0.3-albba
