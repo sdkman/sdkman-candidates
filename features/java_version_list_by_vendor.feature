@@ -18,9 +18,9 @@ Feature: Java Version List by Vendor
       | java      | 8.0.212-albba    | albba   | LINUX_64   | http://albba.example.org/jdk-8.0.212.tar.gz        |
       | java      | 11.0.3-amzn      | amzn    | LINUX_64   | http://amzn.example.org/jdk-11.0.3.j9.tar.gz       |
       | java      | 8.0.212-amzn     | amzn    | LINUX_64   | http://amzn.example.org/jdk-8.0.212.tar.gz         |
-      | java      | 17.0.9-bsg       | bsg     | LINUX_64   | http://bsg.example.org/bsg-17.0.9.tar.gz           |
-      | java      | 11.0.21-bsg      | bsg     | LINUX_64   | http://bsg.example.org/bsg-11.0.21.tar.gz          |
-      | java      | 8.0.392-bsg      | bsg     | LINUX_64   | http://bsg.example.org/bsg-8.0.392.tar.gz          |
+      | java      | 17.0.9-bsg       | bsg     | LINUX_64   | http://bsg.example.org/jdk-17.0.9.tar.gz           |
+      | java      | 11.0.21-bsg      | bsg     | LINUX_64   | http://bsg.example.org/jdk-11.0.21.tar.gz          |
+      | java      | 8.0.392-bsg      | bsg     | LINUX_64   | http://bsg.example.org/jdk-8.0.392.tar.gz          |
       | java      | 19.0.0-gln       | gln     | LINUX_64   | http://graal.example.org/graal-19.0.0.tar.gz       |
       | java      | 17.0.7-graal     | graal   | LINUX_64   | http://graal.example.org/graal-17.0.7.tar.gz       |
       | java      | 17.0.7-graalce   | graalce | LINUX_64   | http://graal.example.org/graal-ce-17.0.7.tar.gz    |
