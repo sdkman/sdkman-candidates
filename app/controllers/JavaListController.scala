@@ -83,7 +83,7 @@ class JavaListController @Inject() (
     "adpt"    -> "AdoptOpenJDK",
     "albba"   -> "Dragonwell",
     "amzn"    -> "Corretto",
-    "bsg" -> "Huawei",
+    "bsg"     -> "Huawei",
     "gln"     -> "Gluon",
     "graalce" -> "GraalVM CE",
     "graal"   -> "GraalVM Oracle",
