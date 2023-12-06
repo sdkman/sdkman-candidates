@@ -2,10 +2,10 @@ package steps
 
 import cucumber.api.scala.{EN, ScalaDsl}
 import org.scalatest.matchers.should.Matchers
+import play.api.libs.Files.logger
 import play.api.libs.json.Json
 import scalaj.http.Http
 import steps.World._
-import support.Mongo
 
 import scala.annotation.tailrec
 
@@ -61,6 +61,13 @@ class RestSteps extends ScalaDsl with EN with Matchers {
   }
 
   And("""^the response body is$""") { body: String =>
+    val responseBody = strip(response.body)
+    val strippedBody = body.stripMargin
+
+    if (responseBody != strippedBody) {
+      logger.error("The Body data is not what was expected, please check the body. \n >> Response Body:\n" + responseBody + "\n >> Expected Body:\n" + strippedBody)
+    }
+
     strip(response.body) shouldBe body.stripMargin
   }
 
