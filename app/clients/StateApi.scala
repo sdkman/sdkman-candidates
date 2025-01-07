@@ -1,6 +1,7 @@
 package clients
 
 import io.sdkman.repos.Version
+import play.api.Configuration
 import play.api.libs.ws.{WSClient, WSRequest}
 import utils.Platform
 
@@ -10,10 +11,17 @@ import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
 @Singleton
-class StateApi @Inject() (ws: WSClient) {
+class StateApi @Inject() (ws: WSClient, config: Configuration) {
+
+  private def stateApiConfig(key: String) = config
+    .getOptional[String](s"state-api.$key")
+    .getOrElse(throw new RuntimeException("state-api configuration not found"))
+
+  private lazy val stateApi =
+    s"${stateApiConfig("protocol")}://${stateApiConfig("host")}:${stateApiConfig("port")}"
 
   private def request(candidate: String): WSRequest =
-    ws.url(s"https://state.sdkman.io/versions/$candidate")
+    ws.url(s"$stateApi/versions/$candidate")
       .addHttpHeaders("Accept" -> "application/json")
       .withRequestTimeout(1500.millis)
 
