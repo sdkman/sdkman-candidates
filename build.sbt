@@ -30,6 +30,7 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   guice,
   ws,
+  ehcache,
   "com.github.sdkman" % "sdkman-mongodb-persistence" % "1.9",
   "org.typelevel" %% "cats-core" % "1.0.1",
   "org.scalatest" %% "scalatest" % "3.1.0" % Test,
