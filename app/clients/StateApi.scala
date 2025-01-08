@@ -28,7 +28,7 @@ class StateApi @Inject() (ws: WSClient, config: Configuration) {
   import play.api.libs.json._
   implicit val versionReads: Reads[Version] = Json.reads[Version]
 
-  def findVersionsByCandidatePlatform(
+  def findVersionsByCandidateAndPlatform(
       candidate: String,
       platform: Platform
   ): Future[Seq[Version]] =
