@@ -11,8 +11,8 @@ class VersionsController @Inject() (stateApi: StateApi, cc: ControllerComponents
     extends AbstractController(cc) {
 
   def all(candidate: String, platformId: String): Action[AnyContent] =
-    Action.async(parse.anyContent) { request =>
-      stateApi.findVersionsByCandidatePlatform(candidate, Platform(platformId)).map { versions =>
+    Action.async(parse.anyContent) { _ =>
+      stateApi.findVersionsByCandidateAndPlatform(candidate, Platform(platformId)).map { versions =>
         Ok(versions.map(_.version).mkString(","))
       }
     }
