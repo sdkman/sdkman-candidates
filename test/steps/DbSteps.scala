@@ -1,11 +1,10 @@
 package steps
 
 import cucumber.api.scala.{EN, ScalaDsl}
-import gherkin.formatter.model.DataTableRow
 import io.cucumber.datatable.DataTable
 import io.sdkman.repos.{Candidate, Version}
 import org.scalatest.matchers.should.Matchers
-import support.Mongo
+import support.{Mongo, StateApiStubs}
 
 class DbSteps extends ScalaDsl with EN with Matchers {
 
@@ -85,6 +84,15 @@ class DbSteps extends ScalaDsl with EN with Matchers {
   }
 
   And("""^the Versions$""") { versionsTable: DataTable =>
-    Mongo.insertVersions(versionsTable.toVersions)
+    val versions  = versionsTable.toVersions
+    val candidate = versions.headOption.map(_.candidate).getOrElse("none")
+    Mongo.insertVersions(versions)
+    versions.groupBy(_.platform).map { case (platform, platformVersions) =>
+      StateApiStubs.stubVersions(candidate, platform, platformVersions.sortBy(_.version))
+    }
+  }
+
+  And("""^no Versions for (.*)$""") { (candidate: String) =>
+    StateApiStubs.stubVersions(candidate, distribution = "UNIVERSAL", versions = Seq.empty[Version])
   }
 }

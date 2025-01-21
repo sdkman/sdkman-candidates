@@ -27,10 +27,11 @@ Feature: Versions
     Then a 200 status code is received
     And the response body is "2.11.8,2.12.5,2.12.6"
 
-  Scenario: Find no Versions for a a given Candidate with no Default Version
+  Scenario: Find no Versions for a given Candidate with no Default Version
     Given the Candidate
       | candidate | name      | description             | default | websiteUrl             | distribution   |
       | micronaut | Micronaut | The Micronaut Framework |         | http://micronaut.io    | UNIVERSAL      |
+    And no Versions for micronaut
     When a request is made to /candidates/micronaut/linuxx64/versions/all
     Then a 200 status code is received
     And the response body is ""
