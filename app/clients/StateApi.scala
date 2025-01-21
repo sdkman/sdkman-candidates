@@ -3,7 +3,6 @@ package clients
 import io.sdkman.repos.Version
 import play.api.Configuration
 import play.api.libs.ws.{WSClient, WSRequest}
-import utils.Platform
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -20,23 +19,22 @@ class StateApi @Inject() (ws: WSClient, config: Configuration) {
   private lazy val stateApi =
     s"${stateApiConfig("protocol")}://${stateApiConfig("host")}:${stateApiConfig("port")}"
 
-  private def request(candidate: String): WSRequest =
-    ws.url(s"$stateApi/versions/$candidate")
+  private def request(candidate: String, platform: String): WSRequest =
+    ws.url(s"$stateApi/versions/$candidate/$platform")
       .addHttpHeaders("Accept" -> "application/json")
       .withRequestTimeout(1500.millis)
 
   import play.api.libs.json._
   implicit val versionReads: Reads[Version] = Json.reads[Version]
 
-  def findVersionsByCandidateAndPlatform(
+  def findVersionsByCandidateAndDistribution(
       candidate: String,
-      platform: Platform
+      distribution: String
   ): Future[Seq[Version]] =
-    request(candidate).get().flatMap { response =>
+    request(candidate, distribution).get().flatMap { response =>
       response.json.validate[List[Version]] match {
-        case JsSuccess(value, _) =>
-          Future.successful(value.filter(_.platform == platform.distribution))
-        case JsError(e) => Future.failed(new RuntimeException(e.toString))
+        case JsSuccess(value, _) => Future.successful(value)
+        case JsError(e)          => Future.failed(new RuntimeException(e.toString))
       }
     }
 }
