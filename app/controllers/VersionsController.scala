@@ -1,6 +1,6 @@
 package controllers
 
-import clients.StateApi
+import clients.StateApiImpl
 import com.google.inject.Inject
 import play.api.mvc._
 import repos.CandidatesRepository
@@ -9,7 +9,7 @@ import utils.Platform
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class VersionsController @Inject() (
-    stateApi: StateApi,
+    stateApi: StateApiImpl,
     candidatesRepo: CandidatesRepository,
     cc: ControllerComponents
 ) extends AbstractController(cc) {
@@ -22,7 +22,7 @@ class VersionsController @Inject() (
           .filter(_ == "UNIVERSAL")
           .getOrElse(Platform(platformId).distribution)
 
-        stateApi.findVersionsByCandidateAndDistribution(candidate, distribution).map { versions =>
+        stateApi.findVersionsByCandidateAndPlatform(candidate, distribution).map { versions =>
           Ok(versions.map(_.version).mkString(","))
         }
       }

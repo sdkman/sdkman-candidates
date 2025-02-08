@@ -9,8 +9,15 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
+trait StateApi {
+  def findVersionsByCandidateAndPlatform(
+      candidate: String,
+      platform: String
+  ): Future[Seq[Version]]
+}
+
 @Singleton
-class StateApi @Inject() (ws: WSClient, config: Configuration) {
+class StateApiImpl @Inject() (ws: WSClient, config: Configuration) extends StateApi {
 
   private def stateApiConfig(key: String) = config
     .getOptional[String](s"state-api.$key")
@@ -27,14 +34,16 @@ class StateApi @Inject() (ws: WSClient, config: Configuration) {
   import play.api.libs.json._
   implicit val versionReads: Reads[Version] = Json.reads[Version]
 
-  def findVersionsByCandidateAndDistribution(
+  def findVersionsByCandidateAndPlatform(
       candidate: String,
-      distribution: String
+      platform: String
   ): Future[Seq[Version]] =
-    request(candidate, distribution).get().flatMap { response =>
+    request(candidate, platform).get().flatMap { response =>
       response.json.validate[List[Version]] match {
         case JsSuccess(value, _) => Future.successful(value)
-        case JsError(e)          => Future.failed(new RuntimeException(e.toString))
+        case JsError(e)          =>
+          // TODO: improve error handling
+          Future.failed(new RuntimeException(e.toString))
       }
     }
 }
