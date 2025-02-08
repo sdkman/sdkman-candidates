@@ -15,7 +15,7 @@ class VersionsController @Inject() (
 ) extends AbstractController(cc) {
 
   def all(candidate: String, platformId: String): Action[AnyContent] =
-    Action.async(parse.anyContent) { request =>
+    Action.async(parse.anyContent) { _ =>
       candidatesRepo.findCandidate(candidate).flatMap { candidateO =>
         val platform = candidateO
           .map(_.distribution)
