@@ -17,12 +17,12 @@ class VersionsController @Inject() (
   def all(candidate: String, platformId: String): Action[AnyContent] =
     Action.async(parse.anyContent) { request =>
       candidatesRepo.findCandidate(candidate).flatMap { candidateO =>
-        val distribution = candidateO
+        val platform = candidateO
           .map(_.distribution)
           .filter(_ == "UNIVERSAL")
           .getOrElse(Platform(platformId).distribution)
 
-        stateApi.findVersionsByCandidateAndPlatform(candidate, distribution).map { versions =>
+        stateApi.findVersionsByCandidateAndPlatform(candidate, platform).map { versions =>
           Ok(versions.map(_.version).mkString(","))
         }
       }
