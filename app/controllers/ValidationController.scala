@@ -15,8 +15,10 @@ class ValidationController @Inject() (versionsRepo: VersionsRepository, cc: Cont
 
   def validate(candidate: String, version: String, platformId: String): Action[AnyContent] =
     Action.async(parse.anyContent) { implicit request =>
+      //TODO: Cut over to StateApi
       val maybeUniversalF =
         versionsRepo.findVersion(candidate, version, "UNIVERSAL")
+      //TODO: Cut over to StateApi
       val maybePlatformSpecificF =
         versionsRepo.findVersion(candidate, version, Platform(platformId).distribution)
       for {
