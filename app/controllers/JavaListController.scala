@@ -29,6 +29,7 @@ class JavaListController @Inject() (
       val platform = Platform(platformId)
 
       candidatesRepo.findCandidate(Candidate).flatMap { candidate =>
+        //TODO: cut over to StateApi
         versionsRepo
           .findAllVisibleVersionsByCandidatePlatform(Candidate, platform.distribution)
           .map { versions =>
