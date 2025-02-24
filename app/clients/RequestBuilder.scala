@@ -1,4 +1,4 @@
-package utils
+package clients
 
 import com.google.inject.Singleton
 import play.api.Configuration
