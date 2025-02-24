@@ -8,9 +8,26 @@ object StateApiStubs {
   import play.api.libs.json._
   implicit val versionWrites: Writes[Version] = Json.writes[Version]
 
-  def stubVersions(candidate: String, distribution: String, versions: Seq[Version]): Unit =
+  def stubVersions(
+      candidate: String,
+      distribution: String,
+      hidden: Boolean,
+      versions: Seq[Version]
+  ): Unit =
     stubFor(
-      get(urlEqualTo(s"/versions/$candidate/$distribution"))
+      get(urlPathEqualTo(s"/versions/$candidate"))
+        .withQueryParam("distribution", equalTo(distribution))
+        .withQueryParam("hidden", equalTo(hidden.toString))
+        .willReturn(
+          aResponse()
+            .withBody(Json.toJson(versions).toString)
+            .withStatus(200)
+        )
+    )
+
+  def stubVersions(candidate: String, versions: Seq[Version]): Unit =
+    stubFor(
+      get(urlPathEqualTo(s"/versions/$candidate"))
         .willReturn(
           aResponse()
             .withBody(Json.toJson(versions).toString)
