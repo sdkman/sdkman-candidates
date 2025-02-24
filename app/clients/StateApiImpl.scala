@@ -2,7 +2,9 @@ package clients
 
 import io.sdkman.repos.Version
 import play.api.Configuration
+import play.api.libs.json.{JsError, JsSuccess}
 import play.api.libs.ws.{WSClient, WSRequest}
+import utils.JsonConverters
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -17,7 +19,9 @@ trait StateApi {
 }
 
 @Singleton
-class StateApiImpl @Inject() (ws: WSClient, config: Configuration) extends StateApi {
+class StateApiImpl @Inject() (ws: WSClient, config: Configuration)
+    extends StateApi
+    with JsonConverters {
 
   private def stateApiConfig(key: String) = config
     .getOptional[String](s"state-api.$key")
@@ -31,9 +35,6 @@ class StateApiImpl @Inject() (ws: WSClient, config: Configuration) extends State
       .withQueryStringParameters(("distribution", platform), ("hidden", "false"))
       .addHttpHeaders("Accept" -> "application/json")
       .withRequestTimeout(1500.millis)
-
-  import play.api.libs.json._
-  implicit val versionReads: Reads[Version] = Json.reads[Version]
 
   def findVersionsByCandidateAndPlatform(
       candidate: String,
