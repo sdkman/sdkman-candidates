@@ -84,22 +84,27 @@ class DbSteps extends ScalaDsl with EN with Matchers {
   }
 
   And("""^the Versions$""") { versionsTable: DataTable =>
-    val versions  = versionsTable.toVersions
-    val candidate = versions.headOption.map(_.candidate).getOrElse("none")
+    val versions = versionsTable.toVersions
     Mongo.insertVersions(versions)
-    versions.groupBy(_.platform).map { case (platform, platformVersions) =>
-      StateApiStubs.stubVersions(
-        candidate = candidate,
-        distribution = platform,
-        versions = platformVersions.sortBy(_.version)
-      )
+
+    val visibleVersions = versions.filter(_.visible.getOrElse(true))
+    visibleVersions.groupBy(_.candidate).foreach {
+      case (candidate: String, candidateVersions: Seq[Version]) =>
+        candidateVersions.groupBy(_.platform).foreach {
+          case (platform: String, candidateVersionsByPlatform: Seq[Version]) =>
+            StateApiStubs.stubVersions(
+              candidate = candidate,
+              distribution = platform,
+              versions = candidateVersionsByPlatform.sortBy(_.version)
+            )
+        }
     }
   }
 
-  And("""^no Versions for (.*)$""") { (candidate: String) =>
+  And("""^no Versions for (.*) of platform (.*)$""") { (candidate: String, platform: String) =>
     StateApiStubs.stubVersions(
       candidate = candidate,
-      distribution = "UNIVERSAL",
+      distribution = platform,
       versions = Seq.empty[Version]
     )
   }

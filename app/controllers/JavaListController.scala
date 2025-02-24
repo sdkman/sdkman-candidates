@@ -1,19 +1,19 @@
 package controllers
 
+import clients.StateApiImpl
 import io.sdkman.repos.Version
-
-import javax.inject.Inject
 import ordering.JavaVersionItemOrdering
 import play.api.mvc._
 import rendering.{JavaVersionRendering, VersionItemListBuilder}
-import repos.{CandidatesRepository, VersionsRepository}
+import repos.CandidatesRepository
 import utils.{Platform, VersionListProperties}
 
+import javax.inject.Inject
 import scala.collection.immutable.ListMap
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class JavaListController @Inject() (
-    versionsRepo: VersionsRepository,
+    stateApi: StateApiImpl,
     candidatesRepo: CandidatesRepository,
     cc: ControllerComponents
 ) extends AbstractController(cc)
@@ -29,9 +29,8 @@ class JavaListController @Inject() (
       val platform = Platform(platformId)
 
       candidatesRepo.findCandidate(Candidate).flatMap { candidate =>
-        //TODO: cut over to StateApi
-        versionsRepo
-          .findAllVisibleVersionsByCandidatePlatform(Candidate, platform.distribution)
+        stateApi
+          .findVisibleVersionsByCandidateAndPlatform(Candidate, platform.distribution)
           .map { versions =>
             val allLocalVersions: Seq[String] = installed.split(",")
 

@@ -30,8 +30,8 @@ Feature: Versions
   Scenario: Find no Versions for a given Candidate with no Default Version
     Given the Candidate
       | candidate | name      | description             | default | websiteUrl             | distribution   |
-      | micronaut | Micronaut | The Micronaut Framework |         | http://micronaut.io    | UNIVERSAL      |
-    And no Versions for micronaut
+      | micronaut | Micronaut | The Micronaut Framework |         | http://micronaut.io    | LINUX_64      |
+    And no Versions for micronaut of platform LINUX_64
     When a request is made to /candidates/micronaut/linuxx64/versions/all
     Then a 200 status code is received
     And the response body is ""
