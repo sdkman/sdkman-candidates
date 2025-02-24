@@ -27,7 +27,8 @@ class StateApiImpl @Inject() (ws: WSClient, config: Configuration) extends State
     s"${stateApiConfig("protocol")}://${stateApiConfig("host")}:${stateApiConfig("port")}"
 
   private def request(candidate: String, platform: String): WSRequest =
-    ws.url(s"$stateApi/versions/$candidate/$platform")
+    ws.url(s"$stateApi/versions/$candidate")
+      .withQueryStringParameters(("distribution", platform), ("hidden", "false"))
       .addHttpHeaders("Accept" -> "application/json")
       .withRequestTimeout(1500.millis)
 
