@@ -1,15 +1,12 @@
 package clients
 
 import io.sdkman.repos.Version
-import play.api.Configuration
 import play.api.libs.json.{JsError, JsSuccess}
-import play.api.libs.ws.{WSClient, WSRequest}
-import utils.JsonConverters
+import utils.{JsonConverters, RequestBuilder}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.concurrent.duration.DurationInt
 
 trait StateApi {
   def findVersionsByCandidateAndPlatform(
@@ -19,33 +16,21 @@ trait StateApi {
 }
 
 @Singleton
-class StateApiImpl @Inject() (ws: WSClient, config: Configuration)
-    extends StateApi
-    with JsonConverters {
-
-  private def stateApiConfig(key: String) = config
-    .getOptional[String](s"state-api.$key")
-    .getOrElse(throw new RuntimeException("state-api configuration not found"))
-
-  private lazy val stateApi =
-    s"${stateApiConfig("protocol")}://${stateApiConfig("host")}:${stateApiConfig("port")}"
-
-  private def request(candidate: String, platform: String): WSRequest =
-    ws.url(s"$stateApi/versions/$candidate")
-      .withQueryStringParameters(("distribution", platform), ("hidden", "false"))
-      .addHttpHeaders("Accept" -> "application/json")
-      .withRequestTimeout(1500.millis)
+class StateApiImpl @Inject() (requestBuilder: RequestBuilder) extends StateApi with JsonConverters {
 
   def findVersionsByCandidateAndPlatform(
       candidate: String,
       platform: String
   ): Future[Seq[Version]] =
-    request(candidate, platform).get().flatMap { response =>
-      response.json.validate[List[Version]] match {
-        case JsSuccess(value, _) => Future.successful(value)
-        case JsError(e)          =>
-          // TODO: improve error handling
-          Future.failed(new RuntimeException(e.toString))
+    requestBuilder
+      .versionsByCandidatePlatformRequest(candidate, platform)
+      .get()
+      .flatMap { response =>
+        response.json.validate[List[Version]] match {
+          case JsSuccess(value, _) => Future.successful(value)
+          case JsError(e)          =>
+            // TODO: improve error handling
+            Future.failed(new RuntimeException(e.toString))
+        }
       }
-    }
 }
