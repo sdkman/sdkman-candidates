@@ -12,7 +12,7 @@ class CandidatesListController @Inject() (
     cc: ControllerComponents
 ) extends AbstractController(cc) {
 
-  def list() = Action.async { _ =>
+  def list(): Action[AnyContent] = Action.async { _ =>
     candidatesRepo.findAllCandidates().map { candidates =>
       Ok {
         views.txt.candidate_list {

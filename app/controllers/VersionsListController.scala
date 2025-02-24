@@ -25,7 +25,7 @@ class VersionsListController @Inject() (
       platformId: String,
       current: Option[String],
       installed: Option[String]
-  ) =
+  ): Action[AnyContent] =
     Action.async(parse.anyContent) { _ =>
       candidatesRepo.findCandidate(candidate).flatMap { _ =>
         versionsRepo
