@@ -28,6 +28,7 @@ class VersionsListController @Inject() (
   ): Action[AnyContent] =
     Action.async(parse.anyContent) { _ =>
       candidatesRepo.findCandidate(candidate).flatMap { _ =>
+        //TODO: cut over to StateApi
         versionsRepo
           .findAllVersionsByCandidatePlatform(candidate, Platform(platformId).distribution)
           .map { versions =>
