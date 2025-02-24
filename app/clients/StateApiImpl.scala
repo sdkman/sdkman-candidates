@@ -2,7 +2,7 @@ package clients
 
 import io.sdkman.repos.Version
 import play.api.libs.json.{JsError, JsSuccess}
-import utils.{JsonConverters, RequestBuilder}
+import utils.JsonConverters
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
