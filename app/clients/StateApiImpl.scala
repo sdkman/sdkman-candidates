@@ -9,7 +9,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait StateApi {
-  def findVersionsByCandidateAndPlatform(
+
+  def findVisibleVersionsByCandidateAndPlatform(
       candidate: String,
       platform: String
   ): Future[Seq[Version]]
@@ -18,7 +19,7 @@ trait StateApi {
 @Singleton
 class StateApiImpl @Inject() (requestBuilder: RequestBuilder) extends StateApi with JsonConverters {
 
-  def findVersionsByCandidateAndPlatform(
+  override def findVisibleVersionsByCandidateAndPlatform(
       candidate: String,
       platform: String
   ): Future[Seq[Version]] =

@@ -11,13 +11,12 @@ object StateApiStubs {
   def stubVersions(
       candidate: String,
       distribution: String,
-      hidden: Boolean,
       versions: Seq[Version]
   ): Unit =
     stubFor(
       get(urlPathEqualTo(s"/versions/$candidate"))
         .withQueryParam("distribution", equalTo(distribution))
-        .withQueryParam("hidden", equalTo(hidden.toString))
+        .withQueryParam("includeHidden", equalTo(false.toString))
         .willReturn(
           aResponse()
             .withBody(Json.toJson(versions).toString)

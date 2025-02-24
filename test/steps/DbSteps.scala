@@ -91,7 +91,6 @@ class DbSteps extends ScalaDsl with EN with Matchers {
       StateApiStubs.stubVersions(
         candidate = candidate,
         distribution = platform,
-        hidden = false,
         versions = platformVersions.sortBy(_.version)
       )
     }
@@ -101,7 +100,6 @@ class DbSteps extends ScalaDsl with EN with Matchers {
     StateApiStubs.stubVersions(
       candidate = candidate,
       distribution = "UNIVERSAL",
-      hidden = false,
       versions = Seq.empty[Version]
     )
   }

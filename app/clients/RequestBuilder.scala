@@ -19,11 +19,10 @@ class RequestBuilder @Inject() (config: Configuration, ws: WSClient) {
 
   def versionsByCandidatePlatformRequest(
       candidate: String,
-      platform: String,
-      hidden: Boolean = false
+      platform: String
   ): WSRequest =
     ws.url(s"$stateApi/versions/$candidate")
-      .withQueryStringParameters(("distribution", platform), ("hidden", hidden.toString))
+      .withQueryStringParameters(("distribution", platform), ("includeHidden", false.toString))
       .addHttpHeaders("Accept" -> "application/json")
       .withRequestTimeout(1500.millis)
 }
