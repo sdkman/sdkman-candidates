@@ -88,11 +88,21 @@ class DbSteps extends ScalaDsl with EN with Matchers {
     val candidate = versions.headOption.map(_.candidate).getOrElse("none")
     Mongo.insertVersions(versions)
     versions.groupBy(_.platform).map { case (platform, platformVersions) =>
-      StateApiStubs.stubVersions(candidate, platform, platformVersions.sortBy(_.version))
+      StateApiStubs.stubVersions(
+        candidate = candidate,
+        distribution = platform,
+        hidden = false,
+        versions = platformVersions.sortBy(_.version)
+      )
     }
   }
 
   And("""^no Versions for (.*)$""") { (candidate: String) =>
-    StateApiStubs.stubVersions(candidate, distribution = "UNIVERSAL", versions = Seq.empty[Version])
+    StateApiStubs.stubVersions(
+      candidate = candidate,
+      distribution = "UNIVERSAL",
+      hidden = false,
+      versions = Seq.empty[Version]
+    )
   }
 }
