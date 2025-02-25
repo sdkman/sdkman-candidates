@@ -23,14 +23,4 @@ object StateApiStubs {
             .withStatus(200)
         )
     )
-
-  def stubVersions(candidate: String, versions: Seq[Version]): Unit =
-    stubFor(
-      get(urlPathEqualTo(s"/versions/$candidate"))
-        .willReturn(
-          aResponse()
-            .withBody(Json.toJson(versions).toString)
-            .withStatus(200)
-        )
-    )
 }
