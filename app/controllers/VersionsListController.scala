@@ -42,16 +42,16 @@ class VersionsListController @Inject() (
       )
 
       (for {
-        candidate <- OptionT(candidatesRepo.findCandidate(candidateId))
+        candidate         <- OptionT(candidatesRepo.findCandidate(candidateId))
         universalVersions <- OptionT.liftF(universalVersionsF)
-        platformVersions <- OptionT.liftF(platformVersionsF)
+        platformVersions  <- OptionT.liftF(platformVersionsF)
         allVersions = universalVersions ++ platformVersions
       } yield {
         import cats.syntax.show._
 
         def flattenNonEmpty(os: Option[String]) = os.filter(_.nonEmpty)
 
-        val rowCount = asRowCount(allVersions.length)
+        val rowCount   = asRowCount(allVersions.length)
         val upperBound = rowCount * DefaultColumnCount
         val padded = pad(
           items(
@@ -71,6 +71,6 @@ class VersionsListController @Inject() (
         } yield VersionRow(col1, col2, col3, col4).show
 
         Ok(views.txt.version_list(candidate.name, rows))
-      }).getOrElseF(Future.failed(new RuntimeException("not found")))
+      }).getOrElseF(Future.successful(NotFound))
     }
 }
