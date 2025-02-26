@@ -126,4 +126,25 @@ class DbSteps extends ScalaDsl with EN with Matchers {
         versions = Seq.empty[Version]
       )
   }
+
+  And("""^the Version on the remote service$""") { versionsTable: DataTable =>
+    val version = versionsTable.toVersions.head
+    StateApiStubs.stubVersionForCandidateAndDistribution(
+      candidate = version.candidate,
+      version = version.version,
+      distribution = version.platform,
+      url = version.url,
+      vendor = version.vendor.filter(_.nonEmpty)
+    )
+  }
+
+  And("""^no Version for (.*) (.*) (.*) of platform (.*) on the remote service$""") {
+    (candidate: String, version: String, vendor: String, platform: String) =>
+      StateApiStubs.stubNoVersionForCandidateAndDistribution(
+        candidate = candidate,
+        version = version,
+        distribution = platform,
+        vendor = Option(vendor).filterNot(_.isBlank)
+      )
+  }
 }
