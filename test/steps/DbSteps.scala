@@ -56,8 +56,8 @@ class DbSteps extends ScalaDsl with EN with Matchers {
     Mongo.insertCandidates(candidatesTable.toCandidates)
   }
 
-  And("""the (.*) Versions (.*) thru (.*)""") {
-    (candidate: String, startVersion: String, endVersion: String) =>
+  And("""^the (.*) (.*) Versions (.*) thru (.*)$""") {
+    (platform: String, candidate: String, startVersion: String, endVersion: String) =>
       val startSegs = startVersion.split("\\.")
       val endSegs   = endVersion.split("\\.")
 
@@ -70,17 +70,34 @@ class DbSteps extends ScalaDsl with EN with Matchers {
       val startPatch = startSegs.last.toInt
       val endPatch   = endSegs.last.toInt
 
-      for (patch <- startPatch to endPatch) {
-        val version = s"${startSegs.take(2).mkString(".")}.$patch"
-        Mongo.insertVersion(
-          Version(
-            candidate,
-            version,
-            "UNIVERSAL",
-            s"https://downloads/$candidate/$version/$candidate-$version.zip"
-          )
-        )
-      }
+      World.candidate = candidate
+      val versions = for {
+        patch <- (startPatch to endPatch).toList
+        patchVersion = s"${startSegs.take(2).mkString(".")}.$patch"
+      } yield Version(
+        candidate,
+        patchVersion,
+        platform,
+        s"https://downloads/$candidate/$patchVersion/$candidate-$patchVersion.zip"
+      )
+      World.remoteVersions = World.remoteVersions ++ versions
+  }
+
+  And("""^these Versions are available on the remote service$""") {
+    Mongo.insertVersions(World.remoteVersions)
+
+    val visibleVersions = World.remoteVersions.filter(_.visible.getOrElse(true))
+    visibleVersions.groupBy(_.candidate).foreach {
+      case (candidate: String, candidateVersions: Seq[Version]) =>
+        candidateVersions.groupBy(_.platform).foreach {
+          case (platform: String, candidateVersionsByPlatform: Seq[Version]) =>
+            StateApiStubs.stubVersionsForCandidateAndDistribution(
+              candidate = candidate,
+              distribution = platform,
+              versions = candidateVersionsByPlatform.sortBy(_.version)
+            )
+        }
+    }
   }
 
   And("""^the Versions$""") { versionsTable: DataTable =>
@@ -92,7 +109,7 @@ class DbSteps extends ScalaDsl with EN with Matchers {
       case (candidate: String, candidateVersions: Seq[Version]) =>
         candidateVersions.groupBy(_.platform).foreach {
           case (platform: String, candidateVersionsByPlatform: Seq[Version]) =>
-            StateApiStubs.stubVersions(
+            StateApiStubs.stubVersionsForCandidateAndDistribution(
               candidate = candidate,
               distribution = platform,
               versions = candidateVersionsByPlatform.sortBy(_.version)
@@ -101,11 +118,12 @@ class DbSteps extends ScalaDsl with EN with Matchers {
     }
   }
 
-  And("""^no Versions for (.*) of platform (.*)$""") { (candidate: String, platform: String) =>
-    StateApiStubs.stubVersions(
-      candidate = candidate,
-      distribution = platform,
-      versions = Seq.empty[Version]
-    )
+  And("""^no Versions for (.*) of platform (.*) on the remote service$""") {
+    (candidate: String, platform: String) =>
+      StateApiStubs.stubVersionsForCandidateAndDistribution(
+        candidate = candidate,
+        distribution = platform,
+        versions = Seq.empty[Version]
+      )
   }
 }

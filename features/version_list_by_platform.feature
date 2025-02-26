@@ -95,6 +95,7 @@ Feature: Version List by Platform
     """
 
   Scenario: Show a Version List for a Universal Candidate
+    Given no Versions for scala of platform WINDOWS_64 on the remote service
     When a request is made to /candidates/scala/windowsx64/versions/list
     Then a 200 status code is received
     And the response body is

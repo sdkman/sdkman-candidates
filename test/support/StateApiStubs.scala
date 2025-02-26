@@ -8,7 +8,7 @@ object StateApiStubs {
   import play.api.libs.json._
   implicit val versionWrites: Writes[Version] = Json.writes[Version]
 
-  def stubVersions(
+  def stubVersionsForCandidateAndDistribution(
       candidate: String,
       distribution: String,
       versions: Seq[Version]
@@ -16,7 +16,6 @@ object StateApiStubs {
     stubFor(
       get(urlPathEqualTo(s"/versions/$candidate"))
         .withQueryParam("distribution", equalTo(distribution))
-        .withQueryParam("includeHidden", equalTo(false.toString))
         .willReturn(
           aResponse()
             .withBody(Json.toJson(versions).toString)

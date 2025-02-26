@@ -192,7 +192,7 @@ Feature: Java Version List by Vendor
 
   Scenario: Only local versions are displayed
     Given the installed Versions 10.0.2-vendor
-    And no Versions for java of platform LINUX_64
+    And no Versions for java of platform LINUX_64 on the remote service
     When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
@@ -215,7 +215,7 @@ Feature: Java Version List by Vendor
     """
 
   Scenario: No local or remote versions are displayed
-    Given no Versions for java of platform LINUX_64
+    Given no Versions for java of platform LINUX_64 on the remote service
     When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
