@@ -1,5 +1,9 @@
 package controllers
 
+import cats.data.OptionT
+import cats.implicits._
+import clients.StateApiImpl
+
 import javax.inject.Inject
 import ordering.VersionItemOrdering
 import play.api.mvc._
@@ -8,9 +12,10 @@ import repos.{CandidatesRepository, VersionsRepository}
 import utils.{Platform, VersionListProperties}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class VersionsListController @Inject() (
-    versionsRepo: VersionsRepository,
+    stateApi: StateApiImpl,
     candidatesRepo: CandidatesRepository,
     cc: ControllerComponents
 ) extends AbstractController(cc)
@@ -21,38 +26,51 @@ class VersionsListController @Inject() (
     with RowCountCalculator {
 
   def list(
-      candidate: String,
+      candidateId: String,
       platformId: String,
       current: Option[String],
       installed: Option[String]
   ): Action[AnyContent] =
     Action.async(parse.anyContent) { _ =>
-      candidatesRepo.findCandidate(candidate).flatMap { _ =>
-        //TODO: cut over to StateApi
-        versionsRepo
-          .findAllVersionsByCandidatePlatform(candidate, Platform(platformId).distribution)
-          .map { versions =>
-            import cats.syntax.show._
+      val universalVersionsF = stateApi.findVisibleVersionsByCandidateAndPlatform(
+        candidateId,
+        Platform.Universal.distribution
+      )
+      val platformVersionsF = stateApi.findVisibleVersionsByCandidateAndPlatform(
+        candidateId,
+        Platform(platformId).distribution
+      )
 
-            def flat(os: Option[String]) = os.filter(_.nonEmpty)
+      (for {
+        candidate <- OptionT(candidatesRepo.findCandidate(candidateId))
+        universalVersions <- OptionT.liftF(universalVersionsF)
+        platformVersions <- OptionT.liftF(platformVersionsF)
+        allVersions = universalVersions ++ platformVersions
+      } yield {
+        import cats.syntax.show._
 
-            val rowCount   = asRowCount(versions.length)
-            val upperBound = rowCount * DefaultColumnCount
-            val padded = pad(
-              items(available(versions), local(flat(installed)), flat(current)).descendingOrder,
-              upperBound
-            )
-            val rows: Seq[String] = for {
-              i <- 0 until rowCount
-              col1 = padded(i + 0 * rowCount)
-              col2 = padded(i + 1 * rowCount)
-              col3 = padded(i + 2 * rowCount)
-              col4 = padded(i + 3 * rowCount)
+        def flattenNonEmpty(os: Option[String]) = os.filter(_.nonEmpty)
 
-            } yield VersionRow(col1, col2, col3, col4).show
+        val rowCount = asRowCount(allVersions.length)
+        val upperBound = rowCount * DefaultColumnCount
+        val padded = pad(
+          items(
+            available(allVersions),
+            local(flattenNonEmpty(installed)),
+            flattenNonEmpty(current)
+          ).descendingOrder,
+          upperBound
+        )
+        val rows: Seq[String] = for {
+          i <- 0 until rowCount
+          col1 = padded(i + 0 * rowCount)
+          col2 = padded(i + 1 * rowCount)
+          col3 = padded(i + 2 * rowCount)
+          col4 = padded(i + 3 * rowCount)
 
-            Ok(views.txt.version_list(candidate.capitalize, rows))
-          }
-      }
+        } yield VersionRow(col1, col2, col3, col4).show
+
+        Ok(views.txt.version_list(candidate.name, rows))
+      }).getOrElseF(Future.failed(new RuntimeException("not found")))
     }
 }

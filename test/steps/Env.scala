@@ -23,6 +23,8 @@ class Env extends ScalaDsl with Logging {
     WireMock.reset()
     World.currentVersion = ""
     World.installedVersions = List.empty
+    World.candidate = ""
+    World.remoteVersions = List.empty
   }
 
   sys.addShutdownHook {

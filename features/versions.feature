@@ -31,7 +31,7 @@ Feature: Versions
     Given the Candidate
       | candidate | name      | description             | default | websiteUrl             | distribution   |
       | micronaut | Micronaut | The Micronaut Framework |         | http://micronaut.io    | LINUX_64      |
-    And no Versions for micronaut of platform LINUX_64
+    And no Versions for micronaut of platform LINUX_64 on the remote service
     When a request is made to /candidates/micronaut/linuxx64/versions/all
     Then a 200 status code is received
     And the response body is ""
