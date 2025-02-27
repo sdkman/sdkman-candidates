@@ -1,6 +1,6 @@
 package utils
 
-import clients.Version
+import domain.Version
 
 trait JsonConverters {
   import play.api.libs.json._
