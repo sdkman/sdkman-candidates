@@ -13,7 +13,7 @@ import scala.concurrent.Future
 case class StateApiVersion(
     candidate: String,
     version: String,
-    distribution: String,
+    platform: String,
     url: String,
     visible: Boolean,
     vendor: Option[String]

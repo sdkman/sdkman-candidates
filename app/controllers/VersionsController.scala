@@ -20,7 +20,7 @@ class VersionsController @Inject() (
         val platform = candidateO
           .map(_.distribution)
           .filter(_ == "UNIVERSAL")
-          .getOrElse(Platform(platformId).distribution)
+          .getOrElse(Platform(platformId).name)
 
         stateApi.findVisibleVersionsByCandidateAndPlatform(candidate, platform).map { versions =>
           Ok(versions.map(_.version).mkString(","))
