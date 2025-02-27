@@ -8,20 +8,20 @@ Feature: Version List by Platform
       | micronaut | Micronaut | Micronaut framework | 2.0.0      | https://micronaut.io/       | MIXED             |
 
     And the Versions
-      | candidate | version      | vendor | platform   | url                                                                                       |
-      | java      | 8u111-open   | open   | LINUX_64   | http://download.oracle.com/otn-pub/java/jdk/8u111-b14/jdk-8u111-linux-x64.tar.gz          |
-      | java      | 8u121-open   | open   | LINUX_64   | http://download.oracle.com/otn-pub/java/jdk/8u121-b14/jdk-8u121-linux-x64.tar.gz          |
-      | java      | 8u131-open   | open   | LINUX_64   | http://download.oracle.com/otn-pub/java/jdk/8u131-b14/jdk-8u131-linux-x64.tar.gz          |
-      | java      | 9ea163-open  | open   | LINUX_64   | http://download.java.net/java/jdk9/archive/163/binaries/jdk-9-ea+163_linux-x64_bin.tar.gz |
-      | java      | 8u131-open   | open   | MAC_OSX    | http://download.oracle.com/otn-pub/java/jdk/8u131-b14/jdk-8u131-osx-x64.tar.gz            |
-      | java      | 9ea163-open  | open   | MAC_OSX    | http://download.java.net/java/jdk9/archive/163/binaries/jdk-9-ea+163_osx-x64_bin.tar.gz   |
-      | java      | 8u111-open   | open   | WINDOWS_64 | http://download.oracle.com/otn-pub/java/jdk/8u111-b14/jdk-8u111-windows-x64.tar.gz        |
-      | java      | 8u121-open   | open   | WINDOWS_64 | http://download.oracle.com/otn-pub/java/jdk/8u121-b14/jdk-8u121-windows-x64.tar.gz        |
-      | scala     | 2.12.6       |        | UNIVERSAL  | http://dl/scala/2.12.0/scala-2.12.0.zip                                                   |
-      | micronaut | 2.0.0        |        | LINUX_64   | http://dl/micronaut/2.0.0/mn-1.3.5-linux.zip                                              |
-      | micronaut | 2.0.0        |        | MAC_OSX    | http://dl/micronaut/2.0.0/mn-1.3.5-osx.zip                                                |
-      | micronaut | 2.0.0        |        | WINDOWS_64 | http://dl/micronaut/2.0.0/mn-1.3.5-windows.zip                                            |
-      | micronaut | 1.3.5        |        | UNIVERSAL  | http://dl/micronaut/1.3.5/mn-1.3.5.zip                                                    |
+      | candidate | version     | vendor | platform    | url                                                                                       |
+      | java      | 8u111-open  | open   | LINUX_X64   | http://download.oracle.com/otn-pub/java/jdk/8u111-b14/jdk-8u111-linux-x64.tar.gz          |
+      | java      | 8u121-open  | open   | LINUX_X64   | http://download.oracle.com/otn-pub/java/jdk/8u121-b14/jdk-8u121-linux-x64.tar.gz          |
+      | java      | 8u131-open  | open   | LINUX_X64   | http://download.oracle.com/otn-pub/java/jdk/8u131-b14/jdk-8u131-linux-x64.tar.gz          |
+      | java      | 9ea163-open | open   | LINUX_X64   | http://download.java.net/java/jdk9/archive/163/binaries/jdk-9-ea+163_linux-x64_bin.tar.gz |
+      | java      | 8u131-open  | open   | MAC_X64     | http://download.oracle.com/otn-pub/java/jdk/8u131-b14/jdk-8u131-osx-x64.tar.gz            |
+      | java      | 9ea163-open | open   | MAC_X64     | http://download.java.net/java/jdk9/archive/163/binaries/jdk-9-ea+163_osx-x64_bin.tar.gz   |
+      | java      | 8u111-open  | open   | WINDOWS_X64 | http://download.oracle.com/otn-pub/java/jdk/8u111-b14/jdk-8u111-windows-x64.tar.gz        |
+      | java      | 8u121-open  | open   | WINDOWS_X64 | http://download.oracle.com/otn-pub/java/jdk/8u121-b14/jdk-8u121-windows-x64.tar.gz        |
+      | scala     | 2.12.6      |        | UNIVERSAL   | http://dl/scala/2.12.0/scala-2.12.0.zip                                                   |
+      | micronaut | 2.0.0       |        | LINUX_X64   | http://dl/micronaut/2.0.0/mn-1.3.5-linux.zip                                              |
+      | micronaut | 2.0.0       |        | MAC_X64     | http://dl/micronaut/2.0.0/mn-1.3.5-osx.zip                                                |
+      | micronaut | 2.0.0       |        | WINDOWS_X64 | http://dl/micronaut/2.0.0/mn-1.3.5-windows.zip                                            |
+      | micronaut | 1.3.5       |        | UNIVERSAL   | http://dl/micronaut/1.3.5/mn-1.3.5.zip                                                    |
 
   Scenario: Show a Version List of a Platform Specific Linux 64 Candidate
     When a request is made to /candidates/java/linuxx64/versions/list
@@ -95,7 +95,7 @@ Feature: Version List by Platform
     """
 
   Scenario: Show a Version List for a Universal Candidate
-    Given no Versions for scala of platform WINDOWS_64 on the remote service
+    Given no Versions for scala of platform WINDOWS_X64 on the remote service
     When a request is made to /candidates/scala/windowsx64/versions/list
     Then a 200 status code is received
     And the response body is
