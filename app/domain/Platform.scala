@@ -36,9 +36,9 @@ object Platform {
   val FreeBSD      = Platform("FREE_BSD", "FreeBSD")
   val SunOS        = Platform("SUN_OS", "Solaris")
 
-  val Universal    = Platform("UNIVERSAL", "Universal")
+  val Universal = Platform("UNIVERSAL", "Universal")
 
-  //fallback to UNIVERSAL for exotic (unsupported) platforms
-  //allows exotic platforms to install only UNIVERSAL candidates
+  // fallback to UNIVERSAL for exotic (unsupported) platforms
+  // allows exotic platforms to install only UNIVERSAL candidates
   val Exotic = Platform("UNIVERSAL", "Exotic")
 }

@@ -18,8 +18,8 @@ class ValidationController @Inject() (
   def validate(candidate: String, versionVendor: String, platformId: String): Action[AnyContent] =
     Action.async(parse.anyContent) { _ =>
       val versionParts = versionVendor.split("-")
-      val version = versionParts(0)
-      val maybeVendor = versionParts.lift(1)
+      val version      = versionParts(0)
+      val maybeVendor  = versionParts.lift(1)
       val maybeUniversalF =
         stateApi.findVersionByCandidateAndPlatform(
           candidate,
