@@ -1,7 +1,6 @@
 package clients
 
 import cats.implicits.{catsSyntaxOptionId, none}
-import io.sdkman.repos.Version
 import play.api.http.Status
 import play.api.libs.json.{JsError, JsSuccess}
 import utils.JsonConverters
@@ -24,7 +23,7 @@ trait StateApi {
   def findVisibleVersionsByCandidateAndPlatform(
       candidate: String,
       platform: String
-  ): Future[Seq[Version]]
+  ): Future[Seq[StateApiVersion]]
 
   def findVersionByCandidateAndPlatform(
       candidate: String,
@@ -40,12 +39,12 @@ class StateApiImpl @Inject() (requestBuilder: RequestBuilder) extends StateApi w
   override def findVisibleVersionsByCandidateAndPlatform(
       candidate: String,
       platform: String
-  ): Future[Seq[Version]] =
+  ): Future[Seq[StateApiVersion]] =
     requestBuilder
       .versionsByCandidatePlatformRequest(candidate, platform)
       .get()
       .flatMap { response =>
-        response.json.validate[List[Version]] match {
+        response.json.validate[List[StateApiVersion]] match {
           case JsSuccess(value, _) => Future.successful(value)
           case JsError(e)          =>
             // TODO: improve error handling
