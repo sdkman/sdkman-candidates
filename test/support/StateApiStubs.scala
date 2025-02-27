@@ -1,6 +1,6 @@
 package support
 
-import clients.StateApiVersion
+import clients.Version
 import com.github.tomakehurst.wiremock.client.WireMock._
 import io.sdkman.repos.{Candidate, Version}
 
@@ -9,8 +9,7 @@ import scala.collection.JavaConverters._
 object StateApiStubs {
 
   import play.api.libs.json._
-  implicit val versionWrites: Writes[Version]                 = Json.writes[Version]
-  implicit val stateApiVersionWrites: Writes[StateApiVersion] = Json.writes[StateApiVersion]
+  implicit val versionWrites: Writes[Version] = Json.writes[Version]
 
   def stubVersionsForCandidateAndPlatform(
       candidate: String,
@@ -46,7 +45,7 @@ object StateApiStubs {
             .withBody(
               Json
                 .toJson(
-                  StateApiVersion(
+                  Version(
                     candidate = candidate,
                     version = version,
                     platform = platform,

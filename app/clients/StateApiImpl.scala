@@ -9,7 +9,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-case class StateApiVersion(
+case class Version(
     candidate: String,
     version: String,
     platform: String,
@@ -23,14 +23,14 @@ trait StateApi {
   def findVisibleVersionsByCandidateAndPlatform(
       candidate: String,
       platform: String
-  ): Future[Seq[StateApiVersion]]
+  ): Future[Seq[Version]]
 
   def findVersionByCandidateAndPlatform(
       candidate: String,
       version: String,
       platform: String,
       vendor: Option[String]
-  ): Future[Option[StateApiVersion]]
+  ): Future[Option[Version]]
 }
 
 @Singleton
@@ -39,12 +39,12 @@ class StateApiImpl @Inject() (requestBuilder: RequestBuilder) extends StateApi w
   override def findVisibleVersionsByCandidateAndPlatform(
       candidate: String,
       platform: String
-  ): Future[Seq[StateApiVersion]] =
+  ): Future[Seq[Version]] =
     requestBuilder
       .versionsByCandidatePlatformRequest(candidate, platform)
       .get()
       .flatMap { response =>
-        response.json.validate[List[StateApiVersion]] match {
+        response.json.validate[List[Version]] match {
           case JsSuccess(value, _) => Future.successful(value)
           case JsError(e)          =>
             // TODO: improve error handling
@@ -57,12 +57,12 @@ class StateApiImpl @Inject() (requestBuilder: RequestBuilder) extends StateApi w
       version: String,
       platform: String,
       vendor: Option[String]
-  ): Future[Option[StateApiVersion]] =
+  ): Future[Option[Version]] =
     requestBuilder
       .versionByCandidatePlatformRequest(candidate, version, platform, vendor)
       .get()
       .flatMap { response =>
-        if (response.status == Status.OK) response.json.validate[StateApiVersion] match {
+        if (response.status == Status.OK) response.json.validate[Version] match {
           case JsSuccess(value, _) => Future.successful(value.some)
           case JsError(e)          => Future.failed(new RuntimeException(e.toString))
         }
