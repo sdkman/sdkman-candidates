@@ -1,7 +1,7 @@
 package controllers
 
-import clients.{StateApiImpl, Version}
-import domain.Platform
+import clients.StateApiImpl
+import domain.{Platform, Version}
 import ordering.JavaVersionItemOrdering
 import play.api.mvc._
 import rendering.{JavaVersionRendering, VersionItemListBuilder}

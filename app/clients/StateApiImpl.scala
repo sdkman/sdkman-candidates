@@ -1,6 +1,7 @@
 package clients
 
 import cats.implicits.{catsSyntaxOptionId, none}
+import domain.Version
 import play.api.http.Status
 import play.api.libs.json.{JsError, JsSuccess}
 import utils.JsonConverters
@@ -8,15 +9,6 @@ import utils.JsonConverters
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-
-case class Version(
-    candidate: String,
-    version: String,
-    platform: String,
-    url: String,
-    visible: Boolean,
-    vendor: Option[String]
-)
 
 trait StateApi {
 
