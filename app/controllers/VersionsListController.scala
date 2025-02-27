@@ -33,11 +33,11 @@ class VersionsListController @Inject() (
     Action.async(parse.anyContent) { _ =>
       val universalVersionsF = stateApi.findVisibleVersionsByCandidateAndPlatform(
         candidateId,
-        Platform.Universal.distribution
+        Platform.Universal.name
       )
       val platformVersionsF = stateApi.findVisibleVersionsByCandidateAndPlatform(
         candidateId,
-        Platform(platformId).distribution
+        Platform(platformId).name
       )
 
       (for {

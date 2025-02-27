@@ -12,14 +12,14 @@ object StateApiStubs {
   implicit val versionWrites: Writes[Version]                 = Json.writes[Version]
   implicit val stateApiVersionWrites: Writes[StateApiVersion] = Json.writes[StateApiVersion]
 
-  def stubVersionsForCandidateAndDistribution(
+  def stubVersionsForCandidateAndPlatform(
       candidate: String,
-      distribution: String,
+      platform: String,
       versions: Seq[Version]
   ): Unit =
     stubFor(
       get(urlPathEqualTo(s"/versions/$candidate"))
-        .withQueryParam("distribution", equalTo(distribution))
+        .withQueryParam("platform", equalTo(platform))
         .willReturn(
           aResponse()
             .withBody(Json.toJson(versions).toString)
@@ -27,15 +27,15 @@ object StateApiStubs {
         )
     )
 
-  def stubVersionForCandidateAndDistribution(
+  def stubVersionForCandidateAndPlatform(
       candidate: String,
       version: String,
-      distribution: String,
+      platform: String,
       url: String,
       vendor: Option[String]
   ): Unit = {
     val queryParams = List(
-      Some("distribution" -> equalTo(distribution)),
+      Some("platform" -> equalTo(platform)),
       vendor.map(v => "vendor" -> equalTo(v))
     ).flatten
     stubFor(
@@ -49,7 +49,7 @@ object StateApiStubs {
                   StateApiVersion(
                     candidate = candidate,
                     version = version,
-                    distribution = distribution,
+                    platform = platform,
                     url = url,
                     vendor = vendor,
                     visible = true
@@ -62,14 +62,14 @@ object StateApiStubs {
     )
   }
 
-  def stubNoVersionForCandidateAndDistribution(
+  def stubNoVersionForCandidateAndPlatform(
       candidate: String,
       version: String,
-      distribution: String,
+      platform: String,
       vendor: Option[String]
   ): Unit = {
     val queryParams = List(
-      Some("distribution" -> equalTo(distribution)),
+      Some("platform" -> equalTo(platform)),
       vendor.map("vendor" -> equalTo(_))
     ).flatten
     stubFor(

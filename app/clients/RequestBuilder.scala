@@ -22,7 +22,7 @@ class RequestBuilder @Inject() (config: Configuration, ws: WSClient) {
       platform: String
   ): WSRequest =
     ws.url(s"$stateApi/versions/$candidate")
-      .withQueryStringParameters("distribution" -> platform)
+      .withQueryStringParameters("platform" -> platform)
       .addHttpHeaders("Accept" -> "application/json")
       .withRequestTimeout(1500.millis)
 
@@ -33,7 +33,7 @@ class RequestBuilder @Inject() (config: Configuration, ws: WSClient) {
       vendor: Option[String]
   ): WSRequest = {
     val queryParams = List(
-      Some("distribution" -> platform),
+      Some("platform" -> platform),
       vendor.map("vendor" -> _)
     ).flatten
     ws.url(s"$stateApi/versions/$candidate/$version")

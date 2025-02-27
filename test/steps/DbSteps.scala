@@ -91,9 +91,9 @@ class DbSteps extends ScalaDsl with EN with Matchers {
       case (candidate: String, candidateVersions: Seq[Version]) =>
         candidateVersions.groupBy(_.platform).foreach {
           case (platform: String, candidateVersionsByPlatform: Seq[Version]) =>
-            StateApiStubs.stubVersionsForCandidateAndDistribution(
+            StateApiStubs.stubVersionsForCandidateAndPlatform(
               candidate = candidate,
-              distribution = platform,
+              platform = platform,
               versions = candidateVersionsByPlatform.sortBy(_.version)
             )
         }
@@ -109,9 +109,9 @@ class DbSteps extends ScalaDsl with EN with Matchers {
       case (candidate: String, candidateVersions: Seq[Version]) =>
         candidateVersions.groupBy(_.platform).foreach {
           case (platform: String, candidateVersionsByPlatform: Seq[Version]) =>
-            StateApiStubs.stubVersionsForCandidateAndDistribution(
+            StateApiStubs.stubVersionsForCandidateAndPlatform(
               candidate = candidate,
-              distribution = platform,
+              platform = platform,
               versions = candidateVersionsByPlatform.sortBy(_.version)
             )
         }
@@ -120,19 +120,19 @@ class DbSteps extends ScalaDsl with EN with Matchers {
 
   And("""^no Versions for (.*) of platform (.*) on the remote service$""") {
     (candidate: String, platform: String) =>
-      StateApiStubs.stubVersionsForCandidateAndDistribution(
+      StateApiStubs.stubVersionsForCandidateAndPlatform(
         candidate = candidate,
-        distribution = platform,
+        platform = platform,
         versions = Seq.empty[Version]
       )
   }
 
   And("""^the Version on the remote service$""") { versionsTable: DataTable =>
     val version = versionsTable.toVersions.head
-    StateApiStubs.stubVersionForCandidateAndDistribution(
+    StateApiStubs.stubVersionForCandidateAndPlatform(
       candidate = version.candidate,
       version = version.version,
-      distribution = version.platform,
+      platform = version.platform,
       url = version.url,
       vendor = version.vendor.filter(_.nonEmpty)
     )
@@ -140,10 +140,10 @@ class DbSteps extends ScalaDsl with EN with Matchers {
 
   And("""^no Version for (.*) (.*) (.*) of platform (.*) on the remote service$""") {
     (candidate: String, version: String, vendor: String, platform: String) =>
-      StateApiStubs.stubNoVersionForCandidateAndDistribution(
+      StateApiStubs.stubNoVersionForCandidateAndPlatform(
         candidate = candidate,
         version = version,
-        distribution = platform,
+        platform = platform,
         vendor = Option(vendor).filterNot(_.isBlank)
       )
   }
