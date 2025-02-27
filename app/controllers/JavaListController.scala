@@ -31,7 +31,7 @@ class JavaListController @Inject() (
         platform = Platform(platformId)
         versions <- stateApi.findVisibleVersionsByCandidateAndPlatform(
           Candidate,
-          platform.distribution
+          platform.name
         )
         allLocalVersions: Seq[String] = installed.split(",")
         localInstalledVersions        = findAllNotEndingWith(allLocalVersions, vendors.keySet)
@@ -47,7 +47,7 @@ class JavaListController @Inject() (
             sortedVendorToItems + localInstalledItems
           }
         defaultVersion = candidateO.flatMap(_.default).getOrElse("17.0.0-tem")
-      } yield Ok(views.txt.java_version_list(combinedItems, defaultVersion, platform.name))
+      } yield Ok(views.txt.java_version_list(combinedItems, defaultVersion, platform.description))
     }
 
   private[controllers] def findAllNotEndingWith(all: Seq[String], endings: Set[String]) =

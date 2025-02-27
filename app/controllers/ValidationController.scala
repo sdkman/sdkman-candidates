@@ -24,14 +24,14 @@ class ValidationController @Inject() (
         stateApi.findVersionByCandidateAndPlatform(
           candidate,
           version,
-          Platform.Universal.distribution,
+          Platform.Universal.name,
           maybeVendor
         )
       val maybePlatformSpecificF =
         stateApi.findVersionByCandidateAndPlatform(
           candidate,
           version,
-          Platform(platformId).distribution,
+          Platform(platformId).name,
           maybeVendor
         )
       for {

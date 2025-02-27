@@ -1,6 +1,6 @@
 package utils
 
-case class Platform(distribution: String, name: String)
+case class Platform(name: String, description: String)
 
 object Platform {
 
