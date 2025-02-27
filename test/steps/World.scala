@@ -1,6 +1,6 @@
 package steps
 
-import io.sdkman.repos.Version
+import domain.Version
 import scalaj.http._
 
 // WARNING: here be heinous mutation sins...

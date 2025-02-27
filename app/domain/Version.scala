@@ -5,6 +5,6 @@ case class Version(
     version: String,
     platform: String,
     url: String,
-    visible: Boolean,
+    visible: Option[Boolean],
     vendor: Option[String]
 )

@@ -2,7 +2,8 @@ package steps
 
 import cucumber.api.scala.{EN, ScalaDsl}
 import io.cucumber.datatable.DataTable
-import io.sdkman.repos.{Candidate, Version}
+import domain.Version
+import io.sdkman.repos.Candidate
 import org.scalatest.matchers.should.Matchers
 import support.{Mongo, StateApiStubs}
 
@@ -78,7 +79,9 @@ class DbSteps extends ScalaDsl with EN with Matchers {
         candidate,
         patchVersion,
         platform,
-        s"https://downloads/$candidate/$patchVersion/$candidate-$patchVersion.zip"
+        s"https://downloads/$candidate/$patchVersion/$candidate-$patchVersion.zip",
+        visible = Some(true),
+        vendor = None
       )
       World.remoteVersions = World.remoteVersions ++ versions
   }
