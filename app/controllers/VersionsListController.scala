@@ -3,14 +3,13 @@ package controllers
 import cats.data.OptionT
 import cats.implicits._
 import clients.StateApiImpl
-
-import javax.inject.Inject
 import ordering.VersionItemOrdering
 import play.api.mvc._
 import rendering.{RowCountCalculator, VersionItemListBuilder, VersionRendering, VersionRow}
-import repos.{CandidatesRepository, VersionsRepository}
+import repos.CandidatesRepository
 import utils.{Platform, VersionListProperties}
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
