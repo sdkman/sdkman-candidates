@@ -1,4 +1,4 @@
-package utils
+package domain
 
 case class Platform(name: String, description: String)
 

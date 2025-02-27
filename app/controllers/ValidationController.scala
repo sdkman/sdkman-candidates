@@ -2,8 +2,8 @@ package controllers
 
 import clients.StateApiImpl
 import com.google.inject.Inject
+import domain.Platform
 import play.api.mvc._
-import utils.Platform
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
