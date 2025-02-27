@@ -1,6 +1,6 @@
 package rendering
 
-import clients.Version
+import domain.Version
 
 trait VersionItemListBuilder {
 

@@ -1,7 +1,7 @@
 package support
 
-import clients.Version
 import com.github.tomakehurst.wiremock.client.WireMock._
+import domain.Version
 import io.sdkman.repos.{Candidate, Version}
 
 import scala.collection.JavaConverters._
