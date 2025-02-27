@@ -2,7 +2,6 @@ package support
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import domain.Version
-import io.sdkman.repos.{Candidate, Version}
 
 import scala.collection.JavaConverters._
 
@@ -51,7 +50,7 @@ object StateApiStubs {
                     platform = platform,
                     url = url,
                     vendor = vendor,
-                    visible = true
+                    visible = Some(true)
                   )
                 )
                 .toString
