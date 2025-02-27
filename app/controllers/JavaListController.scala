@@ -1,11 +1,12 @@
 package controllers
 
 import clients.{StateApiImpl, StateApiVersion}
+import domain.Platform
 import ordering.JavaVersionItemOrdering
 import play.api.mvc._
 import rendering.{JavaVersionRendering, VersionItemListBuilder}
 import repos.CandidatesRepository
-import utils.{Platform, VersionListProperties}
+import utils.VersionListProperties
 
 import javax.inject.Inject
 import scala.collection.immutable.ListMap
