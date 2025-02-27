@@ -21,8 +21,7 @@ class RequestBuilder @Inject() (config: Configuration, ws: WSClient) {
       candidate: String,
       platform: String
   ): WSRequest =
-    ws.url(s"$stateApi/versions/$candidate")
-      .withQueryStringParameters("platform" -> platform)
+    ws.url(s"$stateApi/versions/$candidate/$platform")
       .addHttpHeaders("Accept" -> "application/json")
       .withRequestTimeout(1500.millis)
 
