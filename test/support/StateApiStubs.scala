@@ -16,8 +16,7 @@ object StateApiStubs {
       versions: Seq[Version]
   ): Unit =
     stubFor(
-      get(urlPathEqualTo(s"/versions/$candidate"))
-        .withQueryParam("platform", equalTo(platform))
+      get(urlPathEqualTo(s"/versions/$candidate/$platform"))
         .willReturn(
           aResponse()
             .withBody(Json.toJson(versions).toString)
