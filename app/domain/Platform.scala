@@ -25,14 +25,14 @@ object Platform {
 
   private val LegacyWindowsPattern = "(cygwin|mingw64|msys).*".r
 
-  val LinuxX32     = Platform("LINUX_32", "Linux 32bit")
-  val LinuxX64     = Platform("LINUX_64", "Linux 64bit")
+  val LinuxX32     = Platform("LINUX_X32", "Linux 32bit")
+  val LinuxX64     = Platform("LINUX_X64", "Linux 64bit")
   val LinuxARM32SF = Platform("LINUX_ARM32SF", "Linux ARM 32bit Soft Float")
   val LinuxARM32HF = Platform("LINUX_ARM32HF", "Linux ARM 32bit Hard Float")
   val LinuxARM64   = Platform("LINUX_ARM64", "Linux ARM 64bit")
-  val MacX64       = Platform("MAC_OSX", "macOS 64bit")
+  val MacX64       = Platform("MAC_X64", "macOS 64bit")
   val MacARM64     = Platform("MAC_ARM64", "macOS ARM 64bit")
-  val Windows64    = Platform("WINDOWS_64", "Cygwin")
+  val Windows64    = Platform("WINDOWS_X64", "Cygwin")
   val FreeBSD      = Platform("FREE_BSD", "FreeBSD")
   val SunOS        = Platform("SUN_OS", "Solaris")
 
