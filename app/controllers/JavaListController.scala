@@ -1,7 +1,6 @@
 package controllers
 
-import clients.StateApiImpl
-import io.sdkman.repos.Version
+import clients.{StateApiImpl, StateApiVersion}
 import ordering.JavaVersionItemOrdering
 import play.api.mvc._
 import rendering.{JavaVersionRendering, VersionItemListBuilder}
@@ -53,13 +52,13 @@ class JavaListController @Inject() (
   private[controllers] def findAllNotEndingWith(all: Seq[String], endings: Set[String]) =
     all.filter(name => !endings.exists(ending => name.endsWith(ending)))
 
-  private def vendorKey(version: Version): String = version.vendor.getOrElse("none")
+  private def vendorKey(version: StateApiVersion): String = version.vendor.getOrElse("none")
 
   import cats.syntax.show._
 
   private def toVendorItems(
       vendor: String,
-      versions: Seq[Version],
+      versions: Seq[StateApiVersion],
       installed: Seq[String],
       current: Option[String]
   ): (String, Seq[String]) =
