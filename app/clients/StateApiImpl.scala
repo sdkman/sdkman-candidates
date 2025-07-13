@@ -56,7 +56,9 @@ class StateApiImpl @Inject() (requestBuilder: RequestBuilder) extends StateApi w
       .flatMap { response =>
         if (response.status == Status.OK) response.json.validate[Version] match {
           case JsSuccess(value, _) => Future.successful(value.some)
-          case JsError(e)          => Future.failed(new RuntimeException(e.toString))
+          case JsError(e)          =>
+            // TODO: improve error handling
+            Future.failed(new RuntimeException(e.toString))
         }
         else Future.successful(none)
       }
