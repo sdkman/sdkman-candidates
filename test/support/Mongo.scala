@@ -1,8 +1,9 @@
 package support
 
-import java.util.concurrent.TimeUnit
+import domain.Version
 
-import io.sdkman.repos.{Application, Candidate, Version}
+import java.util.concurrent.TimeUnit
+import io.sdkman.repos.{Application, Candidate}
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
 import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
 import org.mongodb.scala.bson.codecs.Macros._

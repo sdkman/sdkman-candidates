@@ -6,8 +6,10 @@ Feature: Version List
       | scala     | Scala | The Scala Language | 2.12.6  | https://www.scala-lang.org/ | UNIVERSAL    |
 
   Scenario: A single column list of available uninstalled Versions are displayed
-    Given the scala Versions 2.11.1 thru 2.11.8
-    And the scala Versions 2.12.0 thru 2.12.6
+    Given the UNIVERSAL scala Versions 2.11.1 thru 2.11.8
+    And the UNIVERSAL scala Versions 2.12.0 thru 2.12.6
+    And these Versions are available on the remote service
+    And no Versions for scala of platform LINUX_X64 on the remote service
     When a request is made to /candidates/scala/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
@@ -39,10 +41,12 @@ Feature: Version List
     """
 
   Scenario: A multiple column list of available uninstalled Versions are displayed
-    Given the scala Versions 2.9.0 thru 2.9.14
-    And the scala Versions 2.10.0 thru 2.10.14
-    And the scala Versions 2.11.0 thru 2.11.14
-    And the scala Versions 2.12.0 thru 2.12.14
+    Given the UNIVERSAL scala Versions 2.9.0 thru 2.9.14
+    And the UNIVERSAL scala Versions 2.10.0 thru 2.10.14
+    And the UNIVERSAL scala Versions 2.11.0 thru 2.11.14
+    And the UNIVERSAL scala Versions 2.12.0 thru 2.12.14
+    And these Versions are available on the remote service
+    And no Versions for scala of platform LINUX_X64 on the remote service
     When a request is made to /candidates/scala/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
@@ -74,10 +78,12 @@ Feature: Version List
     """
 
   Scenario: Current version is displayed
-    Given the scala Versions 2.9.0 thru 2.9.14
-    And the scala Versions 2.10.0 thru 2.10.14
-    And the scala Versions 2.11.0 thru 2.11.14
-    And the scala Versions 2.12.0 thru 2.12.14
+    Given the UNIVERSAL scala Versions 2.9.0 thru 2.9.14
+    And the UNIVERSAL scala Versions 2.10.0 thru 2.10.14
+    And the UNIVERSAL scala Versions 2.11.0 thru 2.11.14
+    And the UNIVERSAL scala Versions 2.12.0 thru 2.12.14
+    And these Versions are available on the remote service
+    And no Versions for scala of platform LINUX_X64 on the remote service
     And the scala Version 2.12.14 is installed
     And the scala Version 2.12.14 is set as current
     When a request is made to /candidates/scala/linuxx64/versions/list
@@ -110,11 +116,13 @@ Feature: Version List
       |================================================================================
     """
 
-  Scenario: Installed versions are displayed
-    Given the scala Versions 2.9.0 thru 2.9.14
-    And the scala Versions 2.10.0 thru 2.10.14
-    And the scala Versions 2.11.0 thru 2.11.14
-    And the scala Versions 2.12.0 thru 2.12.14
+  Scenario: Installed Versions are displayed
+    Given the UNIVERSAL scala Versions 2.9.0 thru 2.9.14
+    And the UNIVERSAL scala Versions 2.10.0 thru 2.10.14
+    And the UNIVERSAL scala Versions 2.11.0 thru 2.11.14
+    And the UNIVERSAL scala Versions 2.12.0 thru 2.12.14
+    And these Versions are available on the remote service
+    And no Versions for scala of platform LINUX_X64 on the remote service
     And the scala Versions 2.12.14,2.12.13,2.12.12,2.11.14,2.10.14,2.9.14 are installed
     When a request is made to /candidates/scala/linuxx64/versions/list
     Then a 200 status code is received
@@ -146,8 +154,10 @@ Feature: Version List
       |================================================================================
     """
 
-  Scenario: Local versions are displayed
-    Given the scala Versions 2.12.0 thru 2.12.13
+  Scenario: Local Versions are displayed
+    Given the UNIVERSAL scala Versions 2.12.0 thru 2.12.13
+    And these Versions are available on the remote service
+    And no Versions for scala of platform LINUX_X64 on the remote service
     And the scala Versions 2.12.14,2.12.13,2.12.12,2.11.14,2.10.14,2.9.14 are installed
     When a request is made to /candidates/scala/linuxx64/versions/list
     Then a 200 status code is received
@@ -180,10 +190,12 @@ Feature: Version List
     """
 
   Scenario: Version List expands to an arbitrary length
-    Given the scala Versions 2.9.0 thru 2.9.30
-    And the scala Versions 2.10.0 thru 2.10.30
-    And the scala Versions 2.11.0 thru 2.11.30
-    And the scala Versions 2.12.0 thru 2.12.30
+    Given the UNIVERSAL scala Versions 2.9.0 thru 2.9.30
+    And the UNIVERSAL scala Versions 2.10.0 thru 2.10.30
+    And the UNIVERSAL scala Versions 2.11.0 thru 2.11.30
+    And the UNIVERSAL scala Versions 2.12.0 thru 2.12.30
+    And these Versions are available on the remote service
+    And no Versions for scala of platform LINUX_X64 on the remote service
     When a request is made to /candidates/scala/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is

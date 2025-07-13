@@ -1,25 +1,39 @@
 package controllers
 
+import clients.StateApiImpl
 import com.google.inject.Inject
+import domain.Platform
 import play.api.mvc._
-import repos.VersionsRepository
-import utils.Platform
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
-class ValidationController @Inject() (versionsRepo: VersionsRepository, cc: ControllerComponents)
-    extends AbstractController(cc) {
+class ValidationController @Inject() (
+    stateApi: StateApiImpl,
+    cc: ControllerComponents
+) extends AbstractController(cc) {
 
-  val Invalid = "invalid"
-  val Valid   = "valid"
+  private val Invalid = "invalid"
+  private val Valid   = "valid"
 
-  def validate(candidate: String, version: String, platformId: String) =
-    Action.async(parse.anyContent) { implicit request =>
+  def validate(candidate: String, versionVendor: String, platformId: String): Action[AnyContent] =
+    Action.async(parse.anyContent) { _ =>
+      val versionParts = versionVendor.split("-")
+      val version      = versionParts(0)
+      val maybeVendor  = versionParts.lift(1)
       val maybeUniversalF =
-        versionsRepo.findVersion(candidate, version, "UNIVERSAL")
+        stateApi.findVersionByCandidateAndPlatform(
+          candidate,
+          version,
+          Platform.Universal.name,
+          maybeVendor
+        )
       val maybePlatformSpecificF =
-        versionsRepo.findVersion(candidate, version, Platform(platformId).distribution)
+        stateApi.findVersionByCandidateAndPlatform(
+          candidate,
+          version,
+          Platform(platformId).name,
+          maybeVendor
+        )
       for {
         maybeUniversal        <- maybeUniversalF
         maybePlatformSpecific <- maybePlatformSpecificF

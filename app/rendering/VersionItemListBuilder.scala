@@ -1,6 +1,6 @@
 package rendering
 
-import io.sdkman.repos.Version
+import domain.Version
 
 trait VersionItemListBuilder {
 

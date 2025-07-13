@@ -1,19 +1,19 @@
 package controllers
 
-import io.sdkman.repos.Version
-
-import javax.inject.Inject
+import clients.StateApiImpl
+import domain.{Platform, Version}
 import ordering.JavaVersionItemOrdering
 import play.api.mvc._
 import rendering.{JavaVersionRendering, VersionItemListBuilder}
-import repos.{CandidatesRepository, VersionsRepository}
-import utils.{Platform, VersionListProperties}
+import repos.CandidatesRepository
+import utils.VersionListProperties
 
+import javax.inject.Inject
 import scala.collection.immutable.ListMap
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class JavaListController @Inject() (
-    versionsRepo: VersionsRepository,
+    stateApi: StateApiImpl,
     candidatesRepo: CandidatesRepository,
     cc: ControllerComponents
 ) extends AbstractController(cc)
@@ -26,37 +26,28 @@ class JavaListController @Inject() (
 
   def list(platformId: String, current: Option[String], installed: String): Action[AnyContent] =
     Action.async(parse.anyContent) { _ =>
-      val platform = Platform(platformId)
-
-      candidatesRepo.findCandidate(Candidate).flatMap { candidate =>
-        versionsRepo
-          .findAllVisibleVersionsByCandidatePlatform(Candidate, platform.distribution)
-          .map { versions =>
-            val allLocalVersions: Seq[String] = installed.split(",")
-
-            val localInstalledVersions = findAllNotEndingWith(allLocalVersions, vendors.keySet)
-
-            val vendorInstalledVersions = allLocalVersions.diff(localInstalledVersions)
-
-            val vendorsToItems = versions.groupBy(vendorKey).map { case (ven, vs) =>
-              toVendorItems(ven, vs, vendorInstalledVersions.filter(_.endsWith(s"-$ven")), current)
-            }
-
-            val sortedVendorToItems = sortItems(vendorsToItems)
-
-            val combinedItems =
-              localInstalledVersions.headOption.filter(_.trim.nonEmpty).fold(sortedVendorToItems) {
-                _ =>
-                  val localInstalledItems =
-                    toVendorItems("none", Seq.empty, localInstalledVersions, current)
-                  sortedVendorToItems + localInstalledItems
-              }
-
-            val defaultVersion = candidate.flatMap(_.default).getOrElse("17.0.0-tem")
-
-            Ok(views.txt.java_version_list(combinedItems, defaultVersion, platform.name))
+      for {
+        candidateO <- candidatesRepo.findCandidate(Candidate)
+        platform = Platform(platformId)
+        versions <- stateApi.findVisibleVersionsByCandidateAndPlatform(
+          Candidate,
+          platform.name
+        )
+        allLocalVersions: Seq[String] = installed.split(",")
+        localInstalledVersions        = findAllNotEndingWith(allLocalVersions, vendors.keySet)
+        vendorInstalledVersions       = allLocalVersions.diff(localInstalledVersions)
+        vendorsToItems = versions.groupBy(vendorKey).map { case (ven, vs) =>
+          toVendorItems(ven, vs, vendorInstalledVersions.filter(_.endsWith(s"-$ven")), current)
+        }
+        sortedVendorToItems = sortItems(vendorsToItems)
+        combinedItems =
+          localInstalledVersions.headOption.filter(_.trim.nonEmpty).fold(sortedVendorToItems) { _ =>
+            val localInstalledItems =
+              toVendorItems("none", Seq.empty, localInstalledVersions, current)
+            sortedVendorToItems + localInstalledItems
           }
-      }
+        defaultVersion = candidateO.flatMap(_.default).getOrElse("17.0.0-tem")
+      } yield Ok(views.txt.java_version_list(combinedItems, defaultVersion, platform.description))
     }
 
   private[controllers] def findAllNotEndingWith(all: Seq[String], endings: Set[String]) =

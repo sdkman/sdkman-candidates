@@ -1,11 +1,11 @@
 package steps
 
 import cucumber.api.scala.{EN, ScalaDsl}
-import gherkin.formatter.model.DataTableRow
 import io.cucumber.datatable.DataTable
-import io.sdkman.repos.{Candidate, Version}
+import domain.Version
+import io.sdkman.repos.Candidate
 import org.scalatest.matchers.should.Matchers
-import support.Mongo
+import support.{Mongo, StateApiStubs}
 
 class DbSteps extends ScalaDsl with EN with Matchers {
 
@@ -57,8 +57,8 @@ class DbSteps extends ScalaDsl with EN with Matchers {
     Mongo.insertCandidates(candidatesTable.toCandidates)
   }
 
-  And("""the (.*) Versions (.*) thru (.*)""") {
-    (candidate: String, startVersion: String, endVersion: String) =>
+  And("""^the (.*) (.*) Versions (.*) thru (.*)$""") {
+    (platform: String, candidate: String, startVersion: String, endVersion: String) =>
       val startSegs = startVersion.split("\\.")
       val endSegs   = endVersion.split("\\.")
 
@@ -71,20 +71,83 @@ class DbSteps extends ScalaDsl with EN with Matchers {
       val startPatch = startSegs.last.toInt
       val endPatch   = endSegs.last.toInt
 
-      for (patch <- startPatch to endPatch) {
-        val version = s"${startSegs.take(2).mkString(".")}.$patch"
-        Mongo.insertVersion(
-          Version(
-            candidate,
-            version,
-            "UNIVERSAL",
-            s"https://downloads/$candidate/$version/$candidate-$version.zip"
-          )
-        )
-      }
+      World.candidate = candidate
+      val versions = for {
+        patch <- (startPatch to endPatch).toList
+        patchVersion = s"${startSegs.take(2).mkString(".")}.$patch"
+      } yield Version(
+        candidate,
+        patchVersion,
+        platform,
+        s"https://downloads/$candidate/$patchVersion/$candidate-$patchVersion.zip",
+        visible = Some(true),
+        vendor = None
+      )
+      World.remoteVersions = World.remoteVersions ++ versions
+  }
+
+  And("""^these Versions are available on the remote service$""") {
+    Mongo.insertVersions(World.remoteVersions)
+
+    val visibleVersions = World.remoteVersions.filter(_.visible.getOrElse(true))
+    visibleVersions.groupBy(_.candidate).foreach {
+      case (candidate: String, candidateVersions: Seq[Version]) =>
+        candidateVersions.groupBy(_.platform).foreach {
+          case (platform: String, candidateVersionsByPlatform: Seq[Version]) =>
+            StateApiStubs.stubVersionsForCandidateAndPlatform(
+              candidate = candidate,
+              platform = platform,
+              versions = candidateVersionsByPlatform.sortBy(_.version)
+            )
+        }
+    }
   }
 
   And("""^the Versions$""") { versionsTable: DataTable =>
-    Mongo.insertVersions(versionsTable.toVersions)
+    val versions = versionsTable.toVersions
+    Mongo.insertVersions(versions)
+
+    val visibleVersions = versions.filter(_.visible.getOrElse(true))
+    visibleVersions.groupBy(_.candidate).foreach {
+      case (candidate: String, candidateVersions: Seq[Version]) =>
+        candidateVersions.groupBy(_.platform).foreach {
+          case (platform: String, candidateVersionsByPlatform: Seq[Version]) =>
+            StateApiStubs.stubVersionsForCandidateAndPlatform(
+              candidate = candidate,
+              platform = platform,
+              versions = candidateVersionsByPlatform.sortBy(_.version)
+            )
+        }
+    }
+  }
+
+  And("""^no Versions for (.*) of platform (.*) on the remote service$""") {
+    (candidate: String, platform: String) =>
+      StateApiStubs.stubVersionsForCandidateAndPlatform(
+        candidate = candidate,
+        platform = platform,
+        versions = Seq.empty[Version]
+      )
+  }
+
+  And("""^the Version on the remote service$""") { versionsTable: DataTable =>
+    val version = versionsTable.toVersions.head
+    StateApiStubs.stubVersionForCandidateAndPlatform(
+      candidate = version.candidate,
+      version = version.version,
+      platform = version.platform,
+      url = version.url,
+      vendor = version.vendor.filter(_.nonEmpty)
+    )
+  }
+
+  And("""^no Version for (.*) (.*) (.*) of platform (.*) on the remote service$""") {
+    (candidate: String, version: String, vendor: String, platform: String) =>
+      StateApiStubs.stubNoVersionForCandidateAndPlatform(
+        candidate = candidate,
+        version = version,
+        platform = platform,
+        vendor = Option(vendor).filterNot(_.isBlank)
+      )
   }
 }
