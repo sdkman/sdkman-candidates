@@ -10,6 +10,7 @@ object Platform {
     case "linuxarm64"            => LinuxARM64
     case "linuxarm32sf"          => LinuxARM32SF
     case "linuxarm32hf"          => LinuxARM32HF
+    case "linuxriscv64"          => LinuxRISCV64
     case "darwinx64"             => MacX64
     case "darwinarm64"           => MacARM64
     case "windowsx64"            => Windows64
@@ -30,6 +31,7 @@ object Platform {
   val LinuxARM32SF = Platform("LINUX_ARM32SF", "Linux ARM 32bit Soft Float")
   val LinuxARM32HF = Platform("LINUX_ARM32HF", "Linux ARM 32bit Hard Float")
   val LinuxARM64   = Platform("LINUX_ARM64", "Linux ARM 64bit")
+  val LinuxRISCV64 = Platform("LINUX_RISCV64", "Linux RISC-V 64bit")
   val MacX64       = Platform("MAC_OSX", "macOS 64bit")
   val MacARM64     = Platform("MAC_ARM64", "macOS ARM 64bit")
   val Windows64    = Platform("WINDOWS_64", "Cygwin")

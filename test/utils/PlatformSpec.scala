@@ -13,6 +13,7 @@ class PlatformSpec extends AnyWordSpec with Matchers {
       Platform("linuxarm32sf") shouldBe Platform.LinuxARM32SF
       Platform("linuxarm32hf") shouldBe Platform.LinuxARM32HF
       Platform("linuxarm64") shouldBe Platform.LinuxARM64
+      Platform("linuxriscv64") shouldBe Platform.LinuxRISCV64
 
       Platform("windowsx64") shouldBe Platform.Windows64
       Platform("cygwin_nt-6.1") shouldBe Platform.Windows64
