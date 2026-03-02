@@ -8,7 +8,7 @@ name := "sdkman-candidates"
 
 Docker / packageName := "sdkman/sdkman-candidates"
 
-dockerBaseImage := "openjdk:11"
+dockerBaseImage := "eclipse-temurin:11"
 
 dockerExposedPorts ++= Seq(9000)
 
