@@ -27,7 +27,7 @@ resolvers ++= Seq(
   "jitpack" at "https://jitpack.io"
 )
 
-libraryDependencies ++= Seq(
+library Dependencies ++= Seq(
   guice,
   ws,
   "com.github.sdkman" % "sdkman-mongodb-persistence" % "1.9",
