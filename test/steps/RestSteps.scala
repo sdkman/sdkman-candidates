@@ -1,6 +1,7 @@
 package steps
 
 import cucumber.api.scala.{EN, ScalaDsl}
+import org.scalatest.AppendedClues
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 import scalaj.http.Http
@@ -8,7 +9,7 @@ import steps.World._
 
 import scala.annotation.tailrec
 
-class RestSteps extends ScalaDsl with EN with Matchers {
+class RestSteps extends ScalaDsl with EN with Matchers with AppendedClues {
 
   And("""^the scala Version (.*) is set as current$""") { version: String =>
     currentVersion = version
@@ -60,7 +61,13 @@ class RestSteps extends ScalaDsl with EN with Matchers {
   }
 
   And("""^the response body is$""") { body: String =>
-    strip(response.body) shouldBe body.stripMargin
+    strip(response.body) shouldBe body.stripMargin withClue
+      s"""|
+          |The response was:
+          |${response.body}
+          |But we required:
+          $body
+          |""".stripMargin
   }
 
   And("""^the rendered text is:""") { expectedBody: String =>
