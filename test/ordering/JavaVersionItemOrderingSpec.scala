@@ -9,7 +9,8 @@ class JavaVersionItemOrderingSpec extends AnyWordSpec with Matchers {
 
     "of same vendor" should {
 
-      "accurately sort versions ascending" in new RegexStringComparison with JavaVersionItemOrdering {
+      "accurately sort versions ascending" in new RegexStringComparison
+        with JavaVersionItemOrdering {
         val v1 = versionItem("17.0.9-tem")
         val v2 = versionItem("17.0.7-tem")
         val v3 = versionItem("8.0.382-tem")
@@ -25,7 +26,8 @@ class JavaVersionItemOrderingSpec extends AnyWordSpec with Matchers {
         versions.ascendingOrder shouldBe List(v7, v3, v2, v6, v4, v1, v8, v9, v5)
       }
 
-      "accurately sort versions descending" in new RegexStringComparison with JavaVersionItemOrdering {
+      "accurately sort versions descending" in new RegexStringComparison
+        with JavaVersionItemOrdering {
         val v1 = versionItem("17.0.9-tem")
         val v2 = versionItem("17.0.7-tem")
         val v3 = versionItem("8.0.382-tem")
@@ -38,7 +40,7 @@ class JavaVersionItemOrderingSpec extends AnyWordSpec with Matchers {
 
         val versions = List(v1, v2, v3, v4, v5, v6, v7, v8, v9)
 
-        versions.descendingOrder shouldBe List(v5, v9, v8, v1, v4, v6, v2, v3,  v7)
+        versions.descendingOrder shouldBe List(v5, v9, v8, v1, v4, v6, v2, v3, v7)
       }
     }
 
@@ -57,7 +59,8 @@ class JavaVersionItemOrderingSpec extends AnyWordSpec with Matchers {
         versions.ascendingOrder shouldBe List(v6, v3, v2, v4, v5, v1)
       }
 
-      "accurately sort by vendors and version within vendor" in new RegexStringComparison with JavaVersionItemOrdering {
+      "accurately sort by vendors and version within vendor" in new RegexStringComparison
+        with JavaVersionItemOrdering {
         val v1 = versionItem("17.0.9-tem", Some("tem"))
         val v2 = versionItem("8.0.382-tem", Some("tem"))
         val v3 = versionItem("17.0.8.1-tem", Some("tem"))
@@ -75,5 +78,6 @@ class JavaVersionItemOrderingSpec extends AnyWordSpec with Matchers {
     }
   }
 
-  private def versionItem(version: String, vendor: Option[String] = None): VersionItem = VersionItem(version, false, false, false, vendor)
+  private def versionItem(version: String, vendor: Option[String] = None): VersionItem =
+    VersionItem(version, false, false, false, vendor)
 }

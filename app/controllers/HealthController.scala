@@ -13,7 +13,7 @@ class HealthController @Inject() (appRepo: ApplicationRepository, cc: Controller
     extends AbstractController(cc)
     with Logging {
 
-  def alive = Action.async { request =>
+  def alive: Action[AnyContent] = Action.async { request =>
     appRepo
       .findApplication()
       .map { maybeApp =>
@@ -30,7 +30,7 @@ class HealthController @Inject() (appRepo: ApplicationRepository, cc: Controller
       }
   }
 
-  def ping = Action { _ =>
+  def ping: Action[AnyContent] = Action { _ =>
     Ok("000000000000000000000000")
   }
 

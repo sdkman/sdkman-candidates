@@ -8,7 +8,7 @@ trait JavaVersionItemOrdering {
 
   implicit object OrderedJavaVersion extends Ordering[VersionItem] with RegexStringComparison {
     def compare(v1: VersionItem, v2: VersionItem): Int = {
-      (javaVendor(v1)compare javaVendor(v2)) match {
+      (javaVendor(v1) compare javaVendor(v2)) match {
         case 0 => compareRegexGroups(basicJavaVersion(v1), basicJavaVersion(v2))
         case c => c
       }
