@@ -14,8 +14,8 @@ Feature: Java Version List by Vendor
       | java      | 11.0.3.hs-adpt   | adpt    | LINUX_64   | http://adopt.example.org/jdk-11.0.3.hs.tar.gz      |
       | java      | 8.0.212.j9-adpt  | adpt    | LINUX_64   | http://adopt.example.org/jdk-8.0.212.j9.tar.gz     |
       | java      | 8.0.212.hs-adpt  | adpt    | LINUX_64   | http://adopt.example.org/jdk-8.0.212.hs.tar.gz     |
-      | java      | 11.0.3-albba     | albba   | LINUX_64   | http://albba.example.org/jdk-11.0.3.j9.tar.gz      |
-      | java      | 8.0.212-albba    | albba   | LINUX_64   | http://albba.example.org/jdk-8.0.212.tar.gz        |
+      | java      | 11.0.3-alibaba   | alibaba | LINUX_64   | http://alibaba.example.org/jdk-11.0.3.j9.tar.gz    |
+      | java      | 8.0.212-alibaba  | alibaba | LINUX_64   | http://alibaba.example.org/jdk-8.0.212.tar.gz      |
       | java      | 11.0.3-amzn      | amzn    | LINUX_64   | http://amzn.example.org/jdk-11.0.3.j9.tar.gz       |
       | java      | 8.0.212-amzn     | amzn    | LINUX_64   | http://amzn.example.org/jdk-8.0.212.tar.gz         |
       | java      | 17.0.9-bisheng   | bisheng | LINUX_64   | http://bisheng.example.org/jdk-17.0.9.tar.gz       |

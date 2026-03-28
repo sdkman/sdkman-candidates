@@ -81,7 +81,7 @@ class JavaListController @Inject() (
 
   private val vendors = Map(
     "adpt"    -> "AdoptOpenJDK",
-    "albba"   -> "Dragonwell",
+    "alibaba" -> "Dragonwell",
     "amzn"    -> "Corretto",
     "bisheng" -> "Huawei",
     "gln"     -> "Gluon",
