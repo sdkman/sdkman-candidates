@@ -1,250 +1,107 @@
-# Spec — State API integration: default version + contract fixes
+# Spec — State API integration: contract corrections + default-version lookup
 
-> **Source of truth** for the work on the `state_api_integration` branch.
-> Self-contained — everything a loop needs to perform the implementation is here.
+> Describes **what** must be true about the Candidates Service ⇄ State API contract on the `state_api_integration` branch.
+> Implementation strategy ("how") is left to the planning phase.
 
 ## Goal
 
-Make the Candidates Service consume the SDKMAN State API (`https://state.sdkman.io`) correctly for the version operations on this branch, and switch `DefaultController` off MongoDB onto a tag-based State API lookup.
+Two things must hold on this branch:
 
-Two distinct things must land together:
+1. Every Candidates Service interaction with the State API uses the **correct contract** as published in <https://state.sdkman.io/swagger/documentation.yaml>. Three of those interactions are currently wrong.
+2. The Candidates Service `GET /default/:candidate` endpoint resolves the default version by **tag lookup against the State API**, not by reading from MongoDB.
 
-1. **Fix two pre-existing contract bugs** in the State API client (the branch was authored against a stale API shape).
-2. **Migrate the default-version path** off Mongo onto `GET /versions/{candidate}/tags/lts`.
+The State API is consumed as-is. No State API endpoints or schemas change.
 
-The State API itself is **not changed**. All work happens in this repo.
+## State API contract (the source of truth)
 
-## State API contract (consumed as-is)
+All facts below are verified against the live production swagger.
 
-The endpoints the client must call. Verified against `https://state.sdkman.io/swagger/documentation.yaml`.
+### Endpoints consumed by the Candidates Service
 
-### `GET /versions/{candidate}`
+| Method & path | Path params | Query params | Success body |
+|---|---|---|---|
+| `GET /versions/{candidate}` | `candidate` | `platform?`, `distribution?`, `visible?` | `Version[]` |
+| `GET /versions/{candidate}/{version}` | `candidate`, `version` | `platform?`, `distribution?` | `Version` (200) or empty (404) |
+| `GET /versions/{candidate}/tags/{tag}` | `candidate`, `tag` | `platform?` (defaults to `UNIVERSAL`), `distribution?` (defaults to `NA`) | `Version` (200) or empty (404) |
 
-- Path param: `candidate`.
-- Query params (all optional): `platform`, `distribution`, `visible`.
-- Returns: JSON array of `Version` objects.
+The query parameter for vendor is named **`distribution`** on every endpoint. There is no `vendor` query parameter.
 
-### `GET /versions/{candidate}/{version}`
+### `Version` response JSON
 
-- Path params: `candidate`, `version`.
-- Query params (all optional): `platform`, `distribution`.
-- Returns: `200` with a single `Version` JSON object, or `404` if not found.
+The production `Version` object has these fields:
 
-### `GET /versions/{candidate}/tags/{tag}`  ← new for this work
+- `candidate: string`
+- `version: string`
+- `platform: string` — drawn from the enum `LINUX_X32 | LINUX_X64 | LINUX_ARM32HF | LINUX_ARM32SF | LINUX_ARM64 | MAC_X64 | MAC_ARM64 | WINDOWS_X64 | UNIVERSAL`
+- `url: string`
+- `visible: boolean`
+- **`distribution: string`** — drawn from an enum of JDK distributions (`TEMURIN`, `CORRETTO`, `ZULU`, …). The vendor concept is named `distribution` in the response.
+- `md5sum: string`, `sha256sum: string`, `sha512sum: string`
+- `tags: string[]`
 
-- Path params: `candidate`, `tag`.
-- Query params (all optional): `platform` (defaults to `UNIVERSAL`), `distribution` (defaults to `NA` sentinel).
-- Returns: `200` with a single `Version` JSON object, or `404` if no version carries that tag in the scope.
+The Candidates Service does not need to consume every field; unknown fields can be ignored. But the **wire field for vendor is `distribution`**, and `platform` values come back in SCREAMING_SNAKE_CASE.
 
-**Important:** the State API uses the parameter name **`distribution`**. The Candidates Service uses **`vendor`** in its public-facing routes/configs. These refer to the same concept — the client must translate `vendor` → `distribution` when constructing query strings on the wire. Internal Scala signatures keep saying `vendor`.
+## Decisions (fixed for this change — do not deliberate)
 
-## Decisions (do not deliberate, just apply)
+- **Default tag is `"lts"` for every candidate.** When `GET /default/:candidate` is called, the State API call uses `tag = "lts"`, regardless of which candidate. Per-candidate tag configuration is a later concern.
+- **The Candidates Service keeps `vendor` as its internal/public-facing term.** Public route params, configuration, and internal Scala identifiers continue to say `vendor`. The string `"distribution"` appears only at the State API wire boundary — both on outgoing query parameters *and* on incoming response JSON. Translation is the client's responsibility.
+- **`GET /default/:candidate` keeps its existing public contract.** It takes only the `candidate` path parameter; no `platform` or `vendor` is added. The State API call therefore omits both query parameters and relies on the State API's defaults.
+- **Behaviour on missing default.** `404` from the State API tag lookup translates to `400 Bad Request` with an empty body, matching the legacy Mongo behaviour when `Candidate.default` is unset.
 
-- **Default tag** for `DefaultController` is the literal string `"lts"`, hard-coded for every candidate. Do not introduce per-candidate config in this change.
-- **Vendor / distribution naming.** Public routes and Scala signatures stay `vendor`. The wire-level query param is `distribution`. Translation happens inside `RequestBuilder`.
-- **Behaviour on missing default.** If the State API returns `404` for `/versions/{candidate}/tags/lts`, `DefaultController` returns `400 Bad Request` with an empty body — matching the current behaviour when Mongo's `c.default` is unset.
-- **No changes to the public Candidates Service route shape.** `GET /default/:candidate` continues to take only `candidate` (no platform, no vendor); the State API call uses query-param defaults (platform `UNIVERSAL`, distribution `NA`).
+## Contract changes required
 
-## Required changes (in order)
+Each item below describes the **correct shape** of an interaction. The current branch state is described only enough to make the gap visible. None of this prescribes which files to modify or how to structure the code.
 
-### 1. Fix `RequestBuilder.versionsByCandidatePlatformRequest`
+### A. Listing visible versions for a candidate + platform
 
-File: `app/clients/RequestBuilder.scala`.
+- **Currently issues:** a request whose path includes both `candidate` and `platform` as path segments. This does not match any production State API route and effectively returns 404 (or routes incorrectly into the single-version endpoint).
+- **Must issue:** a request against `GET /versions/{candidate}` with `platform` carried as a **query parameter**.
 
-Current (wrong — `/versions/{candidate}/{platform}` does not exist on the State API):
+### B. Fetching a single version with an optional vendor filter
 
-```scala
-ws.url(s"$stateApi/versions/$candidate/$platform")
-  .addHttpHeaders("Accept" -> "application/json")
-  .withRequestTimeout(1500.millis)
-```
+- **Currently issues:** `GET /versions/{candidate}/{version}` with the vendor filter carried as a query parameter named `vendor`.
+- **Must issue:** the same path, but the vendor filter must be carried as a query parameter named **`distribution`**. The Scala caller continues to receive a `vendor: Option[String]` argument; only the wire name changes.
 
-Change to a query-param call against `GET /versions/{candidate}`:
+### C. Resolving the default version by tag
 
-```scala
-ws.url(s"$stateApi/versions/$candidate")
-  .withQueryStringParameters("platform" -> platform)
-  .addHttpHeaders("Accept" -> "application/json")
-  .withRequestTimeout(1500.millis)
-```
+- **Currently exists:** no interaction. `GET /default/:candidate` reads `Candidate.default` from MongoDB.
+- **Must issue:** when the public route `GET /default/:candidate` is invoked, the Candidates Service must call `GET /versions/{candidate}/tags/lts` against the State API with no `platform` or `distribution` query parameters. On `200`, the response's `version` field is returned to the caller with HTTP `200 OK`. On `404` (or any non-2xx), the caller receives `400 Bad Request` with an empty body.
+- **Side effect:** the public-facing default-version path no longer depends on MongoDB. Other controllers' Mongo dependencies are out of scope.
 
-### 2. Fix `RequestBuilder.versionByCandidatePlatformRequest`
+### D. Response parsing for `Version`
 
-File: `app/clients/RequestBuilder.scala`.
+- **Currently parses:** the JSON field `vendor` into the Scala model's `vendor: Option[String]`. This works against the WireMock stubs (which produce `vendor`) but will fail against the real State API (which produces `distribution`).
+- **Must parse:** the JSON field `distribution` into the Scala model's `vendor` field. Other unknown fields (`md5sum`, `sha256sum`, `sha512sum`, `tags`) are not required and may be ignored.
 
-The `vendor` query param must become `distribution` on the wire. Scala parameter stays `vendor: Option[String]`.
+### E. WireMock stubs
 
-Current:
-
-```scala
-val queryParams = List(
-  Some("platform" -> platform),
-  vendor.map("vendor" -> _)
-).flatten
-```
-
-Change to:
-
-```scala
-val queryParams = List(
-  Some("platform" -> platform),
-  vendor.map("distribution" -> _)
-).flatten
-```
-
-### 3. Add a tag-based lookup to `RequestBuilder`
-
-File: `app/clients/RequestBuilder.scala`.
-
-Add a new method:
-
-```scala
-def versionByTagRequest(
-    candidate: String,
-    tag: String,
-    platform: Option[String],
-    vendor: Option[String]
-): WSRequest = {
-  val queryParams = List(
-    platform.map("platform" -> _),
-    vendor.map("distribution" -> _)
-  ).flatten
-  ws.url(s"$stateApi/versions/$candidate/tags/$tag")
-    .withQueryStringParameters(queryParams: _*)
-    .addHttpHeaders("Accept" -> "application/json")
-    .withRequestTimeout(1500.millis)
-}
-```
-
-Both query params optional: the State API supplies sensible defaults.
-
-### 4. Add a tag-based method to `StateApi` / `StateApiImpl`
-
-File: `app/clients/StateApiImpl.scala`.
-
-Extend the `StateApi` trait:
-
-```scala
-def findVersionByTag(
-    candidate: String,
-    tag: String,
-    platform: Option[String],
-    vendor: Option[String]
-): Future[Option[Version]]
-```
-
-Implement in `StateApiImpl` analogously to `findVersionByCandidateAndPlatform`: call `requestBuilder.versionByTagRequest(...)`, treat `200` as `Some(Version)` (parse via existing `JsonConverters`), and `404` (or any non-200) as `None`. Keep the existing `// TODO: improve error handling` comment shape — error handling can be tightened later.
-
-### 5. Rewire `DefaultController`
-
-File: `app/controllers/DefaultController.scala`.
-
-Replace the `CandidatesRepository` injection and Mongo lookup with a `StateApi` injection and a tag-based call:
-
-```scala
-class DefaultController @Inject() (stateApi: StateApi, cc: ControllerComponents)
-    extends AbstractController(cc) {
-  def find(candidate: String): Action[AnyContent] = Action.async(parse.anyContent) { _ =>
-    stateApi.findVersionByTag(candidate, tag = "lts", platform = None, vendor = None).map {
-      case Some(v) => Ok(v.version)
-      case None    => BadRequest("")
-    }
-  }
-}
-```
-
-Drop the `repos.CandidatesRepository` import. **This controller no longer touches Mongo.**
-
-### 6. Update WireMock stubs
-
-File: `test/support/StateApiStubs.scala`.
-
-Three changes:
-
-(a) Fix `stubVersionsForCandidateAndPlatform` to match the corrected list URL — query-param style:
-
-```scala
-stubFor(
-  get(urlPathEqualTo(s"/versions/$candidate"))
-    .withQueryParam("platform", equalTo(platform))
-    .willReturn(aResponse().withBody(Json.toJson(versions).toString).withStatus(200))
-)
-```
-
-(b) In `stubVersionForCandidateAndPlatform` and `stubNoVersionForCandidateAndPlatform`, change the `vendor` WireMock query-param matcher key to `distribution`. The function signature stays `vendor: Option[String]` — only the wire name changes.
-
-(c) Add two new stub helpers for the tag endpoint:
-
-```scala
-def stubVersionByTag(
-    candidate: String,
-    tag: String,
-    platform: Option[String],
-    vendor: Option[String],
-    version: Version
-): Unit = {
-  val queryParams = List(
-    platform.map(p => "platform" -> equalTo(p)),
-    vendor.map(v => "distribution" -> equalTo(v))
-  ).flatten
-  stubFor(
-    get(urlPathEqualTo(s"/versions/$candidate/tags/$tag"))
-      .withQueryParams(queryParams.toMap.asJava)
-      .willReturn(aResponse().withBody(Json.toJson(version).toString).withStatus(200))
-  )
-}
-
-def stubNoVersionByTag(
-    candidate: String,
-    tag: String,
-    platform: Option[String],
-    vendor: Option[String]
-): Unit = {
-  val queryParams = List(
-    platform.map(p => "platform" -> equalTo(p)),
-    vendor.map(v => "distribution" -> equalTo(v))
-  ).flatten
-  stubFor(
-    get(urlPathEqualTo(s"/versions/$candidate/tags/$tag"))
-      .withQueryParams(queryParams.toMap.asJava)
-      .willReturn(aResponse().withStatus(404))
-  )
-}
-```
-
-### 7. Update / add tests
-
-- **`DefaultController` test(s)**: switch from a `CandidatesRepository` mock to `StateApi` (or to the WireMock stub if the existing test uses a real Play test server). Cover two cases:
-  - lts present: stub `GET /versions/<candidate>/tags/lts` → `200`, expect `200 OK` with the version string body.
-  - lts absent: stub `GET /versions/<candidate>/tags/lts` → `404`, expect `400 Bad Request` with empty body.
-- **Existing controller tests** (`VersionsController`, `VersionsListController`, `JavaListController`, `ValidationController`): the stub URLs/params changed in step 6, so re-run and adjust any test fixtures that referenced the old shapes.
-- **Cucumber features**: search `features/` for any step definitions that pre-populate Mongo with `c.default` for the `/default/:candidate` flow and replace them with State API stubbing.
+- **Currently model:** the stale wire contract — path-style `/versions/{candidate}/{platform}`, query parameter `vendor`, and JSON output keyed `vendor`.
+- **Must model:** the production contract — `/versions/{candidate}` with `platform` as a query parameter; `distribution` as the vendor-filter query parameter; `Version` JSON keyed `distribution`. The tag endpoint `/versions/{candidate}/tags/{tag}` must also be stubbable with optional `platform` and `distribution` query parameters and configurable 200/404 outcomes.
 
 ## Acceptance criteria
 
-The loop is done when **all** of the following hold:
+The change is complete when **all** of these hold:
 
-1. `./sbt test` exits 0 (all ScalaTest + Cucumber tests pass).
-2. `./sbt scalafmtCheck Test/scalafmtCheck` exits 0.
-3. `./sbt compile` exits 0 with no warnings introduced by the new code.
-4. `git grep -nE '"vendor"' app/clients/ test/support/'` returns no matches (the literal `"vendor"` query-param key must not appear anywhere in client/stub wire code; the Scala-side `vendor: Option[String]` parameter names are fine and expected).
-5. `git grep -n '/versions/.*/\$platform' app/clients/` returns no matches (the wrong path-style URL is gone).
-6. `DefaultController` does not import `repos.CandidatesRepository` or anything from `io.sdkman.repos`.
+- `./sbt test` passes — every existing test plus new coverage for the default-version-by-tag interaction (both the success case and the missing-tag case).
+- `./sbt scalafmtCheck Test/scalafmtCheck` passes.
+- `./sbt compile` produces no new warnings.
+- A Candidates Service test that issues `GET /default/<candidate>` against a WireMock stub which **returns 200 for `GET /versions/<candidate>/tags/lts`** receives `200 OK` from the controller, with the version string in the body.
+- A Candidates Service test that issues `GET /default/<candidate>` against a WireMock stub which **returns 404 for `GET /versions/<candidate>/tags/lts`** receives `400 Bad Request` from the controller, with an empty body.
+- The `GET /default/<candidate>` controller path has no remaining dependency on MongoDB. (Other controllers' Mongo dependencies remain — they are out of scope.)
 
-## Out of scope (do **not** touch in this change)
+## Out of scope (do not touch)
 
-- **Any code in `../../do/sdkman-state` or the State API contract.** Endpoint shapes, schemas, OpenAPI — all stay.
-- **Other controllers' Mongo dependency.** `VersionsController`, `VersionsListController`, `JavaListController`, `CandidatesController`, `CandidatesListController`, `ValidationController` still need `Candidate` metadata from Mongo via `CandidatesRepository`. Moving them off Mongo is a later, separate piece of work.
-- **Per-candidate default-tag configuration.** Hard-coded `"lts"` is correct for this change.
-- **Vendor Release / dual-write / Java-via-Foojay-DISCO.** Those are steps 3 and 4 of the wider migration.
-- **Error-handling cleanup** in the existing `// TODO: improve error handling` blocks. Mirror the existing pattern in the new method; do not rewrite.
+- **The State API.** No code, endpoints, or schemas in `../../do/sdkman-state` change.
+- **Other controllers' MongoDB dependencies.** `VersionsController`, `VersionsListController`, `JavaListController`, `CandidatesController`, `CandidatesListController`, `ValidationController` continue to read `Candidate` metadata from MongoDB. Migrating those is a separate, later change.
+- **Per-candidate default-tag configuration.** The hard-coded `"lts"` decision stands.
+- **Vendor Release / dual-write / Foojay DISCO.** Steps 3 and 4 of the wider migration.
+- **The 1500 ms request timeout** currently configured on State API calls. Carry it forward unchanged.
+- **The public-facing route shape** of any Candidates Service endpoint. CLI compatibility is preserved.
 
 ## Watch-outs
 
-- `RequestBuilder` has a hard-coded **1500 ms** timeout. Keep it — don't tune in this change.
-- WireMock's `urlPathEqualTo` matches the path only; query params are matched separately. If a test fails with an unmatched stub, double-check both halves.
-- The `Version` JSON shape in the test stubs already carries `vendor: Option[String]` in the Scala model. The State API's JSON also keys this as `vendor` on the response (the `distribution` wire name only appears in **request** query params for these endpoints). Don't rename the JSON field on the response side.
-- Cucumber test server runs on a different port to `./sbt run` — features rely on that. If you touch test wiring, leave the port handling alone.
+- The `platform` query parameter on State API requests accepts free-form strings, but `platform` **in response bodies** is an enum (`LINUX_X64`, `MAC_ARM64`, `UNIVERSAL`, …). If response objects flow into Candidates Service code that compares platform values, the existing internal representation may differ from the API's wire form.
+- `tags` is now a real field on `Version` responses. The Candidates Service does not need to surface it but should not break if it appears.
 
 ## References
 
