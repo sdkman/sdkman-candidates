@@ -6,7 +6,9 @@ It defines **what** must be true. Implementation strategy is the planning phase'
 
 ## Purpose
 
-The Candidates Service consumes the SDKMAN State API (`https://state.sdkman.io`) for all version data. Three of its public endpoints rely on the State API; one of them — `GET /default/:candidate` — must be migrated off MongoDB onto a tag-based State API lookup.
+The Candidates Service consumes the SDKMAN State API (`https://state.sdkman.io`) for all version data. Three of its public endpoints rely on the State API; one of them — `GET /default/:candidate` — must be migrated off the MongoDB `versions` data (including the legacy denormalised `candidates.default` field) onto a tag-based State API lookup.
+
+**Scope is the `versions` collection only.** Reads of the MongoDB `candidates` collection — which holds candidate metadata such as name, description, and platform classification — stay in place. Migrating the `candidates` collection is a separate, later piece of work.
 
 The State API is consumed as-is. No State API endpoints or schemas change. All work happens in the Candidates Service.
 
@@ -59,7 +61,7 @@ When the Candidates Service receives `GET /default/:candidate`, it issues `GET /
 
 - If the candidate is `java`: `platform=LINUX_X64` and `distribution=TEMURIN`.
 - If the candidate is otherwise platform-specific: `platform=LINUX_X64` only.
-- If the candidate is universal: no `platform` and no `distribution`.
+- If the candidate is universal: `platform=UNIVERSAL` only.
 
 The State API's response is mapped to the public response as follows:
 
@@ -78,7 +80,7 @@ These design calls are locked. The planning phase does not revisit them.
 - **The Candidates Service keeps `vendor` as its internal and public-facing term.** Routes, configuration, and Scala identifiers continue to say `vendor`. The string `"distribution"` appears only at the State API wire boundary — both on outgoing query parameters and on incoming response JSON. Translation is the client's responsibility.
 - **`GET /default/:candidate` keeps its existing public contract.** The path parameter is the only input from the caller; the Candidates Service supplies the State API's `platform` and `distribution` parameters according to the classification rule above.
 - **The platform default for platform-specific candidates is `LINUX_X64`.** The distribution default, used only for `java`, is `TEMURIN`.
-- **Other controllers' Mongo dependencies remain.** Only `GET /default/:candidate` is being migrated in this change. `VersionsController`, `VersionsListController`, `JavaListController`, `CandidatesController`, `CandidatesListController`, and `ValidationController` continue to read candidate metadata from MongoDB.
+- **Only the `versions` collection is in scope.** This change moves version-related reads (the existing list/single-version State API calls and the new default-version lookup) onto the State API. The MongoDB `candidates` collection stays in place — every controller that reads candidate metadata continues to do so from MongoDB. Migrating the `candidates` collection is a separate, later piece of work.
 
 ## Acceptance
 
@@ -90,7 +92,7 @@ The change is complete when **all** of the following hold:
 - The Candidates Service serves `GET /default/<candidate>` by issuing a tag lookup against the State API and not by reading from MongoDB.
 - The State API request issued for `GET /default/java` carries `platform=LINUX_X64` and `distribution=TEMURIN` as query parameters.
 - The State API request issued for `GET /default/<another platform-specific candidate>` (e.g. `cuba`) carries `platform=LINUX_X64` and no `distribution`.
-- The State API request issued for `GET /default/<universal candidate>` carries no `platform` and no `distribution`.
+- The State API request issued for `GET /default/<universal candidate>` carries `platform=UNIVERSAL` and no `distribution`.
 - A `200` from the State API tag lookup yields `200 OK` from the Candidates Service with the version string as the response body.
 - A `404` from the State API tag lookup yields `400 Bad Request` from the Candidates Service with an empty response body.
 - The State API request for listing versions of a candidate uses the query-parameter form (the `platform` is sent as a query parameter, not as a path segment).
@@ -100,7 +102,7 @@ The change is complete when **all** of the following hold:
 ## Out of scope
 
 - The State API itself: no code in `../../do/sdkman-state`, no endpoint shapes, no schemas.
-- The MongoDB dependency of every controller other than `DefaultController`.
+- The MongoDB `candidates` collection. Candidate metadata (name, description, platform classification) continues to be read from MongoDB by every controller. Migrating the `candidates` collection is out of scope.
 - Per-candidate default-tag configuration. The literal `"lts"` is correct for this change.
 - Vendor Release, dual-write, Foojay DISCO. Those are wider-migration steps 3 and 4.
 - Public route shapes of the Candidates Service. CLI compatibility is preserved.
