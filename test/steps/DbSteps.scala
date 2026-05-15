@@ -7,6 +7,8 @@ import io.sdkman.repos.Candidate
 import org.scalatest.matchers.should.Matchers
 import support.{Mongo, StateApiStubs}
 
+import scala.collection.JavaConverters._
+
 class DbSteps extends ScalaDsl with EN with Matchers {
 
   implicit class CandidateDataTable(dataTable: DataTable) {
@@ -148,6 +150,29 @@ class DbSteps extends ScalaDsl with EN with Matchers {
         version = version,
         platform = platform,
         vendor = Option(vendor).filterNot(_.isBlank)
+      )
+  }
+
+  And("""^the default Version on the remote service$""") { table: DataTable =>
+    table.asLists().asScala.tail.foreach { row =>
+      val cells = row.asScala.toList
+      StateApiStubs.stubVersionForCandidateAndTag(
+        candidate = cells.head,
+        tag = cells(1),
+        platform = cells(2),
+        vendor = Option(cells(3)).filter(_.nonEmpty),
+        version = cells(4)
+      )
+    }
+  }
+
+  And("""^no default Version for (.*) tag (.*) of platform (.*) on the remote service$""") {
+    (candidate: String, tag: String, platform: String) =>
+      StateApiStubs.stubNoVersionForCandidateAndTag(
+        candidate = candidate,
+        tag = tag,
+        platform = platform,
+        vendor = None
       )
   }
 }
