@@ -2,13 +2,13 @@ package support
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import domain.Version
+import utils.JsonConverters
 
 import scala.collection.JavaConverters._
 
-object StateApiStubs {
+object StateApiStubs extends JsonConverters {
 
   import play.api.libs.json._
-  implicit val versionWrites: Writes[Version] = Json.writes[Version]
 
   def stubVersionsForCandidateAndPlatform(
       candidate: String,
