@@ -76,4 +76,56 @@ object StateApiStubs extends JsonConverters {
         .willReturn(aResponse().withStatus(404))
     )
   }
+
+  def stubVersionForCandidateAndTag(
+      candidate: String,
+      tag: String,
+      platform: String,
+      vendor: Option[String],
+      version: String
+  ): Unit = {
+    val queryParams = List(
+      Some("platform" -> equalTo(platform)),
+      vendor.map(v => "distribution" -> equalTo(v))
+    ).flatten
+    stubFor(
+      get(urlPathEqualTo(s"/versions/$candidate/tags/$tag"))
+        .withQueryParams(queryParams.toMap.asJava)
+        .willReturn(
+          aResponse()
+            .withBody(
+              Json
+                .toJson(
+                  Version(
+                    candidate = candidate,
+                    version = version,
+                    platform = platform,
+                    url = s"https://downloads/$candidate/$version/$candidate-$version.tar.gz",
+                    vendor = vendor,
+                    visible = Some(true)
+                  )
+                )
+                .toString
+            )
+            .withStatus(200)
+        )
+    )
+  }
+
+  def stubNoVersionForCandidateAndTag(
+      candidate: String,
+      tag: String,
+      platform: String,
+      vendor: Option[String]
+  ): Unit = {
+    val queryParams = List(
+      Some("platform" -> equalTo(platform)),
+      vendor.map("distribution" -> equalTo(_))
+    ).flatten
+    stubFor(
+      get(urlPathEqualTo(s"/versions/$candidate/tags/$tag"))
+        .withQueryParams(queryParams.toMap.asJava)
+        .willReturn(aResponse().withStatus(404))
+    )
+  }
 }
