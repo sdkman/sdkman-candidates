@@ -34,7 +34,7 @@ class RequestBuilder @Inject() (config: Configuration, ws: WSClient) {
   ): WSRequest = {
     val queryParams = List(
       Some("platform" -> platform),
-      vendor.map("vendor" -> _)
+      vendor.map("distribution" -> _)
     ).flatten
     ws.url(s"$stateApi/versions/$candidate/$version")
       .withQueryStringParameters(queryParams: _*)
