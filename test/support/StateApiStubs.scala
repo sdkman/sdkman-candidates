@@ -16,7 +16,8 @@ object StateApiStubs extends JsonConverters {
       versions: Seq[Version]
   ): Unit =
     stubFor(
-      get(urlPathEqualTo(s"/versions/$candidate/$platform"))
+      get(urlPathEqualTo(s"/versions/$candidate"))
+        .withQueryParam("platform", equalTo(platform))
         .willReturn(
           aResponse()
             .withBody(Json.toJson(versions).toString)
