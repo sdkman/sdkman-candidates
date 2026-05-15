@@ -34,7 +34,7 @@ object StateApiStubs extends JsonConverters {
   ): Unit = {
     val queryParams = List(
       Some("platform" -> equalTo(platform)),
-      vendor.map(v => "vendor" -> equalTo(v))
+      vendor.map(v => "distribution" -> equalTo(v))
     ).flatten
     stubFor(
       get(urlPathEqualTo(s"/versions/$candidate/$version"))
@@ -68,7 +68,7 @@ object StateApiStubs extends JsonConverters {
   ): Unit = {
     val queryParams = List(
       Some("platform" -> equalTo(platform)),
-      vendor.map("vendor" -> equalTo(_))
+      vendor.map("distribution" -> equalTo(_))
     ).flatten
     stubFor(
       get(urlPathEqualTo(s"/versions/$candidate/$version"))
