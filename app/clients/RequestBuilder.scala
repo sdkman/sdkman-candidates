@@ -41,4 +41,20 @@ class RequestBuilder @Inject() (config: Configuration, ws: WSClient) {
       .addHttpHeaders("Accept" -> "application/json")
       .withRequestTimeout(1500.millis)
   }
+
+  def versionByCandidateTagRequest(
+      candidate: String,
+      tag: String,
+      platform: String,
+      vendor: Option[String]
+  ): WSRequest = {
+    val queryParams = List(
+      Some("platform" -> platform),
+      vendor.map("distribution" -> _)
+    ).flatten
+    ws.url(s"$stateApi/versions/$candidate/tags/$tag")
+      .withQueryStringParameters(queryParams: _*)
+      .addHttpHeaders("Accept" -> "application/json")
+      .withRequestTimeout(1500.millis)
+  }
 }
