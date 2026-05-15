@@ -12,3 +12,8 @@ RUNNING_PID
 project/.bloop/
 project/metals.sbt
 project/project/
+IMPLEMENTATION_PLAN.md
+PROGRESS.md
+.ralph/
+PROMPT_plan.md
+PROMPT_build.md
