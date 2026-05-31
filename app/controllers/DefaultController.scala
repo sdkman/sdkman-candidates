@@ -19,7 +19,7 @@ class DefaultController @Inject() (
       case None => Future.successful(BadRequest(""))
       case Some(c) =>
         val (platform, vendor) =
-          if (candidate == "java") ("LINUX_X64", Some("TEMURIN"))
+          if (candidate == "java") ("LINUX_X64", Some("tem"))
           else if (c.distribution == "UNIVERSAL") ("UNIVERSAL", None)
           else ("LINUX_X64", None)
         stateApi.findVersionByCandidateAndTag(candidate, "lts", platform, vendor).map {
