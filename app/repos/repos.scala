@@ -2,7 +2,7 @@ package repos
 
 import com.typesafe.config.{Config, ConfigFactory}
 import io.sdkman.db.{MongoConfiguration, MongoConnectivity}
-import io.sdkman.repos.{ApplicationRepo, CandidatesRepo, VersionsRepo}
+import io.sdkman.repos.{ApplicationRepo, CandidatesRepo}
 import javax.inject.Singleton
 
 trait MongoConn extends MongoConnectivity with MongoConfiguration {
