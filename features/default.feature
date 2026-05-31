@@ -19,7 +19,7 @@ Feature: Default Candidate Version
   Scenario: A Default Version is provided for the java Candidate with the Temurin distribution
     Given the default Version on the remote service
       | candidate | tag | platform  | vendor  | version |
-      | java      | lts | LINUX_X64 | TEMURIN | 21.0.5  |
+      | java      | lts | LINUX_X64 | tem     | 21.0.5  |
     When a request is made to /default/java
     Then a 200 status code is received
     And the response body is "21.0.5"
