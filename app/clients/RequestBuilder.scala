@@ -17,6 +17,14 @@ class RequestBuilder @Inject() (config: Configuration, ws: WSClient) {
   private lazy val stateApi =
     s"${stateApiConfig("protocol")}://${stateApiConfig("host")}:${stateApiConfig("port")}"
 
+  // Callers pass the internal vendor `shortcode` (per
+  // specs/vendor-distribution-translation.md). Translate to the State API's
+  // wire-side `distribution` enum name at the boundary. An orphan shortcode
+  // with no wire counterpart yields no `distribution` query parameter at all —
+  // best-effort lookup, since no versions are hosted for defunct distributions.
+  private def distributionParam(vendor: Option[String]): Option[(String, String)] =
+    vendor.flatMap(VendorDistribution.toDistribution).map("distribution" -> _)
+
   def versionsByCandidatePlatformRequest(
       candidate: String,
       platform: String
@@ -34,7 +42,7 @@ class RequestBuilder @Inject() (config: Configuration, ws: WSClient) {
   ): WSRequest = {
     val queryParams = List(
       Some("platform" -> platform),
-      vendor.map("distribution" -> _)
+      distributionParam(vendor)
     ).flatten
     ws.url(s"$stateApi/versions/$candidate/$version")
       .withQueryStringParameters(queryParams: _*)
@@ -50,7 +58,7 @@ class RequestBuilder @Inject() (config: Configuration, ws: WSClient) {
   ): WSRequest = {
     val queryParams = List(
       Some("platform" -> platform),
-      vendor.map("distribution" -> _)
+      distributionParam(vendor)
     ).flatten
     ws.url(s"$stateApi/versions/$candidate/tags/$tag")
       .withQueryStringParameters(queryParams: _*)
