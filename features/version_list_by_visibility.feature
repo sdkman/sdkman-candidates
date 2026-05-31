@@ -5,10 +5,10 @@ Feature: Version List by Visibility
       | candidate | name | description   | default    | websiteUrl           | distribution      |
       | java      | Java | Java Platform | 17.0.0-tem | https://adoptium.net | PLATFORM_SPECIFIC |
     And the Versions
-      | candidate | version         | vendor | platform  | url                                                                                                                              | visible |
-      | java      | 8.0.222.hs-adpt | adpt   | LINUX_X64 | https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jdk_x64_linux_hotspot_8u222b10.tar.gz | true    |
-      | java      | 8.0.272.hs-adpt | adpt   | LINUX_X64 | https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u272-b10/OpenJDK8U-jdk_x64_linux_hotspot_8u272b10.tar.gz |         |
-      | java      | 8.0.275.hs-adpt | adpt   | LINUX_X64 | https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_x64_linux_hotspot_8u275b01.tar.gz | false   |
+      | candidate | version       | vendor | platform  | url                                                                                                                  | visible |
+      | java      | 8.0.222.hs-tem | tem   | LINUX_X64 | https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jdk_x64_linux_hotspot_8u222b10.tar.gz | true    |
+      | java      | 8.0.272.hs-tem | tem   | LINUX_X64 | https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u272-b10/OpenJDK8U-jdk_x64_linux_hotspot_8u272b10.tar.gz |         |
+      | java      | 8.0.275.hs-tem | tem   | LINUX_X64 | https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_x64_linux_hotspot_8u275b01.tar.gz | false   |
     When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
@@ -18,8 +18,8 @@ Feature: Version List by Visibility
     |================================================================================
     | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
-    | AdoptOpenJDK  |     | 8.0.272.hs   | adpt    |            | 8.0.272.hs-adpt
-    |               |     | 8.0.222.hs   | adpt    |            | 8.0.222.hs-adpt
+    | Temurin       |     | 8.0.272.hs   | tem     |            | 8.0.272.hs-tem
+    |               |     | 8.0.222.hs   | tem     |            | 8.0.222.hs-tem
     |================================================================================
     |Omit Identifier to install default version 17.0.0-tem:
     |    $ sdk install java
