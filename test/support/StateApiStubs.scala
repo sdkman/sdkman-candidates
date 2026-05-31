@@ -1,5 +1,6 @@
 package support
 
+import clients.VendorDistribution
 import com.github.tomakehurst.wiremock.client.WireMock._
 import domain.Version
 import utils.JsonConverters
@@ -9,6 +10,17 @@ import scala.collection.JavaConverters._
 object StateApiStubs extends JsonConverters {
 
   import play.api.libs.json._
+
+  // Callers pass the internal vendor `shortcode` (per
+  // specs/vendor-distribution-translation.md). The WireMock matcher mirrors
+  // the real State API wire contract by translating the shortcode to the
+  // distribution enum name. Orphan shortcodes have no wire counterpart, so no
+  // `distribution` matcher is added — matching the absence on the wire that
+  // `RequestBuilder` produces for the same shortcode.
+  private def distributionMatcher(vendor: Option[String]) =
+    vendor
+      .flatMap(VendorDistribution.toDistribution)
+      .map(d => "distribution" -> equalTo(d))
 
   def stubVersionsForCandidateAndPlatform(
       candidate: String,
@@ -34,7 +46,7 @@ object StateApiStubs extends JsonConverters {
   ): Unit = {
     val queryParams = List(
       Some("platform" -> equalTo(platform)),
-      vendor.map(v => "distribution" -> equalTo(v))
+      distributionMatcher(vendor)
     ).flatten
     stubFor(
       get(urlPathEqualTo(s"/versions/$candidate/$version"))
@@ -68,7 +80,7 @@ object StateApiStubs extends JsonConverters {
   ): Unit = {
     val queryParams = List(
       Some("platform" -> equalTo(platform)),
-      vendor.map("distribution" -> equalTo(_))
+      distributionMatcher(vendor)
     ).flatten
     stubFor(
       get(urlPathEqualTo(s"/versions/$candidate/$version"))
@@ -86,7 +98,7 @@ object StateApiStubs extends JsonConverters {
   ): Unit = {
     val queryParams = List(
       Some("platform" -> equalTo(platform)),
-      vendor.map(v => "distribution" -> equalTo(v))
+      distributionMatcher(vendor)
     ).flatten
     stubFor(
       get(urlPathEqualTo(s"/versions/$candidate/tags/$tag"))
@@ -120,7 +132,7 @@ object StateApiStubs extends JsonConverters {
   ): Unit = {
     val queryParams = List(
       Some("platform" -> equalTo(platform)),
-      vendor.map("distribution" -> equalTo(_))
+      distributionMatcher(vendor)
     ).flatten
     stubFor(
       get(urlPathEqualTo(s"/versions/$candidate/tags/$tag"))

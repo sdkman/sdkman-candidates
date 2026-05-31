@@ -63,11 +63,11 @@ class StateApiImplSpec
   "findVersionByCandidateAndTag" should {
 
     "GET /versions/{candidate}/tags/{tag} with platform + distribution and map 200 to Some(Version)" in {
-      // `Version.vendor` is the internal shortcode (`tem`); `Json.toJson(expected)`
-      // below applies the boundary translation so the wire body still reads
-      // `distribution: "TEMURIN"`. The caller-side argument to
-      // `findVersionByCandidateAndTag` still carries the enum name here — the
-      // outbound translation is item 5 of the plan, not this commit.
+      // Caller-side vendor is the internal shortcode (`tem`); the wire matcher
+      // asserts the State API distribution enum name (`TEMURIN`). Both
+      // translations — the request-side query parameter and the response-side
+      // JSON body — happen at the State API client boundary per
+      // specs/vendor-distribution-translation.md.
       val expected = Version(
         candidate = "java",
         version = "21.0.5-tem",
@@ -85,8 +85,26 @@ class StateApiImplSpec
       )
 
       stateApi
-        .findVersionByCandidateAndTag("java", "lts", "LINUX_X64", Some("TEMURIN"))
+        .findVersionByCandidateAndTag("java", "lts", "LINUX_X64", Some("tem"))
         .futureValue shouldBe Some(expected)
+    }
+
+    "omit the distribution query parameter for an orphan vendor shortcode" in {
+      // `adpt` (AdoptOpenJDK, superseded by Temurin) has no State API
+      // distribution. Per the spec the client treats this as no distribution:
+      // the wire request carries no `distribution` parameter, and the lookup
+      // is best-effort — there are no versions hosted for defunct distributions
+      // so the natural outcome is the State API's no-match.
+      stub(
+        get(urlPathEqualTo("/versions/java/tags/lts"))
+          .withQueryParam("platform", equalTo("LINUX_X64"))
+          .withQueryParam("distribution", absent())
+          .willReturn(aResponse().withStatus(404))
+      )
+
+      stateApi
+        .findVersionByCandidateAndTag("java", "lts", "LINUX_X64", Some("adpt"))
+        .futureValue shouldBe None
     }
 
     "omit the distribution query parameter when no vendor is supplied" in {
