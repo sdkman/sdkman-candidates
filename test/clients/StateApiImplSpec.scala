@@ -63,13 +63,18 @@ class StateApiImplSpec
   "findVersionByCandidateAndTag" should {
 
     "GET /versions/{candidate}/tags/{tag} with platform + distribution and map 200 to Some(Version)" in {
+      // `Version.vendor` is the internal shortcode (`tem`); `Json.toJson(expected)`
+      // below applies the boundary translation so the wire body still reads
+      // `distribution: "TEMURIN"`. The caller-side argument to
+      // `findVersionByCandidateAndTag` still carries the enum name here — the
+      // outbound translation is item 5 of the plan, not this commit.
       val expected = Version(
         candidate = "java",
         version = "21.0.5-tem",
         platform = "LINUX_X64",
         url = "https://downloads/java/21.0.5-tem/java-21.0.5-tem.tar.gz",
         visible = Some(true),
-        vendor = Some("TEMURIN")
+        vendor = Some("tem")
       )
 
       stub(

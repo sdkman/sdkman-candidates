@@ -6,22 +6,19 @@ Feature: Java Version List by Vendor
       | java      | Java | The Java Language | 17.0.0-tem | https://adoptium.net | PLATFORM_SPECIFIC |
 
   Scenario: List all Java Versions
+    # Orphan-distribution shortcodes (adpt, albba, gln, trava, zulufx) are
+    # absent from this stub: the State API does not host them per
+    # specs/vendor-distribution-translation.md, so the wire never carries
+    # them. The rendering of the orphan vendor labels is covered by a unit
+    # test on the controller's mapping; this end-to-end scenario only
+    # exercises the State-API-hosted distributions.
     Given the Versions
       | candidate | version          | vendor  | platform  | url                                                |
-      | java      | 12.0.1.j9-adpt   | adpt    | LINUX_X64 | http://adopt.example.org/jdk-12.0.1.j9.tar.gz      |
-      | java      | 12.0.1.hs-adpt   | adpt    | LINUX_X64 | http://adopt.example.org/jdk-12.0.1.hs.tar.gz      |
-      | java      | 11.0.3.j9-adpt   | adpt    | LINUX_X64 | http://adopt.example.org/jdk-11.0.3.j9.tar.gz      |
-      | java      | 11.0.3.hs-adpt   | adpt    | LINUX_X64 | http://adopt.example.org/jdk-11.0.3.hs.tar.gz      |
-      | java      | 8.0.212.j9-adpt  | adpt    | LINUX_X64 | http://adopt.example.org/jdk-8.0.212.j9.tar.gz     |
-      | java      | 8.0.212.hs-adpt  | adpt    | LINUX_X64 | http://adopt.example.org/jdk-8.0.212.hs.tar.gz     |
-      | java      | 11.0.3-albba     | albba   | LINUX_X64 | http://albba.example.org/jdk-11.0.3.j9.tar.gz      |
-      | java      | 8.0.212-albba    | albba   | LINUX_X64 | http://albba.example.org/jdk-8.0.212.tar.gz        |
       | java      | 11.0.3-amzn      | amzn    | LINUX_X64 | http://amzn.example.org/jdk-11.0.3.j9.tar.gz       |
       | java      | 8.0.212-amzn     | amzn    | LINUX_X64 | http://amzn.example.org/jdk-8.0.212.tar.gz         |
       | java      | 17.0.9-bisheng   | bisheng | LINUX_X64 | http://bisheng.example.org/jdk-17.0.9.tar.gz       |
       | java      | 11.0.21-bisheng  | bisheng | LINUX_X64 | http://bisheng.example.org/jdk-11.0.21.tar.gz      |
       | java      | 8.0.392-bisheng  | bisheng | LINUX_X64 | http://bisheng.example.org/jdk-8.0.392.tar.gz      |
-      | java      | 19.0.0-gln       | gln     | LINUX_X64 | http://graal.example.org/graal-19.0.0.tar.gz       |
       | java      | 17.0.7-graal     | graal   | LINUX_X64 | http://graal.example.org/graal-17.0.7.tar.gz       |
       | java      | 17.0.7-graalce   | graalce | LINUX_X64 | http://graal.example.org/graal-ce-17.0.7.tar.gz    |
       | java      | 11.0.8-jbr       | jbr     | LINUX_X64 | http://jbr.example.org/jbr-11.0.8.tar.gz           |
@@ -40,13 +37,12 @@ Feature: Java Version List by Vendor
       | java      | 17.0.5-kona      | kona    | LINUX_X64 | http://kona.example.org/jdk-17.0.5.tar.gz          |
       | java      | 11.0.17-kona     | kona    | LINUX_X64 | http://kona.example.org/jdk-11.0.17.tar.gz         |
       | java      | 8.0.352-kona     | kona    | LINUX_X64 | http://kona.example.org/jdk-8.0.352.tar.gz         |
-      | java      | 11.0.9-trava     | trava   | LINUX_X64 | http://trava.example.org/trava-11.0.9.tar.gz       |
       | java      | 12.0.1-zulu      | zulu    | LINUX_X64 | http://zulu.example.org/jdk-12.0.1.tar.gz          |
       | java      | 11.0.3-zulu      | zulu    | LINUX_X64 | http://zulu.example.org/jdk-11.0.3.tar.gz          |
       | java      | 8.0.212-zulu     | zulu    | LINUX_X64 | http://zulu.example.org/jdk-8.0.212.tar.gz         |
 
-    And the current Version is 11.0.3.j9-adpt
-    And the installed Versions 8.0.202-zulu,11.0.3.j9-adpt,12.0.1-zulu,13.ea.20-open,11.0.3-local
+    And the current Version is 12.0.1-zulu
+    And the installed Versions 8.0.202-zulu,12.0.1-zulu,13.ea.20-open,11.0.3-local
     When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
     And the response body is
@@ -56,17 +52,8 @@ Feature: Java Version List by Vendor
     |================================================================================
     | Vendor        | Use | Version      | Dist    | Status     | Identifier
     |--------------------------------------------------------------------------------
-    | AdoptOpenJDK  |     | 12.0.1.j9    | adpt    |            | 12.0.1.j9-adpt
-    |               |     | 12.0.1.hs    | adpt    |            | 12.0.1.hs-adpt
-    |               | >>> | 11.0.3.j9    | adpt    | installed  | 11.0.3.j9-adpt
-    |               |     | 11.0.3.hs    | adpt    |            | 11.0.3.hs-adpt
-    |               |     | 8.0.212.j9   | adpt    |            | 8.0.212.j9-adpt
-    |               |     | 8.0.212.hs   | adpt    |            | 8.0.212.hs-adpt
     | Corretto      |     | 11.0.3       | amzn    |            | 11.0.3-amzn
     |               |     | 8.0.212      | amzn    |            | 8.0.212-amzn
-    | Dragonwell    |     | 11.0.3       | albba   |            | 11.0.3-albba
-    |               |     | 8.0.212      | albba   |            | 8.0.212-albba
-    | Gluon         |     | 19.0.0       | gln     |            | 19.0.0-gln
     | GraalVM CE    |     | 17.0.7       | graalce |            | 17.0.7-graalce
     | GraalVM Oracle|     | 17.0.7       | graal   |            | 17.0.7-graal
     | Huawei        |     | 17.0.9       | bisheng |            | 17.0.9-bisheng
@@ -88,8 +75,7 @@ Feature: Java Version List by Vendor
     | Tencent       |     | 17.0.5       | kona    |            | 17.0.5-kona
     |               |     | 11.0.17      | kona    |            | 11.0.17-kona
     |               |     | 8.0.352      | kona    |            | 8.0.352-kona
-    | Trava         |     | 11.0.9       | trava   |            | 11.0.9-trava
-    | Zulu          |     | 12.0.1       | zulu    | installed  | 12.0.1-zulu
+    | Zulu          | >>> | 12.0.1       | zulu    | installed  | 12.0.1-zulu
     |               |     | 11.0.3       | zulu    |            | 11.0.3-zulu
     |               |     | 8.0.212      | zulu    |            | 8.0.212-zulu
     |               |     | 8.0.202      | zulu    | local only | 8.0.202-zulu
