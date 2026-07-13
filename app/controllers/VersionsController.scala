@@ -4,27 +4,24 @@ import clients.StateApiImpl
 import com.google.inject.Inject
 import domain.Platform
 import play.api.mvc._
-import repos.CandidatesRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class VersionsController @Inject() (
     stateApi: StateApiImpl,
-    candidatesRepo: CandidatesRepository,
     cc: ControllerComponents
 ) extends AbstractController(cc) {
 
   def all(candidate: String, platformId: String): Action[AnyContent] =
     Action.async(parse.anyContent) { _ =>
-      candidatesRepo.findCandidate(candidate).flatMap { candidateO =>
-        val platform = candidateO
-          .map(_.distribution)
-          .filter(_ == "UNIVERSAL")
-          .getOrElse(Platform(platformId).name)
+      val universalVersionsF =
+        stateApi.findVisibleVersionsByCandidateAndPlatform(candidate, Platform.Universal.name)
+      val platformVersionsF =
+        stateApi.findVisibleVersionsByCandidateAndPlatform(candidate, Platform(platformId).name)
 
-        stateApi.findVisibleVersionsByCandidateAndPlatform(candidate, platform).map { versions =>
-          Ok(versions.map(_.version).mkString(","))
-        }
-      }
+      for {
+        universalVersions <- universalVersionsF
+        platformVersions  <- platformVersionsF
+      } yield Ok((universalVersions ++ platformVersions).map(_.version).mkString(","))
     }
 }
