@@ -43,6 +43,24 @@ class VersionItemListBuilderSpec extends AnyWordSpec with Matchers {
           VersionItem("2.12.6", installed = true, current = true)
         )
     }
+
+    // Regression for G5 (spec 06 §3): Play folds a query `+` to a space on bind, so a
+    // `+`-bearing installed identifier arrives space-folded. It must still match the
+    // `+`-bearing `available` value and be marked installed — not a phantom local row.
+    "mark a space-folded `+` installed identifier as installed against a `+`-bearing available" in new UnderTest {
+      val available = Seq("21.0.1+12-open")
+      val installed = List("21.0.1 12-open") // Play `+`→space fold
+      items(available, installed, current = None) shouldBe
+        List(VersionItem("21.0.1+12-open", installed = true))
+    }
+
+    "mark a space-folded `+` current identifier as current, not local" in new UnderTest {
+      val available = Seq("21.0.1+12-open")
+      val installed = List("21.0.1 12-open")
+      val current   = Some("21.0.1 12-open")
+      items(available, installed, current) shouldBe
+        List(VersionItem("21.0.1+12-open", installed = true, current = true))
+    }
   }
 
   private class UnderTest
