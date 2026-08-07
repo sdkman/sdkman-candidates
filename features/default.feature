@@ -32,8 +32,36 @@ Feature: Default Candidate Version
     Then a 200 status code is received
     And the response body is "7.2.0"
 
-  Scenario: A Default Version is requested but the State API has none
+  Scenario: A UNIVERSAL-labelled Candidate whose lts exists only at LINUX_X64 falls back
+    Given the default Version on the remote service
+      | candidate | tag | platform  | vendor | version |
+      | micronaut | lts | LINUX_X64 |        | 4.2.0   |
+    And no default Version for micronaut tag lts of platform UNIVERSAL on the remote service
+    When a request is made to /default/micronaut
+    Then a 200 status code is received
+    And the response body is "4.2.0"
+
+  Scenario: A UNIVERSAL-labelled Candidate hosting lts at both platforms resolves the preferred UNIVERSAL version
+    Given the default Version on the remote service
+      | candidate | tag | platform  | vendor | version |
+      | scala     | lts | UNIVERSAL |        | 2.13.0  |
+      | scala     | lts | LINUX_X64 |        | 2.12.0  |
+    When a request is made to /default/scala
+    Then a 200 status code is received
+    And the response body is "2.13.0"
+
+  Scenario: A non-UNIVERSAL Candidate whose lts exists only at UNIVERSAL falls back
+    Given the default Version on the remote service
+      | candidate | tag | platform  | vendor | version |
+      | cuba      | lts | UNIVERSAL |        | 7.3.0   |
+    And no default Version for cuba tag lts of platform LINUX_X64 on the remote service
+    When a request is made to /default/cuba
+    Then a 200 status code is received
+    And the response body is "7.3.0"
+
+  Scenario: A Default Version is requested but the State API has none at either platform
     Given no default Version for micronaut tag lts of platform UNIVERSAL on the remote service
+    And no default Version for micronaut tag lts of platform LINUX_X64 on the remote service
     When a request is made to /default/micronaut
     Then a 400 status code is received
     And the response body is ""
