@@ -106,3 +106,39 @@ Feature: Candidate Version Validation by Platform
     When I attempt validation at endpoint /validate/scala/2.12.0/exotic
     Then a 200 status code is received
     And the response body is "valid"
+
+  Scenario: Validation succeeds for a real dashed non-java version (groovy)
+    Given the Version on the remote service
+      | candidate | version       | vendor | platform  | url                                                    |
+      | groovy    | 6.0.0-alpha-1 |        | UNIVERSAL | http://dl/groovy/6.0.0-alpha-1/groovy-6.0.0-alpha-1.zip |
+    And no Version for groovy 6.0.0-alpha-1  of platform LINUX_X64 on the remote service
+    When I attempt validation at endpoint /validate/groovy/6.0.0-alpha-1/linuxx64
+    Then a 200 status code is received
+    And the response body is "valid"
+
+  Scenario: Validation succeeds for a real dashed non-java version (sbt)
+    Given the Version on the remote service
+      | candidate | version    | vendor | platform  | url                                        |
+      | sbt       | 2.0.0-RC13 |        | UNIVERSAL | http://dl/sbt/2.0.0-RC13/sbt-2.0.0-RC13.zip |
+    And no Version for sbt 2.0.0-RC13  of platform LINUX_X64 on the remote service
+    When I attempt validation at endpoint /validate/sbt/2.0.0-RC13/linuxx64
+    Then a 200 status code is received
+    And the response body is "valid"
+
+  Scenario: Validation succeeds for a real dashed non-java version (kotlin)
+    Given the Version on the remote service
+      | candidate | version | vendor | platform  | url                                          |
+      | kotlin    | 1.0.5-2 |        | UNIVERSAL | http://dl/kotlin/1.0.5-2/kotlin-1.0.5-2.zip |
+    And no Version for kotlin 1.0.5-2  of platform LINUX_X64 on the remote service
+    When I attempt validation at endpoint /validate/kotlin/1.0.5-2/linuxx64
+    Then a 200 status code is received
+    And the response body is "valid"
+
+  Scenario: Validation still splits the java vendor from the last dash
+    Given the Version on the remote service
+      | candidate | version | vendor | platform  | url                                         |
+      | java      | 21.0.5  | tem    | LINUX_X64 | http://dl/java/21.0.5-tem/jdk-21.0.5.tar.gz |
+    And no Version for java 21.0.5 tem of platform UNIVERSAL on the remote service
+    When I attempt validation at endpoint /validate/java/21.0.5-tem/linuxx64
+    Then a 200 status code is received
+    And the response body is "valid"
