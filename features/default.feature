@@ -23,6 +23,16 @@ Feature: Default Candidate Version
     When a request is made to /default/java
     Then a 200 status code is received
     And the response body is "21.0.5"
+    And the State API received exactly 1 tag lookup for java at platform LINUX_X64 with distribution TEMURIN
+    And the State API received exactly 1 tag lookup for java
+
+  Scenario: A Default Version for java is absent — a single lookup, no fallback
+    Given no default Version for java tag lts of platform LINUX_X64 on the remote service
+    When a request is made to /default/java
+    Then a 400 status code is received
+    And the response body is ""
+    And the State API received exactly 1 tag lookup for java at platform LINUX_X64 with distribution TEMURIN
+    And the State API received exactly 1 tag lookup for java
 
   Scenario: A Default Version is provided for a Platform Specific Candidate other than java
     Given the default Version on the remote service
@@ -70,3 +80,4 @@ Feature: Default Candidate Version
     When a request is made to /default/groovy
     Then a 400 status code is received
     And the response body is ""
+    And the State API received no requests

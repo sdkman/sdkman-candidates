@@ -1,5 +1,13 @@
 package steps
 
+import com.github.tomakehurst.wiremock.client.WireMock.{
+  anyRequestedFor,
+  anyUrl,
+  equalTo,
+  getRequestedFor,
+  urlPathMatching,
+  verify
+}
 import cucumber.api.scala.{EN, ScalaDsl}
 import org.scalatest.AppendedClues
 import org.scalatest.matchers.should.Matchers
@@ -58,6 +66,31 @@ class RestSteps extends ScalaDsl with EN with Matchers with AppendedClues {
 
   And("""^the response body is "(.*)"$""") { body: String =>
     response.body shouldBe body
+  }
+
+  // Request-journal assertions against the shared WireMock State API stub (port
+  // 8080, journal reset per scenario in Env.Before). These pin call counts the
+  // response-only assertions cannot see: a regression giving `/default/java` a
+  // fallback, or hitting the State API before the unknown-candidate check, still
+  // returns the same status/body but issues a different number of requests.
+  And("""^the State API received no requests$""") { () =>
+    verify(0, anyRequestedFor(anyUrl()))
+  }
+
+  And("""^the State API received exactly (\d+) tag lookups? for (\S+)$""") {
+    (count: Int, candidate: String) =>
+      verify(count, getRequestedFor(urlPathMatching(s"/versions/$candidate/tags/.*")))
+  }
+
+  And(
+    """^the State API received exactly (\d+) tag lookups? for (\S+) at platform (\S+) with distribution (\S+)$"""
+  ) { (count: Int, candidate: String, platform: String, distribution: String) =>
+    verify(
+      count,
+      getRequestedFor(urlPathMatching(s"/versions/$candidate/tags/.*"))
+        .withQueryParam("platform", equalTo(platform))
+        .withQueryParam("distribution", equalTo(distribution))
+    )
   }
 
   And("""^the response body is$""") { body: String =>
