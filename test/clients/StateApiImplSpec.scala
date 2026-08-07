@@ -3,11 +3,13 @@ package clients
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import com.typesafe.config.ConfigFactory
 import domain.Version
 import org.scalatest.BeforeAndAfterAll
+import org.scalatest.Inspectors.forAll
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -139,6 +141,77 @@ class StateApiImplSpec
       stateApi
         .findVersionByCandidateAndTag("missing", "lts", "UNIVERSAL", None)
         .futureValue shouldBe None
+    }
+  }
+
+  "findVisibleVersionsByCandidateAndPlatform" should {
+
+    def stubListing(candidate: String, platform: String)(
+        response: ResponseDefinitionBuilder
+    ): Unit =
+      stub(
+        get(urlPathEqualTo(s"/versions/$candidate"))
+          .withQueryParam("platform", equalTo(platform))
+          .willReturn(response)
+      )
+
+    "map a 200 body to the parsed Version list" in {
+      val versions = List(
+        Version("groovy", "4.0.0", "UNIVERSAL", "https://dl/groovy/4.0.0.zip", Some(true), None),
+        Version("groovy", "4.0.1", "UNIVERSAL", "https://dl/groovy/4.0.1.zip", Some(true), None)
+      )
+      stubListing("groovy", "UNIVERSAL")(
+        aResponse().withStatus(200).withBody(Json.toJson(versions).toString)
+      )
+
+      stateApi
+        .findVisibleVersionsByCandidateAndPlatform("groovy", "UNIVERSAL")
+        .futureValue shouldBe versions
+    }
+
+    "map a 200 empty array to an empty Seq" in {
+      stubListing("groovy", "UNIVERSAL")(aResponse().withStatus(200).withBody("[]"))
+
+      stateApi
+        .findVisibleVersionsByCandidateAndPlatform("groovy", "UNIVERSAL")
+        .futureValue shouldBe empty
+    }
+
+    // A State API blip or an unrecognised platform (400 for FREE_BSD/SUN_OS)
+    // must degrade to an empty listing, never surface as a 500 to the CLI.
+    forAll(Seq(400, 500, 503)) { status =>
+      s"degrade a $status listing read to an empty Seq" in {
+        stubListing("groovy", "FREE_BSD")(aResponse().withStatus(status))
+
+        stateApi
+          .findVisibleVersionsByCandidateAndPlatform("groovy", "FREE_BSD")
+          .futureValue shouldBe empty
+      }
+    }
+
+    "degrade a timeout to an empty Seq" in {
+      // The request timeout is 1500ms (RequestBuilder); a longer delay forces a
+      // transport-level failure the client degrades rather than propagates.
+      stubListing("groovy", "UNIVERSAL")(
+        aResponse().withStatus(200).withBody("[]").withFixedDelay(3000)
+      )
+
+      stateApi
+        .findVisibleVersionsByCandidateAndPlatform("groovy", "UNIVERSAL")
+        .futureValue shouldBe empty
+    }
+
+    // Contract drift is not "no versions": a 200 whose body is not Version[]
+    // must still fail so the divergence is visible, not silently swallowed.
+    "fail on a malformed 200 body" in {
+      stubListing("groovy", "UNIVERSAL")(
+        aResponse().withStatus(200).withBody("""{"unexpected":"shape"}""")
+      )
+
+      stateApi
+        .findVisibleVersionsByCandidateAndPlatform("groovy", "UNIVERSAL")
+        .failed
+        .futureValue shouldBe a[RuntimeException]
     }
   }
 }

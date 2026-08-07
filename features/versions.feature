@@ -51,3 +51,16 @@ Feature: Versions
     When a request is made to /candidates/jmc/linuxx64/versions/all
     Then a 200 status code is received
     And the response body is "8.3.0,9.1.1"
+
+  Scenario: Degrade a State API listing rejection to an empty list rather than a 500
+    And no Versions for scala of platform UNIVERSAL on the remote service
+    And the remote service rejects scala of platform FREE_BSD with status 400
+    When a request is made to /candidates/scala/freebsd/versions/all
+    Then a 200 status code is received
+    And the response body is ""
+
+  Scenario: A malformed 200 listing body is contract drift, not "no versions"
+    And no Versions for scala of platform UNIVERSAL on the remote service
+    And the remote service returns a malformed body for scala of platform LINUX_X64
+    When a request is made to /candidates/scala/linuxx64/versions/all
+    Then a 500 status code is received
