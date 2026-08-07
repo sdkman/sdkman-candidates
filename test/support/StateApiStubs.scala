@@ -37,6 +37,37 @@ object StateApiStubs extends JsonConverters {
         )
     )
 
+  // Mirrors a non-2xx from the real State API listing read — e.g. the 400 it
+  // returns for platforms it does not recognise (FREE_BSD/SUN_OS, behind
+  // `freebsd`/`sunos`), or a 500/503 blip. The client degrades these to an
+  // empty listing rather than surfacing a 500.
+  def stubVersionsErrorForCandidateAndPlatform(
+      candidate: String,
+      platform: String,
+      status: Int
+  ): Unit =
+    stubFor(
+      get(urlPathEqualTo(s"/versions/$candidate"))
+        .withQueryParam("platform", equalTo(platform))
+        .willReturn(aResponse().withStatus(status))
+    )
+
+  // A 200 whose body is not Version[] — contract drift. The client must still
+  // fail on this rather than treat it as "no versions".
+  def stubMalformedVersionsForCandidateAndPlatform(
+      candidate: String,
+      platform: String
+  ): Unit =
+    stubFor(
+      get(urlPathEqualTo(s"/versions/$candidate"))
+        .withQueryParam("platform", equalTo(platform))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withBody("""{"unexpected":"shape"}""")
+        )
+    )
+
   def stubVersionForCandidateAndPlatform(
       candidate: String,
       version: String,

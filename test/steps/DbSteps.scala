@@ -132,6 +132,23 @@ class DbSteps extends ScalaDsl with EN with Matchers {
       )
   }
 
+  And("""^the remote service rejects (.*) of platform (.*) with status (\d+)$""") {
+    (candidate: String, platform: String, status: Int) =>
+      StateApiStubs.stubVersionsErrorForCandidateAndPlatform(
+        candidate = candidate,
+        platform = platform,
+        status = status
+      )
+  }
+
+  And("""^the remote service returns a malformed body for (.*) of platform (.*)$""") {
+    (candidate: String, platform: String) =>
+      StateApiStubs.stubMalformedVersionsForCandidateAndPlatform(
+        candidate = candidate,
+        platform = platform
+      )
+  }
+
   And("""^the Version on the remote service$""") { versionsTable: DataTable =>
     val version = versionsTable.toVersions.head
     StateApiStubs.stubVersionForCandidateAndPlatform(
