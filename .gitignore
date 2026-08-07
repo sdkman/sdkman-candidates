@@ -1,5 +1,6 @@
 logs
 target
+.archon
 .idea
 .idea_modules
 .classpath
