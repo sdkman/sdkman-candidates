@@ -1,10 +1,10 @@
 # Spec — State API integration hardening (PR #71 pre-merge)
 
-Consolidates the three blocking findings from the [adversarial review of PR #71](https://github.com/sdkman/sdkman-candidates/pull/71#pullrequestreview-4878315974) into one imperative spec. It amends [`state-api-default-version.md`](./state-api-default-version.md), which specifies the happy-path contract and is silent on all three concerns.
+Consolidates the blocking findings from the [adversarial review of PR #71](https://github.com/sdkman/sdkman-candidates/pull/71#pullrequestreview-4878315974) into one imperative spec. It amends [`state-api-default-version.md`](./state-api-default-version.md), which specifies the happy-path contract and is silent on all four concerns.
 
 This spec defines **what** must be true. The **how** — sequencing, recovery mechanics, config layout — is the planning phase's concern and is not prescribed here. Where this spec and `state-api-default-version.md` disagree, **this spec wins**; every other decision in that spec is unchanged.
 
-The review raised six findings plus nits. The three below are the ones the reviewer flagged for resolution or conscious acceptance **before this fronts the live CLI**. The remaining three (`/validate` vendor split, `/versions/all` existence + sort, a visibility-default contract test) and the nits are deferred — see [Out of scope](#out-of-scope).
+The review raised six findings plus nits. The **four** below must be resolved (or consciously accepted) **before this fronts the live CLI**. Findings #1–#3 were flagged by the review directly; #4 (`/validate` version parsing) the review rated lower, but it is a live-confirmed install-blocking regression this branch introduces — see §4. The remaining two findings (`/versions/all` existence + sort, a visibility-default contract test) and the nits are deferred — see [Out of scope](#out-of-scope).
 
 ---
 
@@ -24,6 +24,8 @@ The review raised six findings plus nits. The three below are the ones the revie
 - Soft-fail applies to **listing reads only**. Single-version and tag lookups already map non-`200` → absent, and their callers translate that correctly (`invalid` for `/validate`, `400` for `/default`). Softening those would report a real version as missing — worse than today. Unchanged.
 - Soft-fail is keyed on **status and transport failure, never on the parse result of a `200`**.
 - The `FREE_BSD`/`SUN_OS` values **stay** in `Platform.scala`. Removing them would also stop the `500` but changes how the service answers those platforms — a separate product decision. This spec only requires the rejection degrade rather than crash.
+
+**Conscious-acceptance note — per-row blast radius.** The "a `200` that breaks schema stays loud" decision is deliberate, but its blast radius is per *row*, not per contract change: the listing parses the whole body as `List[Version]`, so a **single** malformed row (missing a required `url`/`candidate`/`version`/`platform`) fails the entire parse and `500`s the whole candidate's `sdk list`. This is acceptable only if State API row integrity is trusted; it is called out here so the trade-off is chosen, not stumbled into. Making the parse row-resilient (skip-and-log a bad row rather than fail the list) is a legitimate follow-up but is **not** required by this spec.
 
 ---
 
@@ -67,6 +69,25 @@ The review raised six findings plus nits. The three below are the ones the revie
 
 ---
 
+## 4. `/validate` must parse the version identifier the way the rest of the service does
+
+**Symptom.** `GET /validate/:candidate/:versionVendor/:platform` splits the identifier on the **first** `-` (`ValidationController.scala:20` — `versionVendor.split("-")`, taking `versionParts(0)` as the version and `.lift(1)` as the vendor). This is **new on this branch** — commit `d2f8f6a` cut validate over to the State API; the old code passed the full identifier straight to Mongo (`versionsRepo.findVersion(candidate, version, "UNIVERSAL")`). The split runs for **every** candidate, but the "`version-vendor`" shape only holds for java. For any other candidate a dash is part of the version itself, so the first segment truncates the version and the second becomes a bogus "vendor".
+
+**Live-confirmed install-blocking regression** (verified 2026-08-07). Real versions that exist on the State API but validate as `invalid` under the split:
+- `groovy 6.0.0-alpha-1` — exists (`200`), but validate queries version `6.0.0` → `404` → **`invalid`**.
+- Same shape for `sbt 2.0.0-RC13`, kotlin `1.0.5-2`, and every `-alpha`/`-beta`/`-RC`/`-M`/multi-segment version across non-java candidates.
+
+The CLI calls `/validate` to gate `sdk install`, so this **blocks installation of pre-release versions that actually exist** — a broad, user-visible regression, and unlike §2 it needs no mislabelled data to bite.
+
+**Required behaviour.** The identifier must be parsed the way the rest of the service already parses it: the vendor is the suffix after the **last** `-` and is only meaningful for java (the service elsewhere uses `endsWith(s"-$ven")`, e.g. `JavaListController`). A dashed non-java version resolves as **itself** — `groovy 6.0.0-alpha-1` is looked up as version `6.0.0-alpha-1` with no vendor, and validates `valid`.
+
+**Locked decisions.**
+- Vendor extraction is **suffix-based (last `-`), not second-segment**, matching the rest of the service. Reusing the existing suffix extraction is preferred over a second bespoke parse.
+- The `valid`/`invalid` public contract and the two-platform (`UNIVERSAL` + request platform) lookup are otherwise unchanged.
+- Vendor→distribution translation remains the State API client's responsibility per [`vendor-distribution-translation.md`](./vendor-distribution-translation.md); this fix only changes how the identifier is **split**, not how a vendor is translated.
+
+---
+
 ## Acceptance
 
 The change is complete when **all** hold:
@@ -92,15 +113,19 @@ The change is complete when **all** hold:
 *Caching (#3)*
 - `play.ws.cache.enabled` is absent from `conf/application.conf`, the `ehcache` dependency is absent from `build.sbt`, and the commented-out `play.api.libs.ws.ahc.cache` logger is absent from `conf/logback.xml`.
 
+*Validate parsing (#4)*
+- `GET /validate/groovy/6.0.0-alpha-1/<platform>` (a real, State-API-hosted dashed version) resolves `valid`, not `invalid` — the version is looked up as `6.0.0-alpha-1`, not `6.0.0`.
+- A java identifier (`21.0.7-tem`) still validates `valid`, with the vendor derived from the suffix after the last `-`.
+- A dashless non-java version continues to validate unchanged.
+
 ---
 
 ## Out of scope
 
 **Deferred review findings** (real, but not blocking the live-CLI cutover; track separately):
-- **#4 `/validate` vendor parsing** splits on the *first* `-` (`.split("-").lift(1)`) while the rest of the service uses the last-`-` suffix (`endsWith(s"-$ven")`). Agrees for today's single-dash java identifiers; mis-parses any identifier with an internal `-`.
 - **#5 `/versions/all`** (a) no longer checks candidate existence (unknown → `200 ""`) while `VersionsListController` returns `404` for the same input — two contracts across siblings; and (b) concatenates `universal ++ platform` without a global re-sort.
 - **#6 Visibility-default contract test.** The client sends no `visible` param and relies on the State API's implicit `visible=true` default; the Cucumber stubs pre-filter visibility, so no test pins this dependency (e.g. `withQueryParam("visible", absent())`).
-- **Nits:** the three `// TODO: improve error handling` mean one malformed row `500`s a whole list; `ExecutionContext.Implicits.global` in the new client rather than an injected EC; a `withClue` heredoc margin typo in `RestSteps`.
+- **Nits:** `ExecutionContext.Implicits.global` in the new client rather than an injected EC; a `withClue` heredoc margin typo in `RestSteps`. (The third nit — one malformed row `500`s a whole list — is folded into §1 as a conscious-acceptance note, since it is the same failure mode #1 deliberately leaves loud.)
 
 **Confirmed NOT problems** by the reviewer (do not re-investigate): no visibility regression (State API defaults `visible=true`; old repo alias also unioned `UNIVERSAL`); no hidden-version validation regression (single-version `findUnique` has no `visible` predicate); the `+`→space fold correctly does not touch `/validate` (path param, no query-string fold).
 
@@ -119,7 +144,7 @@ The change is complete when **all** hold:
 - Vendor↔distribution translation: [`vendor-distribution-translation.md`](./vendor-distribution-translation.md)
 - Review: <https://github.com/sdkman/sdkman-candidates/pull/71#pullrequestreview-4878315974>
 - Client under discussion: `app/clients/StateApiImpl.scala`, `app/clients/RequestBuilder.scala`
-- Callers: `app/controllers/DefaultController.scala`, `VersionsController.scala`, `VersionsListController.scala`, `JavaListController.scala`
+- Callers: `app/controllers/DefaultController.scala`, `ValidationController.scala`, `VersionsController.scala`, `VersionsListController.scala`, `JavaListController.scala`
 - Union-of-platforms precedent: `features/versions.feature`
 - Caching commit: `6c3fc73` — "Introduce http caching for remote calls"
 - Live State API swagger: <https://state.sdkman.io/swagger/documentation.yaml>
