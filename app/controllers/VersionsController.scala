@@ -22,6 +22,6 @@ class VersionsController @Inject() (
       for {
         universalVersions <- universalVersionsF
         platformVersions  <- platformVersionsF
-      } yield Ok((universalVersions ++ platformVersions).map(_.version).mkString(","))
+      } yield Ok((universalVersions ++ platformVersions).map(_.identifier).mkString(","))
     }
 }

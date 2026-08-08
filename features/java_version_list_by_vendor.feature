@@ -14,32 +14,32 @@ Feature: Java Version List by Vendor
     # exercises the State-API-hosted distributions.
     Given the Versions
       | candidate | version          | vendor  | platform  | url                                                |
-      | java      | 11.0.3-amzn      | amzn    | LINUX_X64 | http://amzn.example.org/jdk-11.0.3.j9.tar.gz       |
-      | java      | 8.0.212-amzn     | amzn    | LINUX_X64 | http://amzn.example.org/jdk-8.0.212.tar.gz         |
-      | java      | 17.0.9-bisheng   | bisheng | LINUX_X64 | http://bisheng.example.org/jdk-17.0.9.tar.gz       |
-      | java      | 11.0.21-bisheng  | bisheng | LINUX_X64 | http://bisheng.example.org/jdk-11.0.21.tar.gz      |
-      | java      | 8.0.392-bisheng  | bisheng | LINUX_X64 | http://bisheng.example.org/jdk-8.0.392.tar.gz      |
-      | java      | 17.0.7-graal     | graal   | LINUX_X64 | http://graal.example.org/graal-17.0.7.tar.gz       |
-      | java      | 17.0.7-graalce   | graalce | LINUX_X64 | http://graal.example.org/graal-ce-17.0.7.tar.gz    |
-      | java      | 11.0.8-jbr       | jbr     | LINUX_X64 | http://jbr.example.org/jbr-11.0.8.tar.gz           |
-      | java      | 17.0.7-jbr       | jbr     | LINUX_X64 | http://jbr.example.org/jbr-17.0.7.tar.gz           |
-      | java      | 20.1.0.1-mandrel | mandrel | LINUX_X64 | http://mandrel.example.org/mandrel-20.1.0.1.tar.gz |
-      | java      | 11.0.9-ms        | ms      | LINUX_X64 | http://ms.example.org/ms-11.0.9.tar.gz             |
-      | java      | 19.0.0-nik       | nik     | LINUX_X64 | http://nik.example.org/nik-19.0.0.tar.gz           |
-      | java      | 13.ea.20-open    | open    | LINUX_X64 | http://open.example.org/jdk-13.ea.20.tar.gz        |
-      | java      | 12.0.1-open      | open    | LINUX_X64 | http://open.example.org/jdk-12.0.1.tar.gz          |
-      | java      | 11.0.3-open      | open    | LINUX_X64 | http://open.example.org/jdk-11.0.3.tar.gz          |
-      | java      | 10.0.2-open      | open    | LINUX_X64 | http://open.example.org/jdk-10.0.2.tar.gz          |
-      | java      | 9.0.4-open       | open    | LINUX_X64 | http://open.example.org/jdk-9.0.4.tar.gz           |
-      | java      | 11.0.9-oracle    | oracle  | LINUX_X64 | http://oracle.example.org/oracle-11.0.9.tar.gz     |
-      | java      | 8.0.212-sem      | sem     | LINUX_X64 | http://sem.example.org/sem-8.0.212.tar.gz          |
-      | java      | 8.0.212-tem      | tem     | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz          |
-      | java      | 17.0.5-kona      | kona    | LINUX_X64 | http://kona.example.org/jdk-17.0.5.tar.gz          |
-      | java      | 11.0.17-kona     | kona    | LINUX_X64 | http://kona.example.org/jdk-11.0.17.tar.gz         |
-      | java      | 8.0.352-kona     | kona    | LINUX_X64 | http://kona.example.org/jdk-8.0.352.tar.gz         |
-      | java      | 12.0.1-zulu      | zulu    | LINUX_X64 | http://zulu.example.org/jdk-12.0.1.tar.gz          |
-      | java      | 11.0.3-zulu      | zulu    | LINUX_X64 | http://zulu.example.org/jdk-11.0.3.tar.gz          |
-      | java      | 8.0.212-zulu     | zulu    | LINUX_X64 | http://zulu.example.org/jdk-8.0.212.tar.gz         |
+      | java      | 11.0.3           | amzn    | LINUX_X64 | http://amzn.example.org/jdk-11.0.3.j9.tar.gz       |
+      | java      | 8.0.212          | amzn    | LINUX_X64 | http://amzn.example.org/jdk-8.0.212.tar.gz         |
+      | java      | 17.0.9           | bisheng | LINUX_X64 | http://bisheng.example.org/jdk-17.0.9.tar.gz       |
+      | java      | 11.0.21          | bisheng | LINUX_X64 | http://bisheng.example.org/jdk-11.0.21.tar.gz      |
+      | java      | 8.0.392          | bisheng | LINUX_X64 | http://bisheng.example.org/jdk-8.0.392.tar.gz      |
+      | java      | 17.0.7           | graal   | LINUX_X64 | http://graal.example.org/graal-17.0.7.tar.gz       |
+      | java      | 17.0.7           | graalce | LINUX_X64 | http://graal.example.org/graal-ce-17.0.7.tar.gz    |
+      | java      | 11.0.8           | jbr     | LINUX_X64 | http://jbr.example.org/jbr-11.0.8.tar.gz           |
+      | java      | 17.0.7           | jbr     | LINUX_X64 | http://jbr.example.org/jbr-17.0.7.tar.gz           |
+      | java      | 20.1.0.1         | mandrel | LINUX_X64 | http://mandrel.example.org/mandrel-20.1.0.1.tar.gz |
+      | java      | 11.0.9           | ms      | LINUX_X64 | http://ms.example.org/ms-11.0.9.tar.gz             |
+      | java      | 19.0.0           | nik     | LINUX_X64 | http://nik.example.org/nik-19.0.0.tar.gz           |
+      | java      | 13.ea.20         | open    | LINUX_X64 | http://open.example.org/jdk-13.ea.20.tar.gz        |
+      | java      | 12.0.1           | open    | LINUX_X64 | http://open.example.org/jdk-12.0.1.tar.gz          |
+      | java      | 11.0.3           | open    | LINUX_X64 | http://open.example.org/jdk-11.0.3.tar.gz          |
+      | java      | 10.0.2           | open    | LINUX_X64 | http://open.example.org/jdk-10.0.2.tar.gz          |
+      | java      | 9.0.4            | open    | LINUX_X64 | http://open.example.org/jdk-9.0.4.tar.gz           |
+      | java      | 11.0.9           | oracle  | LINUX_X64 | http://oracle.example.org/oracle-11.0.9.tar.gz     |
+      | java      | 8.0.212          | sem     | LINUX_X64 | http://sem.example.org/sem-8.0.212.tar.gz          |
+      | java      | 8.0.212          | tem     | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz          |
+      | java      | 17.0.5           | kona    | LINUX_X64 | http://kona.example.org/jdk-17.0.5.tar.gz          |
+      | java      | 11.0.17          | kona    | LINUX_X64 | http://kona.example.org/jdk-11.0.17.tar.gz         |
+      | java      | 8.0.352          | kona    | LINUX_X64 | http://kona.example.org/jdk-8.0.352.tar.gz         |
+      | java      | 12.0.1           | zulu    | LINUX_X64 | http://zulu.example.org/jdk-12.0.1.tar.gz          |
+      | java      | 11.0.3           | zulu    | LINUX_X64 | http://zulu.example.org/jdk-11.0.3.tar.gz          |
+      | java      | 8.0.212          | zulu    | LINUX_X64 | http://zulu.example.org/jdk-8.0.212.tar.gz         |
 
     And the current Version is 12.0.1-zulu
     And the installed Versions 8.0.202-zulu,12.0.1-zulu,13.ea.20-open,11.0.3-local
@@ -94,7 +94,7 @@ Feature: Java Version List by Vendor
   Scenario: An orphaned local version is displayed
     Given the Versions
       | candidate | version     | vendor | platform  | url                                       |
-      | java      | 10.0.2-open | open   | LINUX_X64 | http://open.example.org/jdk-10.0.2.tar.gz |
+      | java      | 10.0.2      | open   | LINUX_X64 | http://open.example.org/jdk-10.0.2.tar.gz |
 
     And the installed Versions 10.0.2-open,10.0.1-open
     When a request is made to /candidates/java/linuxx64/versions/list
@@ -122,7 +122,7 @@ Feature: Java Version List by Vendor
   Scenario: An unclassified local version is displayed
     Given the Versions
       | candidate | version     | vendor | platform  | url                                       |
-      | java      | 10.0.2-open | open   | LINUX_X64 | http://open.example.org/jdk-10.0.2.tar.gz |
+      | java      | 10.0.2      | open   | LINUX_X64 | http://open.example.org/jdk-10.0.2.tar.gz |
 
     And the installed Versions 10.0.2-open,10.0.1-local,8.0.212-vendor,8.0.212-xyz
     When a request is made to /candidates/java/linuxx64/versions/list
@@ -152,7 +152,7 @@ Feature: Java Version List by Vendor
   Scenario: No local or orphaned versions are displayed
     Given the Versions
       | candidate | version     | vendor | platform  | url                                       |
-      | java      | 10.0.2-open | open   | LINUX_X64 | http://open.example.org/jdk-10.0.2.tar.gz |
+      | java      | 10.0.2      | open   | LINUX_X64 | http://open.example.org/jdk-10.0.2.tar.gz |
 
     And the installed Versions 10.0.2-open
     When a request is made to /candidates/java/linuxx64/versions/list

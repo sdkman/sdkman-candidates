@@ -6,7 +6,7 @@ trait VersionItemListBuilder {
 
   val MinCountThreshold: Int
 
-  def available(v: Seq[Version]): Seq[String] = v.map(_.version)
+  def available(v: Seq[Version]): Seq[String] = v.map(_.identifier)
 
   def local(installed: Option[String]): Seq[String] = installed.toList.flatMap(_.split(","))
 

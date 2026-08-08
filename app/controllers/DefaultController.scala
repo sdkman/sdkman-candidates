@@ -30,12 +30,12 @@ class DefaultController @Inject() (
           else ("LINUX_X64", Some("UNIVERSAL"), None)
 
         lookup(candidate, preferred, vendor).flatMap {
-          case Some(version) => Future.successful(Ok(publicId(version.version, vendor)))
+          case Some(version) => Future.successful(Ok(version.identifier))
           case None =>
             fallback match {
               case Some(fallbackPlatform) =>
                 lookup(candidate, fallbackPlatform, vendor).map {
-                  case Some(version) => Ok(publicId(version.version, vendor))
+                  case Some(version) => Ok(version.identifier)
                   case None          => BadRequest("")
                 }
               case None => Future.successful(BadRequest(""))
@@ -46,7 +46,4 @@ class DefaultController @Inject() (
 
   private def lookup(candidate: String, platform: String, vendor: Option[String]) =
     stateApi.findVersionByCandidateAndTag(candidate, "lts", platform, vendor)
-
-  private def publicId(version: String, vendor: Option[String]): String =
-    vendor.fold(version)(shortcode => s"$version-$shortcode")
 }
