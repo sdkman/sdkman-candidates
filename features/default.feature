@@ -22,7 +22,7 @@ Feature: Default Candidate Version
       | java      | lts | LINUX_X64 | tem     | 21.0.5  |
     When a request is made to /default/java
     Then a 200 status code is received
-    And the response body is "21.0.5"
+    And the response body is "21.0.5-tem"
     And the State API received exactly 1 tag lookup for java at platform LINUX_X64 with distribution TEMURIN
     And the State API received exactly 1 tag lookup for java
 
