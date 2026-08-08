@@ -7,4 +7,6 @@ case class Version(
     url: String,
     visible: Option[Boolean],
     vendor: Option[String]
-)
+) {
+  def identifier: String = vendor.fold(version)(shortcode => s"$version-$shortcode")
+}

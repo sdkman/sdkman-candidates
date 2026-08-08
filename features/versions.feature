@@ -13,7 +13,7 @@ Feature: Versions
     And no Versions for java of platform UNIVERSAL on the remote service
     When a request is made to /candidates/java/linuxx64/versions/all
     Then a 200 status code is received
-    And the response body is "8u111,8u121,8u131,9ea163"
+    And the response body is "8u111-open,8u121-open,8u131-open,9ea163-open"
 
   Scenario: Find all Versions for a given Universal Candidate
     Given the Candidate
@@ -42,11 +42,11 @@ Feature: Versions
   Scenario: Find all Versions for a Candidate registered as UNIVERSAL but hosting platform-specific Versions
     Given the Candidate
       | candidate | name | description         | default    | websiteUrl              | distribution |
-      | jmc       | JMC  | JDK Mission Control | 9.1.1-zulu | https://jdk.java.net/jmc | UNIVERSAL    |
+      | jmc       | JMC  |                     | 9.1.1-zulu | https://jdk.java.net/jmc | UNIVERSAL    |
     And the Versions
       | candidate | version | vendor | platform  | url                                                    |
-      | jmc       | 8.3.0   | zulu   | LINUX_X64 | https://downloads/jmc/8.3.0/jmc-8.3.0-linux-x64.tar.gz |
-      | jmc       | 9.1.1   | zulu   | LINUX_X64 | https://downloads/jmc/9.1.1/jmc-9.1.1-linux-x64.tar.gz |
+      | jmc       | 8.3.0   |        | LINUX_X64 | https://downloads/jmc/8.3.0/jmc-8.3.0-linux-x64.tar.gz |
+      | jmc       | 9.1.1   |        | LINUX_X64 | https://downloads/jmc/9.1.1/jmc-9.1.1-linux-x64.tar.gz |
     And no Versions for jmc of platform UNIVERSAL on the remote service
     When a request is made to /candidates/jmc/linuxx64/versions/all
     Then a 200 status code is received
