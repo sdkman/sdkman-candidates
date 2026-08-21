@@ -31,12 +31,12 @@ Feature: Version List by Platform
     |================================================================================
     |Available Java Versions for Linux 64bit
     |================================================================================
-    | Vendor        | Use | Version      | Dist    | Status     | Identifier
+    | Vendor         | Use | Version            | Identifier
     |--------------------------------------------------------------------------------
-    | Java.net      |     | 9ea163       | open    |            | 9ea163-open
-    |               |     | 8u131        | open    |            | 8u131-open
-    |               |     | 8u121        | open    |            | 8u121-open
-    |               |     | 8u111        | open    |            | 8u111-open
+    | Java.net       |     | 9ea163             | 9ea163-open
+    |                |     | 8u131              | 8u131-open
+    |                |     | 8u121              | 8u121-open
+    |                |     | 8u111              | 8u111-open
     |================================================================================
     |Omit Identifier to install default version 8u111-open:
     |    $ sdk install java
@@ -56,10 +56,10 @@ Feature: Version List by Platform
     |================================================================================
     |Available Java Versions for macOS 64bit
     |================================================================================
-    | Vendor        | Use | Version      | Dist    | Status     | Identifier
+    | Vendor         | Use | Version            | Identifier
     |--------------------------------------------------------------------------------
-    | Java.net      |     | 9ea163       | open    |            | 9ea163-open
-    |               |     | 8u131        | open    |            | 8u131-open
+    | Java.net       |     | 9ea163             | 9ea163-open
+    |                |     | 8u131              | 8u131-open
     |================================================================================
     |Omit Identifier to install default version 8u111-open:
     |    $ sdk install java
@@ -79,10 +79,10 @@ Feature: Version List by Platform
     |================================================================================
     |Available Java Versions for Cygwin
     |================================================================================
-    | Vendor        | Use | Version      | Dist    | Status     | Identifier
+    | Vendor         | Use | Version            | Identifier
     |--------------------------------------------------------------------------------
-    | Java.net      |     | 8u121        | open    |            | 8u121-open
-    |               |     | 8u111        | open    |            | 8u111-open
+    | Java.net       |     | 8u121              | 8u121-open
+    |                |     | 8u111              | 8u111-open
     |================================================================================
     |Omit Identifier to install default version 8u111-open:
     |    $ sdk install java

@@ -16,10 +16,10 @@ Feature: Version List by Visibility
     |================================================================================
     |Available Java Versions for Linux 64bit
     |================================================================================
-    | Vendor        | Use | Version      | Dist    | Status     | Identifier
+    | Vendor         | Use | Version            | Identifier
     |--------------------------------------------------------------------------------
-    | Temurin       |     | 8.0.272.hs   | tem     |            | 8.0.272.hs-tem
-    |               |     | 8.0.222.hs   | tem     |            | 8.0.222.hs-tem
+    | Temurin        |     | 8.0.272.hs         | 8.0.272.hs-tem
+    |                |     | 8.0.222.hs         | 8.0.222.hs-tem
     |================================================================================
     |Omit Identifier to install default version 17.0.0-tem:
     |    $ sdk install java
