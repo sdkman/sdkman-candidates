@@ -284,3 +284,37 @@ Feature: Java Version List by Vendor
     | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
+
+  Scenario: Local installs matching no published vendor fall to Unclassified
+    # `17-gln` ends in a shortcode the State API never publishes, `17-zulu` in one
+    # that is unpublished on this platform, and `system` merely ends in the letters
+    # of `tem`. All three used to be claimed by a vendor group and then filtered
+    # back out of it, so they rendered nowhere at all — indistinguishable, from the
+    # CLI, from an uninstalled JDK.
+    Given the Versions
+      | candidate | version | vendor | platform  | url                                       |
+      | java      | 8.0.212 | tem    | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz |
+
+    And the installed Versions 17-gln,system,17-zulu
+    When a request is made to /candidates/java/linuxx64/versions/list
+    Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
+    And the response body is
+    """
+    |================================================================================
+    |Available Java Versions for Linux 64bit
+    |================================================================================
+    | Vendor         | Use | Version            | Identifier
+    |--------------------------------------------------------------------------------
+    | Temurin        |     | 8.0.212            | 8.0.212-tem
+    | Unclassified   |   + | 17                 | 17-zulu
+    |                |   + | 17                 | 17-gln
+    |                |   + | system             | system
+    |================================================================================
+    | > in use   * installed   + local only
+    |--------------------------------------------------------------------------------
+    | $ sdk install java <Identifier>    install a specific version
+    | $ sdk install java                 install the default: 17.0.0-tem
+    | $ sdk install java [TAB]           complete an available identifier
+    |================================================================================
+    """
