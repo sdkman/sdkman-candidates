@@ -37,7 +37,7 @@ The vendor is the suffix after the *last* `-`, meaningful only for java. A dashe
 
 ## Done when
 
-- `./sbt test` and `./sbt scalafmtCheck Test/scalafmtCheck` pass.
+- `sbt test` and `sbt scalafmtCheck Test/scalafmtCheck` pass.
 - A `500`/`503`/`400`/timeout listing read yields an empty list; `/candidates/:c/freebsd/versions/all` returns `2xx`; a malformed `200` body still fails.
 - A `UNIVERSAL`-labelled candidate with `lts` only at `LINUX_X64` resolves `200`; both-platform resolves to preferred; `/default/java` issues one lookup with `distribution=TEMURIN`.
 - `/validate/groovy/6.0.0-alpha-1/<platform>` resolves `valid`.

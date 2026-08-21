@@ -198,7 +198,7 @@ No versions available for your platform at this time.
 - [ ] No rendered row carries trailing whitespace.
 - [ ] The non-java list view's output is byte-for-byte unchanged.
 - [ ] Test fixtures cover at least one hyphen-qualified java version with a vendor (e.g. `21.0.12-crac+1.2` / `librca`) and one identifier at or beyond the previous 20-character ceiling — neither shape is present in the current suite, which is why this defect shipped.
-- [ ] `./sbt test` and `./sbt scalafmtCheck Test/scalafmtCheck` pass.
+- [ ] `sbt test` and `sbt scalafmtCheck Test/scalafmtCheck` pass.
 
 ## References
 
