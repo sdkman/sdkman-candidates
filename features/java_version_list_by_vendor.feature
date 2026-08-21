@@ -394,3 +394,16 @@ Feature: Java Version List by Vendor
     When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
     And every response line is at most 80 characters with no trailing whitespace
+
+  Scenario: Two all-hyphen local install labels still return a response
+    # Two labels that both reduce to an empty version string meet in the same
+    # comparison. The segment list is then empty on both sides, which the version
+    # comparison did not match on, throwing and failing the list with a 500.
+    Given the Versions
+      | candidate | version | vendor | platform  | url                                       |
+      | java      | 8.0.212 | tem    | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz |
+
+    And the installed Versions -,--
+    When a request is made to /candidates/java/linuxx64/versions/list
+    Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
