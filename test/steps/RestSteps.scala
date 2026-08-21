@@ -108,9 +108,12 @@ class RestSteps extends ScalaDsl with EN with Matchers with AppendedClues {
   // 80-column rule of specs/java-list-view-layout.md. This step reads
   // `response.body` unmodified and is the only end-to-end cover for that rule.
   And("""^every response line is at most 80 characters with no trailing whitespace$""") { () =>
-    val lines    = response.body.split("\n", -1).toSeq
-    val tooWide  = lines.filter(_.length > 80)
-    val trailing = lines.filter(_.endsWith(" "))
+    // A tab or a carriage return is as invisible in a diff as a trailing space,
+    // and just as capable of pushing a rendered row past the terminal rule.
+    val trailingWhitespace = """.*[ \t\r]""".r
+    val lines              = response.body.split("\n", -1).toSeq
+    val tooWide            = lines.filter(_.length > 80)
+    val trailing           = lines.filter(trailingWhitespace.pattern.matcher(_).matches)
 
     tooWide shouldBe empty withClue
       s"""|
