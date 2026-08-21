@@ -58,4 +58,19 @@ class LocalVersionFilteringSpec
       }
     }
   }
+
+  "Vendor grouping" should {
+
+    // The mapped labels are padded to the vendor column width; an unpadded fallback would
+    // shift the first row's `|` separator off column 17 for any unrecognised shortcode.
+    "pad the fallback label of an unmapped shortcode to the vendor column width" in
+      new JavaListController(null, null, null) {
+
+        val (label, rows) = toVendorItems("myxyz", Seq.empty, Seq("11.0.3-myxyz"), None)
+
+        label shouldBe "Unclassified   "
+        label should have length 15
+        rows.head should startWith("|")
+      }
+  }
 }

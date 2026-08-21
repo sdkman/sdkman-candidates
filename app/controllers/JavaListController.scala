@@ -57,18 +57,23 @@ class JavaListController @Inject() (
 
   import cats.syntax.show._
 
-  private def toVendorItems(
+  private[controllers] def toVendorItems(
       vendor: String,
       versions: Seq[Version],
       installed: Seq[String],
       current: Option[String]
   ): (String, Seq[String]) =
-    vendors.getOrElse(vendor, "Unclassified") -> items(
+    vendors.getOrElse(vendor, UnclassifiedLabel) -> items(
       available(versions),
       installed,
       current,
       Some(vendor)
     ).descendingOrder.map(_.show)
+
+  // A shortcode absent from the map still heads a group, so its label carries the same
+  // padding as the mapped labels below; an unpadded fallback would pull the row separator
+  // three columns left of 17 for that group's first row.
+  private[controllers] val UnclassifiedLabel = "Unclassified".padTo(15, ' ')
 
   private val vendors = Map(
     "adpt"    -> "AdoptOpenJDK",
