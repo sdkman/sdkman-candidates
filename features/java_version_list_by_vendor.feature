@@ -210,3 +210,36 @@ Feature: Java Version List by Vendor
     | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
+
+  Scenario: Hyphen-qualified versions are displayed in full
+    # Regression cover for the defect in specs/java-list-view-layout.md: the
+    # suite carried no java version whose qualifier is introduced by a hyphen,
+    # so three distinct Liberica versions used to collapse to `21.0.12` and the
+    # 23-character identifier used to push the row past 80 characters.
+    Given the Versions
+      | candidate | version          | vendor | platform  | url                                                       |
+      | java      | 21.0.12+1.1      | librca | LINUX_X64 | http://librca.example.org/jdk-21.0.12+1.1.tar.gz           |
+      | java      | 21.0.12-fx+1.1   | librca | LINUX_X64 | http://librca.example.org/jdk-21.0.12-fx+1.1.tar.gz        |
+      | java      | 21.0.12-crac+1.2 | librca | LINUX_X64 | http://librca.example.org/jdk-21.0.12-crac+1.2.tar.gz      |
+
+    And the installed Versions 21.0.12-crac+1.2-librca
+    When a request is made to /candidates/java/linuxx64/versions/list
+    Then a 200 status code is received
+    And the response body is
+    """
+    |================================================================================
+    |Available Java Versions for Linux 64bit
+    |================================================================================
+    | Vendor         | Use | Version            | Identifier
+    |--------------------------------------------------------------------------------
+    | Liberica       |     | 21.0.12+1.1        | 21.0.12+1.1-librca
+    |                |     | 21.0.12-fx+1.1     | 21.0.12-fx+1.1-librca
+    |                |   * | 21.0.12-crac+1.2   | 21.0.12-crac+1.2-librca
+    |================================================================================
+    | > in use   * installed   + local only
+    |--------------------------------------------------------------------------------
+    | $ sdk install java <Identifier>    install a specific version
+    | $ sdk install java                 install the default: 17.0.0-tem
+    | $ sdk install java [TAB]           complete an available identifier
+    |================================================================================
+    """
