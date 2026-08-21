@@ -38,25 +38,44 @@ class LocalVersionFilteringSpec
         suffix  <- suffixGen
       } yield s"$version-$suffix"
 
-    val combinedVersions: Gen[(List[String], List[String])] = for {
-      knownVersions   <- Gen.listOfN(5, identifiers(suffixes(known)))
-      unknownVersions <- Gen.listOfN(5, identifiers(suffixes(unknown)))
-    } yield (knownVersions, unknownVersions)
+    // A label joins a vendor group on a `-<shortcode>` suffix only, so a hyphenless label
+    // that merely ends in the shortcode letters is not a member.
+    def hyphenless(suffixGen: Gen[String]): Gen[String] =
+      for {
+        version <- versionGen
+        suffix  <- suffixGen
+      } yield s"$version$suffix"
 
-    "filter names not ending certain suffixes" in new JavaListController(null, null, null) {
+    val combinedVersions: Gen[(List[String], List[String], List[String])] = for {
+      knownVersions     <- Gen.listOfN(5, identifiers(suffixes(known)))
+      unknownVersions   <- Gen.listOfN(5, identifiers(suffixes(unknown)))
+      hyphenlessVersion <- Gen.listOfN(5, hyphenless(suffixes(known)))
+    } yield (knownVersions, unknownVersions, hyphenlessVersion)
 
-      check {
-        Prop.forAll(combinedVersions) { case (kvs: Seq[String], ukvs: Seq[String]) =>
-          val allVersions = Random.shuffle(kvs ++ ukvs)
+    "retain every name that does not carry a `-<suffix>` ending" in
+      new JavaListController(null, null, null) {
 
-          val names = findAllNotEndingWith(allVersions, known.toSet)
+        check {
+          Prop.forAll(combinedVersions) {
+            case (kvs: Seq[String], ukvs: Seq[String], hvs: Seq[String]) =>
+              val allVersions = Random.shuffle(kvs ++ ukvs ++ hvs)
 
-          logger.info(allVersions + " -> " + names + " : ")
+              val names = findAllNotEndingWith(allVersions, known.toSet)
 
-          (names diff ukvs).isEmpty
+              logger.info(allVersions + " -> " + names + " : ")
+
+              names.sorted == (ukvs ++ hvs).sorted
+          }
         }
       }
-    }
+
+    // Both labels used to be claimed by the Temurin group on a bare `endsWith("tem")` match
+    // and then filtered out of it again by the `-tem` suffix test, so neither ever rendered.
+    "retain a bare shortcode label and a hyphenless label ending in one" in
+      new JavaListController(null, null, null) {
+
+        findAllNotEndingWith(Seq("system", "tem"), Set("tem")) shouldBe Seq("system", "tem")
+      }
   }
 
   "Vendor grouping" should {
