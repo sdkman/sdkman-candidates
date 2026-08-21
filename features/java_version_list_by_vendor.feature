@@ -318,3 +318,35 @@ Feature: Java Version List by Vendor
     | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
+
+  Scenario: Qualified local installs keep their qualifiers in the Version column
+    # Neither label ends in a published `-<shortcode>`, so both fall to Unclassified
+    # and the version cell comes from the fallback. Dropping the last hyphen segment
+    # unconditionally rendered both rows as `21.0.12`, hiding which of the two builds
+    # each row installs.
+    Given the Versions
+      | candidate | version | vendor | platform  | url                                       |
+      | java      | 8.0.212 | tem    | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz |
+
+    And the installed Versions 21.0.12-crac+1.2,21.0.12-fx+1.1
+    When a request is made to /candidates/java/linuxx64/versions/list
+    Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
+    And the response body is
+    """
+    |================================================================================
+    |Available Java Versions for Linux 64bit
+    |================================================================================
+    | Vendor         | Use | Version            | Identifier
+    |--------------------------------------------------------------------------------
+    | Temurin        |     | 8.0.212            | 8.0.212-tem
+    | Unclassified   |   + | 21.0.12-fx+1.1     | 21.0.12-fx+1.1
+    |                |   + | 21.0.12-crac+1.2   | 21.0.12-crac+1.2
+    |================================================================================
+    | > in use   * installed   + local only
+    |--------------------------------------------------------------------------------
+    | $ sdk install java <Identifier>    install a specific version
+    | $ sdk install java                 install the default: 17.0.0-tem
+    | $ sdk install java [TAB]           complete an available identifier
+    |================================================================================
+    """
