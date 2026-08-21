@@ -45,6 +45,7 @@ Feature: Java Version List by Vendor
     And the installed Versions 8.0.202-zulu,12.0.1-zulu,13.ea.20-open,11.0.3-local
     When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
     And the response body is
     """
     |================================================================================
@@ -97,6 +98,7 @@ Feature: Java Version List by Vendor
     And the installed Versions 10.0.2-open,10.0.1-open
     When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
     And the response body is
     """
     |================================================================================
@@ -123,6 +125,7 @@ Feature: Java Version List by Vendor
     And the installed Versions 10.0.2-open,10.0.1-local,8.0.212-vendor,8.0.212-xyz
     When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
     And the response body is
     """
     |================================================================================
@@ -151,6 +154,7 @@ Feature: Java Version List by Vendor
     And the installed Versions 10.0.2-open
     When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
     And the response body is
     """
     |================================================================================
@@ -173,6 +177,7 @@ Feature: Java Version List by Vendor
     And no Versions for java of platform LINUX_X64 on the remote service
     When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
     And the response body is
     """
     |================================================================================
@@ -194,6 +199,7 @@ Feature: Java Version List by Vendor
     Given no Versions for java of platform LINUX_X64 on the remote service
     When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
     And the response body is
     """
     |================================================================================
@@ -225,6 +231,7 @@ Feature: Java Version List by Vendor
     And the installed Versions 21.0.12-crac+1.2-librca
     When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
     And the response body is
     """
     |================================================================================
