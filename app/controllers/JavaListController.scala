@@ -52,7 +52,10 @@ class JavaListController @Inject() (
           }
         combinedItems  = sortItems(mergeByLabel(allVendorItems))
         defaultVersion = candidateO.flatMap(_.default).getOrElse("17.0.0-tem")
-      } yield Ok(views.txt.java_version_list(combinedItems, defaultVersion, platform.description))
+        // The footer line has a fixed 57-character prefix, so an over-long candidate
+        // default is the one value left that can push a response line past 80 characters.
+        footerDefault = truncate(defaultVersion, DefaultVersionLength)
+      } yield Ok(views.txt.java_version_list(combinedItems, footerDefault, platform.description))
     }
 
   /** The labels that join no vendor group. A label joins a group only on a `-<shortcode>` suffix,

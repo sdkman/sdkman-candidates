@@ -51,6 +51,11 @@ trait JavaVersionRendering {
 
   val TruncationMarker = ">"
 
+  /** The width left for the footer's default identifier after its fixed 57-character prefix, so an
+    * over-long candidate default cannot push that line past 80 characters.
+    */
+  val DefaultVersionLength = 23
+
   implicit val javaItemShow = show[VersionItem] { vi =>
     val current = if (vi.current) CurrentSymbol else BlankSymbol
 
