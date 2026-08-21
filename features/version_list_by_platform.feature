@@ -38,13 +38,11 @@ Feature: Version List by Platform
     |                |     | 8u121              | 8u121-open
     |                |     | 8u111              | 8u111-open
     |================================================================================
-    |Omit Identifier to install default version 8u111-open:
-    |    $ sdk install java
-    |Use TAB completion to discover available versions
-    |    $ sdk install java [TAB]
-    |Or install a specific version by Identifier:
-    |    $ sdk install java 8u111-open
-    |Hit Q to exit this list view
+    | > in use   * installed   + local only
+    |--------------------------------------------------------------------------------
+    | $ sdk install java <Identifier>    install a specific version
+    | $ sdk install java                 install the default: 8u111-open
+    | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
 
@@ -61,13 +59,11 @@ Feature: Version List by Platform
     | Java.net       |     | 9ea163             | 9ea163-open
     |                |     | 8u131              | 8u131-open
     |================================================================================
-    |Omit Identifier to install default version 8u111-open:
-    |    $ sdk install java
-    |Use TAB completion to discover available versions
-    |    $ sdk install java [TAB]
-    |Or install a specific version by Identifier:
-    |    $ sdk install java 8u111-open
-    |Hit Q to exit this list view
+    | > in use   * installed   + local only
+    |--------------------------------------------------------------------------------
+    | $ sdk install java <Identifier>    install a specific version
+    | $ sdk install java                 install the default: 8u111-open
+    | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
 
@@ -84,13 +80,11 @@ Feature: Version List by Platform
     | Java.net       |     | 8u121              | 8u121-open
     |                |     | 8u111              | 8u111-open
     |================================================================================
-    |Omit Identifier to install default version 8u111-open:
-    |    $ sdk install java
-    |Use TAB completion to discover available versions
-    |    $ sdk install java [TAB]
-    |Or install a specific version by Identifier:
-    |    $ sdk install java 8u111-open
-    |Hit Q to exit this list view
+    | > in use   * installed   + local only
+    |--------------------------------------------------------------------------------
+    | $ sdk install java <Identifier>    install a specific version
+    | $ sdk install java                 install the default: 8u111-open
+    | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
 

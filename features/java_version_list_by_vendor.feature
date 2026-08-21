@@ -81,13 +81,11 @@ Feature: Java Version List by Vendor
     |                |   + | 8.0.202            | 8.0.202-zulu
     | Unclassified   |   + | 11.0.3             | 11.0.3-local
     |================================================================================
-    |Omit Identifier to install default version 17.0.0-tem:
-    |    $ sdk install java
-    |Use TAB completion to discover available versions
-    |    $ sdk install java [TAB]
-    |Or install a specific version by Identifier:
-    |    $ sdk install java 17.0.0-tem
-    |Hit Q to exit this list view
+    | > in use   * installed   + local only
+    |--------------------------------------------------------------------------------
+    | $ sdk install java <Identifier>    install a specific version
+    | $ sdk install java                 install the default: 17.0.0-tem
+    | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
 
@@ -109,13 +107,11 @@ Feature: Java Version List by Vendor
     | Java.net       |   * | 10.0.2             | 10.0.2-open
     |                |   + | 10.0.1             | 10.0.1-open
     |================================================================================
-    |Omit Identifier to install default version 17.0.0-tem:
-    |    $ sdk install java
-    |Use TAB completion to discover available versions
-    |    $ sdk install java [TAB]
-    |Or install a specific version by Identifier:
-    |    $ sdk install java 17.0.0-tem
-    |Hit Q to exit this list view
+    | > in use   * installed   + local only
+    |--------------------------------------------------------------------------------
+    | $ sdk install java <Identifier>    install a specific version
+    | $ sdk install java                 install the default: 17.0.0-tem
+    | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
 
@@ -139,13 +135,11 @@ Feature: Java Version List by Vendor
     |                |   + | 8.0.212            | 8.0.212-xyz
     |                |   + | 8.0.212            | 8.0.212-vendor
     |================================================================================
-    |Omit Identifier to install default version 17.0.0-tem:
-    |    $ sdk install java
-    |Use TAB completion to discover available versions
-    |    $ sdk install java [TAB]
-    |Or install a specific version by Identifier:
-    |    $ sdk install java 17.0.0-tem
-    |Hit Q to exit this list view
+    | > in use   * installed   + local only
+    |--------------------------------------------------------------------------------
+    | $ sdk install java <Identifier>    install a specific version
+    | $ sdk install java                 install the default: 17.0.0-tem
+    | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
 
@@ -166,13 +160,11 @@ Feature: Java Version List by Vendor
     |--------------------------------------------------------------------------------
     | Java.net       |   * | 10.0.2             | 10.0.2-open
     |================================================================================
-    |Omit Identifier to install default version 17.0.0-tem:
-    |    $ sdk install java
-    |Use TAB completion to discover available versions
-    |    $ sdk install java [TAB]
-    |Or install a specific version by Identifier:
-    |    $ sdk install java 17.0.0-tem
-    |Hit Q to exit this list view
+    | > in use   * installed   + local only
+    |--------------------------------------------------------------------------------
+    | $ sdk install java <Identifier>    install a specific version
+    | $ sdk install java                 install the default: 17.0.0-tem
+    | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
 
@@ -190,13 +182,11 @@ Feature: Java Version List by Vendor
     |--------------------------------------------------------------------------------
     | Unclassified   |   + | 10.0.2             | 10.0.2-vendor
     |================================================================================
-    |Omit Identifier to install default version 17.0.0-tem:
-    |    $ sdk install java
-    |Use TAB completion to discover available versions
-    |    $ sdk install java [TAB]
-    |Or install a specific version by Identifier:
-    |    $ sdk install java 17.0.0-tem
-    |Hit Q to exit this list view
+    | > in use   * installed   + local only
+    |--------------------------------------------------------------------------------
+    | $ sdk install java <Identifier>    install a specific version
+    | $ sdk install java                 install the default: 17.0.0-tem
+    | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
 
@@ -213,12 +203,10 @@ Feature: Java Version List by Vendor
     |--------------------------------------------------------------------------------
     |No versions available for your platform at this time.
     |================================================================================
-    |Omit Identifier to install default version 17.0.0-tem:
-    |    $ sdk install java
-    |Use TAB completion to discover available versions
-    |    $ sdk install java [TAB]
-    |Or install a specific version by Identifier:
-    |    $ sdk install java 17.0.0-tem
-    |Hit Q to exit this list view
+    | > in use   * installed   + local only
+    |--------------------------------------------------------------------------------
+    | $ sdk install java <Identifier>    install a specific version
+    | $ sdk install java                 install the default: 17.0.0-tem
+    | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """

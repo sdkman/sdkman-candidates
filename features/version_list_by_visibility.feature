@@ -21,12 +21,10 @@ Feature: Version List by Visibility
     | Temurin        |     | 8.0.272.hs         | 8.0.272.hs-tem
     |                |     | 8.0.222.hs         | 8.0.222.hs-tem
     |================================================================================
-    |Omit Identifier to install default version 17.0.0-tem:
-    |    $ sdk install java
-    |Use TAB completion to discover available versions
-    |    $ sdk install java [TAB]
-    |Or install a specific version by Identifier:
-    |    $ sdk install java 17.0.0-tem
-    |Hit Q to exit this list view
+    | > in use   * installed   + local only
+    |--------------------------------------------------------------------------------
+    | $ sdk install java <Identifier>    install a specific version
+    | $ sdk install java                 install the default: 17.0.0-tem
+    | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
