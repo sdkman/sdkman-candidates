@@ -33,10 +33,15 @@ class JavaListController @Inject() (
           Candidate,
           platform.name
         )
+        versionsByVendor = versions.groupBy(vendorKey)
+        // Membership of a vendor group is keyed on the vendors actually published on this
+        // platform, not on the whole shortcode map: a label ending in a shortcode nobody
+        // published had no group to land in and used to vanish from the response entirely.
+        publishedVendors: Set[String] = versionsByVendor.keySet
         allLocalVersions: Seq[String] = installed.split(",")
-        localInstalledVersions        = findAllNotEndingWith(allLocalVersions, vendors.keySet)
+        localInstalledVersions        = findAllNotEndingWith(allLocalVersions, publishedVendors)
         vendorInstalledVersions       = allLocalVersions.diff(localInstalledVersions)
-        vendorsToItems = versions.groupBy(vendorKey).toSeq.map { case (ven, vs) =>
+        vendorsToItems = versionsByVendor.toSeq.map { case (ven, vs) =>
           toVendorItems(ven, vs, vendorInstalledVersions.filter(_.endsWith(s"-$ven")), current)
         }
         allVendorItems =
@@ -50,8 +55,12 @@ class JavaListController @Inject() (
       } yield Ok(views.txt.java_version_list(combinedItems, defaultVersion, platform.description))
     }
 
+  /** The labels that join no vendor group. A label joins a group only on a `-<shortcode>` suffix,
+    * so a bare shortcode (`tem`) and a hyphenless label that merely ends in one (`system`) stay
+    * local instead of being claimed by, and then filtered out of, the Temurin group.
+    */
   private[controllers] def findAllNotEndingWith(all: Seq[String], endings: Set[String]) =
-    all.filter(name => !endings.exists(ending => name.endsWith(ending)))
+    all.filter(name => !endings.exists(ending => name.endsWith(s"-$ending")))
 
   private def vendorKey(version: Version): String = version.vendor.getOrElse("none")
 
