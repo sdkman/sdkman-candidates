@@ -50,36 +50,36 @@ Feature: Java Version List by Vendor
     |================================================================================
     |Available Java Versions for Linux 64bit
     |================================================================================
-    | Vendor        | Use | Version      | Dist    | Status     | Identifier
+    | Vendor         | Use | Version            | Identifier
     |--------------------------------------------------------------------------------
-    | Corretto      |     | 11.0.3       | amzn    |            | 11.0.3-amzn
-    |               |     | 8.0.212      | amzn    |            | 8.0.212-amzn
-    | GraalVM CE    |     | 17.0.7       | graalce |            | 17.0.7-graalce
-    | GraalVM Oracle|     | 17.0.7       | graal   |            | 17.0.7-graal
-    | Huawei        |     | 17.0.9       | bisheng |            | 17.0.9-bisheng
-    |               |     | 11.0.21      | bisheng |            | 11.0.21-bisheng
-    |               |     | 8.0.392      | bisheng |            | 8.0.392-bisheng
-    | Java.net      |     | 13.ea.20     | open    | installed  | 13.ea.20-open
-    |               |     | 12.0.1       | open    |            | 12.0.1-open
-    |               |     | 11.0.3       | open    |            | 11.0.3-open
-    |               |     | 10.0.2       | open    |            | 10.0.2-open
-    |               |     | 9.0.4        | open    |            | 9.0.4-open
-    | JetBrains     |     | 17.0.7       | jbr     |            | 17.0.7-jbr
-    |               |     | 11.0.8       | jbr     |            | 11.0.8-jbr
-    | Liberica NIK  |     | 19.0.0       | nik     |            | 19.0.0-nik
-    | Mandrel       |     | 20.1.0.1     | mandrel |            | 20.1.0.1-mandrel
-    | Microsoft     |     | 11.0.9       | ms      |            | 11.0.9-ms
-    | Oracle        |     | 11.0.9       | oracle  |            | 11.0.9-oracle
-    | Semeru        |     | 8.0.212      | sem     |            | 8.0.212-sem
-    | Temurin       |     | 8.0.212      | tem     |            | 8.0.212-tem
-    | Tencent       |     | 17.0.5       | kona    |            | 17.0.5-kona
-    |               |     | 11.0.17      | kona    |            | 11.0.17-kona
-    |               |     | 8.0.352      | kona    |            | 8.0.352-kona
-    | Zulu          | >>> | 12.0.1       | zulu    | installed  | 12.0.1-zulu
-    |               |     | 11.0.3       | zulu    |            | 11.0.3-zulu
-    |               |     | 8.0.212      | zulu    |            | 8.0.212-zulu
-    |               |     | 8.0.202      | zulu    | local only | 8.0.202-zulu
-    | Unclassified  |     | 11.0.3       | none    | local only | 11.0.3-local
+    | Corretto       |     | 11.0.3             | 11.0.3-amzn
+    |                |     | 8.0.212            | 8.0.212-amzn
+    | GraalVM CE     |     | 17.0.7             | 17.0.7-graalce
+    | GraalVM Oracle |     | 17.0.7             | 17.0.7-graal
+    | Huawei         |     | 17.0.9             | 17.0.9-bisheng
+    |                |     | 11.0.21            | 11.0.21-bisheng
+    |                |     | 8.0.392            | 8.0.392-bisheng
+    | Java.net       |   * | 13.ea.20           | 13.ea.20-open
+    |                |     | 12.0.1             | 12.0.1-open
+    |                |     | 11.0.3             | 11.0.3-open
+    |                |     | 10.0.2             | 10.0.2-open
+    |                |     | 9.0.4              | 9.0.4-open
+    | JetBrains      |     | 17.0.7             | 17.0.7-jbr
+    |                |     | 11.0.8             | 11.0.8-jbr
+    | Liberica NIK   |     | 19.0.0             | 19.0.0-nik
+    | Mandrel        |     | 20.1.0.1           | 20.1.0.1-mandrel
+    | Microsoft      |     | 11.0.9             | 11.0.9-ms
+    | Oracle         |     | 11.0.9             | 11.0.9-oracle
+    | Semeru         |     | 8.0.212            | 8.0.212-sem
+    | Temurin        |     | 8.0.212            | 8.0.212-tem
+    | Tencent        |     | 17.0.5             | 17.0.5-kona
+    |                |     | 11.0.17            | 11.0.17-kona
+    |                |     | 8.0.352            | 8.0.352-kona
+    | Zulu           | > * | 12.0.1             | 12.0.1-zulu
+    |                |     | 11.0.3             | 11.0.3-zulu
+    |                |     | 8.0.212            | 8.0.212-zulu
+    |                |   + | 8.0.202            | 8.0.202-zulu
+    | Unclassified   |   + | 11.0.3             | 11.0.3-local
     |================================================================================
     |Omit Identifier to install default version 17.0.0-tem:
     |    $ sdk install java
@@ -104,10 +104,10 @@ Feature: Java Version List by Vendor
     |================================================================================
     |Available Java Versions for Linux 64bit
     |================================================================================
-    | Vendor        | Use | Version      | Dist    | Status     | Identifier
+    | Vendor         | Use | Version            | Identifier
     |--------------------------------------------------------------------------------
-    | Java.net      |     | 10.0.2       | open    | installed  | 10.0.2-open
-    |               |     | 10.0.1       | open    | local only | 10.0.1-open
+    | Java.net       |   * | 10.0.2             | 10.0.2-open
+    |                |   + | 10.0.1             | 10.0.1-open
     |================================================================================
     |Omit Identifier to install default version 17.0.0-tem:
     |    $ sdk install java
@@ -132,12 +132,12 @@ Feature: Java Version List by Vendor
     |================================================================================
     |Available Java Versions for Linux 64bit
     |================================================================================
-    | Vendor        | Use | Version      | Dist    | Status     | Identifier
+    | Vendor         | Use | Version            | Identifier
     |--------------------------------------------------------------------------------
-    | Java.net      |     | 10.0.2       | open    | installed  | 10.0.2-open
-    | Unclassified  |     | 10.0.1       | none    | local only | 10.0.1-local
-    |               |     | 8.0.212      | none    | local only | 8.0.212-xyz
-    |               |     | 8.0.212      | none    | local only | 8.0.212-vendor
+    | Java.net       |   * | 10.0.2             | 10.0.2-open
+    | Unclassified   |   + | 10.0.1             | 10.0.1-local
+    |                |   + | 8.0.212            | 8.0.212-xyz
+    |                |   + | 8.0.212            | 8.0.212-vendor
     |================================================================================
     |Omit Identifier to install default version 17.0.0-tem:
     |    $ sdk install java
@@ -162,9 +162,9 @@ Feature: Java Version List by Vendor
     |================================================================================
     |Available Java Versions for Linux 64bit
     |================================================================================
-    | Vendor        | Use | Version      | Dist    | Status     | Identifier
+    | Vendor         | Use | Version            | Identifier
     |--------------------------------------------------------------------------------
-    | Java.net      |     | 10.0.2       | open    | installed  | 10.0.2-open
+    | Java.net       |   * | 10.0.2             | 10.0.2-open
     |================================================================================
     |Omit Identifier to install default version 17.0.0-tem:
     |    $ sdk install java
@@ -186,9 +186,9 @@ Feature: Java Version List by Vendor
     |================================================================================
     |Available Java Versions for Linux 64bit
     |================================================================================
-    | Vendor        | Use | Version      | Dist    | Status     | Identifier
+    | Vendor         | Use | Version            | Identifier
     |--------------------------------------------------------------------------------
-    | Unclassified  |     | 10.0.2       | none    | local only | 10.0.2-vendor
+    | Unclassified   |   + | 10.0.2             | 10.0.2-vendor
     |================================================================================
     |Omit Identifier to install default version 17.0.0-tem:
     |    $ sdk install java
@@ -209,7 +209,7 @@ Feature: Java Version List by Vendor
     |================================================================================
     |Available Java Versions for Linux 64bit
     |================================================================================
-    | Vendor        | Use | Version      | Dist    | Status     | Identifier
+    | Vendor         | Use | Version            | Identifier
     |--------------------------------------------------------------------------------
     |No versions available for your platform at this time.
     |================================================================================
