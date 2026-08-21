@@ -72,5 +72,24 @@ class LocalVersionFilteringSpec
         label should have length 15
         rows.head should startWith("|")
       }
+
+    // Published versions with an unmapped shortcode, published versions with no vendor and
+    // local-only installs all carry the `Unclassified` label. Collecting the pairs into a Map
+    // let the last one silently overwrite the others, dropping whole rows from the response.
+    "merge groups that share a display label and keep the pair order" in
+      new JavaListController(null, null, null) {
+
+        val merged = mergeByLabel(
+          Seq(
+            "Temurin        " -> Seq("| tem row"),
+            UnclassifiedLabel -> Seq("| published row"),
+            "Zulu           " -> Seq("| zulu row"),
+            UnclassifiedLabel -> Seq("| local row")
+          )
+        )
+
+        merged.map(_._1) shouldBe Seq("Temurin        ", UnclassifiedLabel, "Zulu           ")
+        merged(1)._2 shouldBe Seq("| published row", "| local row")
+      }
   }
 }
