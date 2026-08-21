@@ -17,7 +17,11 @@ trait JavaVersionItemOrdering {
 
   private def javaVendor(item: VersionItem): String = item.vendor.getOrElse("none")
 
-  private def basicJavaVersion(item: VersionItem): String = item.version.split('-').head
+  /** The version up to its first hyphen. An all-hyphen label such as `-` splits into no segments at
+    * all, so `head` used to throw and turn a degenerate local install into an HTTP 500.
+    */
+  private def basicJavaVersion(item: VersionItem): String =
+    item.version.split('-').headOption.getOrElse("")
 
   private def quickSort(as: Array[VersionItem]): Array[VersionItem] = {
     Sorting.quickSort(as)
