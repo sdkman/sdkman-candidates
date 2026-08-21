@@ -26,6 +26,7 @@ Feature: Version List by Platform
   Scenario: Show a Version List of a Platform Specific Linux 64 Candidate
     When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
     And the response body is
     """
     |================================================================================
@@ -49,6 +50,7 @@ Feature: Version List by Platform
   Scenario: Show a Version List of a Platform Specific Mac OSX Candidate
     When a request is made to /candidates/java/darwinx64/versions/list
     Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
     And the response body is
     """
     |================================================================================
@@ -70,6 +72,7 @@ Feature: Version List by Platform
   Scenario: Show a Version List of a Platform Specific Windows Candidate
     When a request is made to /candidates/java/windowsx64/versions/list
     Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
     And the response body is
     """
     |================================================================================

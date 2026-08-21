@@ -11,6 +11,7 @@ Feature: Version List by Visibility
       | java      | 8.0.275.hs     | tem   | LINUX_X64 | https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u275-b01/OpenJDK8U-jdk_x64_linux_hotspot_8u275b01.tar.gz | false   |
     When a request is made to /candidates/java/linuxx64/versions/list
     Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
     And the response body is
     """
     |================================================================================
