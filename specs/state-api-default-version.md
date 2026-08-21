@@ -86,9 +86,9 @@ These design calls are locked. The planning phase does not revisit them.
 
 The change is complete when **all** of the following hold:
 
-- `./sbt test` passes.
-- `./sbt scalafmtCheck Test/scalafmtCheck` passes.
-- `./sbt compile` produces no new warnings.
+- `sbt test` passes.
+- `sbt scalafmtCheck Test/scalafmtCheck` passes.
+- `sbt compile` produces no new warnings.
 - The Candidates Service serves `GET /default/<candidate>` by issuing a tag lookup against the State API and not by reading from MongoDB.
 - The State API request issued for `GET /default/java` carries `platform=LINUX_X64` and `distribution=TEMURIN` as query parameters.
 - The State API request issued for `GET /default/<another platform-specific candidate>` (e.g. `cuba`) carries `platform=LINUX_X64` and no `distribution`.

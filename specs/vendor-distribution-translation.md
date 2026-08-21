@@ -81,8 +81,8 @@ These design calls are locked. The planning phase does not revisit them.
 
 The change is complete when **all** of the following hold:
 
-- `./sbt test` passes.
-- `./sbt scalafmtCheck Test/scalafmtCheck` passes.
+- `sbt test` passes.
+- `sbt scalafmtCheck Test/scalafmtCheck` passes.
 - A State API `Version` response carrying `distribution: "TEMURIN"` is parsed so that `vendor` is `tem` (and absent `distribution` yields no vendor).
 - The Java version list groups versions under their correct vendor labels (Temurin, Zulu, …) and never under "Unclassified" solely because of an untranslated enum name; installed vendored versions (e.g. `21.0.3-tem`) correlate correctly.
 - The State API request for validating a vendored Java version (e.g. `8u111-open`) carries `distribution=OPENJDK` (the enum name), not `open`.
