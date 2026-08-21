@@ -82,12 +82,22 @@ class JavaVersionItemRenderingSpec extends AnyWordSpec with Matchers {
     }
 
     // Truncation is a width guarantee rather than an expected outcome: no live version is this
-    // wide, but an overflowing cell would push the row past the 80 character rule.
-    "truncate a version wider than the column to 18 characters" in new JavaVersionRendering {
+    // wide, but an overflowing cell would push the row past the 80 character rule. The marker
+    // keeps the elision visible instead of presenting a clipped value as the real one.
+    "truncate a version wider than the column to 17 characters plus the marker" in new JavaVersionRendering {
       VersionItem(
         "21.0.12-crac+1.2.3.4-librca",
         vendor = Some("librca")
-      ).show shouldBe "|     | 21.0.12-crac+1.2.3 | 21.0.12-crac+1.2.3.4-librca"
+      ).show shouldBe "|     | 21.0.12-crac+1.2.> | 21.0.12-crac+1.2.3.4-librca"
+    }
+
+    // A truncated identifier is not installable as displayed, so the row must say so rather than
+    // offering 35 characters of a 36 character label as if they were the whole thing.
+    "truncate an identifier wider than the column to 34 characters plus the marker" in new JavaVersionRendering {
+      VersionItem(
+        "21.0.12-crac+1.2.3.4.5.6.7.10-librca",
+        vendor = Some("librca")
+      ).show shouldBe "|     | 21.0.12-crac+1.2.> | 21.0.12-crac+1.2.3.4.5.6.7.10-libr>"
     }
 
     "render no trailing whitespace, because the identifier is the last column" in new JavaVersionRendering {
