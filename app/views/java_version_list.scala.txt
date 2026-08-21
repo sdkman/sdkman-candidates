@@ -1,10 +1,10 @@
 @(vendorVersions: Map[String, Seq[String]], defaultVersion: String, platform: String)================================================================================
 Available Java Versions for @platform
 ================================================================================
- Vendor        | Use | Version      | Dist    | Status     | Identifier
+ Vendor         | Use | Version            | Identifier
 --------------------------------------------------------------------------------
 @if(vendorVersions.nonEmpty) {@for((vendor, versions) <- vendorVersions) { @vendor@versions.head
-@for(version <- versions.tail){               @version
+@for(version <- versions.tail){                @version
 }}} else {No versions available for your platform at this time.
 }================================================================================
 Omit Identifier to install default version @defaultVersion:

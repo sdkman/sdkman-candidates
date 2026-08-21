@@ -37,35 +37,50 @@ trait VersionRendering {
 
 trait JavaVersionRendering {
 
-  val CurrentSymbol = ">>>"
+  val VersionLength = 18
 
-  val BlankSymbol = "   "
+  val IdentifierLength = 35
 
-  val StatusLength = 10
+  val BlankSymbol = " "
 
-  val BasicVersionLength = 12
+  val CurrentSymbol = ">"
 
-  val IdentifierLength = 20
+  val InstalledSymbol = "*"
 
-  val DistributionLength = 7
+  val LocalSymbol = "+"
 
   implicit val javaItemShow = show[VersionItem] { vi =>
-    def current = if (vi.current) CurrentSymbol else BlankSymbol
+    val current = if (vi.current) CurrentSymbol else BlankSymbol
 
-    val status = vi match {
-      case VersionItem(_, _, true, false, _) => "installed".padTo(StatusLength, ' ')
-      case VersionItem(_, _, false, true, _) => "local only".padTo(StatusLength, ' ')
-      case _                                 => "".padTo(StatusLength, ' ')
-    }
+    val installed =
+      if (vi.installed) InstalledSymbol else if (vi.local) LocalSymbol else BlankSymbol
 
-    val version = vi.version.padTo(IdentifierLength, ' ')
+    val use = s"$current $installed"
 
-    def basicVersion = vi.version.split('-').head.padTo(BasicVersionLength, ' ')
+    val version = qualifiedVersion(vi).take(VersionLength).padTo(VersionLength, ' ')
 
-    def distribution = vi.vendor.getOrElse("none").padTo(DistributionLength, ' ')
+    val identifier = vi.version.take(IdentifierLength)
 
-    s"| $current | $basicVersion | $distribution | $status | $version"
+    s"| $use | $version | $identifier"
   }
+
+  /** The identifier without its trailing vendor shortcode. Only a suffix matching the item's own
+    * vendor is removed, so hyphen-introduced qualifiers such as `-fx+1.1` stay with the version.
+    */
+  private def qualifiedVersion(vi: VersionItem): String = {
+    val identifier = vi.version
+    vi.vendor
+      .map(vendor => s"-$vendor")
+      .filter(identifier.endsWith)
+      .map(suffix => identifier.dropRight(suffix.length))
+      .getOrElse(dropTrailingSegment(identifier))
+  }
+
+  private def dropTrailingSegment(identifier: String): String =
+    identifier.lastIndexOf('-') match {
+      case -1    => identifier
+      case index => identifier.take(index)
+    }
 }
 
 case class VersionItem(

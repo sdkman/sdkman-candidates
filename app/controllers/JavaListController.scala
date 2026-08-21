@@ -93,7 +93,7 @@ class JavaListController @Inject() (
     "trava"   -> "Trava",
     "zulu"    -> "Zulu",
     "zulufx"  -> "ZuluFX"
-  ).mapValues(_.padTo(14, ' '))
+  ).mapValues(_.padTo(15, ' '))
 
   private def sortItems(versionsToItems: Map[String, Seq[String]]): ListMap[String, Seq[String]] =
     ListMap(versionsToItems.toSeq.sortBy(_._1): _*)
