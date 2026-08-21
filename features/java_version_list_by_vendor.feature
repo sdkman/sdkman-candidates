@@ -381,3 +381,16 @@ Feature: Java Version List by Vendor
     | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
+
+  Scenario: Degenerate local install labels still return a response
+    # A local install label has no required shape, so an all-hyphen label reaches the
+    # version sort. It split into no segments at all and threw, failing the whole list
+    # with a 500 — one unusable local install hid every other version from the CLI.
+    Given the Versions
+      | candidate | version | vendor | platform  | url                                       |
+      | java      | 8.0.212 | tem    | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz |
+
+    And the installed Versions mybuild-,-
+    When a request is made to /candidates/java/linuxx64/versions/list
+    Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace

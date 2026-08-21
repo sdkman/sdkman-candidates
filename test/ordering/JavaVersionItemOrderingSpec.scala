@@ -76,6 +76,18 @@ class JavaVersionItemOrderingSpec extends AnyWordSpec with Matchers {
         versions.ascendingOrder shouldBe List(v7, v2, v6, v3, v1, v8, v9, v5, v4)
       }
     }
+
+    "of degenerate local labels" should {
+
+      // A local install label carries no shape guarantee, so an all-hyphen label reaches the
+      // sort. It used to split into no segments at all and fail the whole list with a 500.
+      "sort an all-hyphen version without throwing" in new RegexStringComparison
+        with JavaVersionItemOrdering {
+        val versions = List(versionItem("-"), versionItem("mybuild-"))
+
+        noException should be thrownBy versions.ascendingOrder
+      }
+    }
   }
 
   private def versionItem(version: String, vendor: Option[String] = None): VersionItem =
