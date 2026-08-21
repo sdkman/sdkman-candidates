@@ -38,14 +38,18 @@ class JavaListController @Inject() (
         // platform, not on the whole shortcode map: a label ending in a shortcode nobody
         // published had no group to land in and used to vanish from the response entirely.
         publishedVendors: Set[String] = versionsByVendor.keySet
-        allLocalVersions: Seq[String] = installed.split(",")
+        // A leading, trailing or doubled comma splits into empty elements. Left in, the first
+        // of them failed the local-list guard below and suppressed the whole Unclassified
+        // group, so every local install vanished because of a stray comma.
+        allLocalVersions: Seq[String] = installed.split(",").filter(_.trim.nonEmpty)
         localInstalledVersions        = findAllNotEndingWith(allLocalVersions, publishedVendors)
         vendorInstalledVersions       = allLocalVersions.diff(localInstalledVersions)
         vendorsToItems = versionsByVendor.toSeq.map { case (ven, vs) =>
           toVendorItems(ven, vs, vendorInstalledVersions.filter(_.endsWith(s"-$ven")), current)
         }
         allVendorItems =
-          localInstalledVersions.headOption.filter(_.trim.nonEmpty).fold(vendorsToItems) { _ =>
+          if (localInstalledVersions.isEmpty) vendorsToItems
+          else {
             val localInstalledItems =
               toVendorItems("none", Seq.empty, localInstalledVersions, current)
             vendorsToItems :+ localInstalledItems
