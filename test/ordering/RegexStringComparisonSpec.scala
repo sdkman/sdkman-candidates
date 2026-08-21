@@ -68,6 +68,16 @@ class RegexStringComparisonSpec extends AnyWordSpec with Matchers {
       }
 
     }
+
+    "groups are empty" should {
+
+      // A degenerate local install label such as "-" reduces to an empty version
+      // string, so the sort can compare two strings that yield no regex groups at
+      // all. Without a Nil case the match threw and failed the whole list request.
+      "treat two versions with no segments as equal" in new RegexStringComparison {
+        assertZero(compareRegexGroups("", ""))
+      }
+    }
   }
 
   private def assertPositive(i: Int) = assert(i > 0)
