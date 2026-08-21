@@ -61,6 +61,26 @@ class JavaVersionItemRenderingSpec extends AnyWordSpec with Matchers {
       ).show shouldBe "|   + | 11.0.3             | 11.0.3-local"
     }
 
+    // A local install carries no matching vendor, so the fallback decides its version cell.
+    // Dropping the last hyphen segment unconditionally ate the qualifier and collapsed
+    // `21.0.12-crac+1.2` and `21.0.12-fx+1.1` into one indistinguishable `21.0.12` row.
+    "keep a qualifier the fallback cannot mistake for a shortcode" in new JavaVersionRendering {
+      VersionItem(
+        "21.0.12-crac+1.2",
+        local = true,
+        vendor = Some("none")
+      ).show shouldBe "|   + | 21.0.12-crac+1.2   | 21.0.12-crac+1.2"
+    }
+
+    // Shortcodes are lowercase letters only, so an upper-case segment is part of the label.
+    "keep an upper-case trailing segment in the version column" in new JavaVersionRendering {
+      VersionItem(
+        "UPPER-CASE",
+        local = true,
+        vendor = Some("none")
+      ).show shouldBe "|   + | UPPER-CASE         | UPPER-CASE"
+    }
+
     // Truncation is a width guarantee rather than an expected outcome: no live version is this
     // wide, but an overflowing cell would push the row past the 80 character rule.
     "truncate a version wider than the column to 18 characters" in new JavaVersionRendering {
