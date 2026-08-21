@@ -350,3 +350,34 @@ Feature: Java Version List by Vendor
     | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
+
+  Scenario: Blank elements in the installed parameter are ignored
+    # The CLI can send a leading, trailing or doubled comma. The empty element it
+    # split into headed the local list and failed the non-blank guard, so the whole
+    # Unclassified group was suppressed and both real local installs vanished.
+    Given the Versions
+      | candidate | version | vendor | platform  | url                                       |
+      | java      | 8.0.212 | tem    | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz |
+
+    And the installed Versions ,a-local,,b-local
+    When a request is made to /candidates/java/linuxx64/versions/list
+    Then a 200 status code is received
+    And every response line is at most 80 characters with no trailing whitespace
+    And the response body is
+    """
+    |================================================================================
+    |Available Java Versions for Linux 64bit
+    |================================================================================
+    | Vendor         | Use | Version            | Identifier
+    |--------------------------------------------------------------------------------
+    | Temurin        |     | 8.0.212            | 8.0.212-tem
+    | Unclassified   |   + | b                  | b-local
+    |                |   + | a                  | a-local
+    |================================================================================
+    | > in use   * installed   + local only
+    |--------------------------------------------------------------------------------
+    | $ sdk install java <Identifier>    install a specific version
+    | $ sdk install java                 install the default: 17.0.0-tem
+    | $ sdk install java [TAB]           complete an available identifier
+    |================================================================================
+    """
