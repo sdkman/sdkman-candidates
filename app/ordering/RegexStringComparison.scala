@@ -23,6 +23,8 @@ trait RegexStringComparison {
 
   @tailrec
   private def compare(segments: Seq[(String, String)]): Int = segments match {
+    case Nil =>
+      0
     case (x: String, y: String) :: Nil =>
       compareSegValues(x, y)
     case (x: String, y: String) :: segs =>
