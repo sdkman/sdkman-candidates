@@ -76,11 +76,20 @@ trait JavaVersionRendering {
       .getOrElse(dropTrailingSegment(identifier))
   }
 
+  /** The trailing segment is dropped only when it has shortcode shape, so a hyphen-introduced
+    * qualifier such as `-crac+1.2` survives on a local install whose vendor never matched. Rows
+    * that differ at all must differ visibly, and a qualifier is part of the version.
+    */
   private def dropTrailingSegment(identifier: String): String =
     identifier.lastIndexOf('-') match {
-      case -1    => identifier
-      case index => identifier.take(index)
+      case -1 => identifier
+      case index =>
+        val segment = identifier.drop(index + 1)
+        if (ShortcodeSegment.pattern.matcher(segment).matches) identifier.take(index)
+        else identifier
     }
+
+  private val ShortcodeSegment = "[a-z]+".r
 }
 
 case class VersionItem(
