@@ -49,6 +49,8 @@ trait JavaVersionRendering {
 
   val LocalSymbol = "+"
 
+  val TruncationMarker = ">"
+
   implicit val javaItemShow = show[VersionItem] { vi =>
     val current = if (vi.current) CurrentSymbol else BlankSymbol
 
@@ -57,12 +59,20 @@ trait JavaVersionRendering {
 
     val use = s"$current $installed"
 
-    val version = qualifiedVersion(vi).take(VersionLength).padTo(VersionLength, ' ')
+    val version = truncate(qualifiedVersion(vi), VersionLength).padTo(VersionLength, ' ')
 
-    val identifier = vi.version.take(IdentifierLength)
+    val identifier = truncate(vi.version, IdentifierLength)
 
     s"| $use | $version | $identifier"
   }
+
+  /** The value cut to the column width, with the last character replaced by the truncation marker
+    * when anything was cut. A silently clipped identifier reads as an installable one; the marker
+    * makes the elision visible.
+    */
+  def truncate(value: String, width: Int): String =
+    if (value.length <= width) value
+    else value.take(width - 1) + TruncationMarker
 
   /** The identifier without its trailing vendor shortcode. Only a suffix matching the item's own
     * vendor is removed, so hyphen-introduced qualifiers such as `-fx+1.1` stay with the version.
