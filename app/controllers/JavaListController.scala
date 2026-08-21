@@ -36,16 +36,16 @@ class JavaListController @Inject() (
         allLocalVersions: Seq[String] = installed.split(",")
         localInstalledVersions        = findAllNotEndingWith(allLocalVersions, vendors.keySet)
         vendorInstalledVersions       = allLocalVersions.diff(localInstalledVersions)
-        vendorsToItems = versions.groupBy(vendorKey).map { case (ven, vs) =>
+        vendorsToItems = versions.groupBy(vendorKey).toSeq.map { case (ven, vs) =>
           toVendorItems(ven, vs, vendorInstalledVersions.filter(_.endsWith(s"-$ven")), current)
         }
-        sortedVendorToItems = sortItems(vendorsToItems)
-        combinedItems =
-          localInstalledVersions.headOption.filter(_.trim.nonEmpty).fold(sortedVendorToItems) { _ =>
+        allVendorItems =
+          localInstalledVersions.headOption.filter(_.trim.nonEmpty).fold(vendorsToItems) { _ =>
             val localInstalledItems =
               toVendorItems("none", Seq.empty, localInstalledVersions, current)
-            sortedVendorToItems + localInstalledItems
+            vendorsToItems :+ localInstalledItems
           }
+        combinedItems  = sortItems(mergeByLabel(allVendorItems))
         defaultVersion = candidateO.flatMap(_.default).getOrElse("17.0.0-tem")
       } yield Ok(views.txt.java_version_list(combinedItems, defaultVersion, platform.description))
     }
@@ -100,7 +100,26 @@ class JavaListController @Inject() (
     "zulufx"  -> "ZuluFX"
   ).mapValues(_.padTo(15, ' '))
 
-  private def sortItems(versionsToItems: Map[String, Seq[String]]): ListMap[String, Seq[String]] =
-    ListMap(versionsToItems.toSeq.sortBy(_._1): _*)
+  /** Groups carrying the same display label render as one group, published rows first and
+    * local-only rows after, so a group never silently overwrites another with the same key.
+    */
+  private[controllers] def mergeByLabel(
+      vendorsToItems: Seq[(String, Seq[String])]
+  ): Seq[(String, Seq[String])] =
+    vendorsToItems.foldLeft(Seq.empty[(String, Seq[String])]) { case (merged, (label, items)) =>
+      merged.indexWhere(_._1 == label) match {
+        case -1    => merged :+ (label -> items)
+        case index => merged.updated(index, label -> (merged(index)._2 ++ items))
+      }
+    }
+
+  // The catch-all group renders after every vendor group, as the layout spec's reference
+  // rendering shows; sorting it alphabetically would move it above Zulu.
+  private[controllers] def sortItems(
+      versionsToItems: Seq[(String, Seq[String])]
+  ): ListMap[String, Seq[String]] = {
+    val (unclassified, classified) = versionsToItems.partition(_._1 == UnclassifiedLabel)
+    ListMap(classified.sortBy(_._1) ++ unclassified: _*)
+  }
 
 }
