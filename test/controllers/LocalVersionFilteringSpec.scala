@@ -38,8 +38,6 @@ class LocalVersionFilteringSpec
         suffix  <- suffixGen
       } yield s"$version-$suffix"
 
-    // A label joins a vendor group on a `-<shortcode>` suffix only, so a hyphenless label
-    // that merely ends in the shortcode letters is not a member.
     def hyphenless(suffixGen: Gen[String]): Gen[String] =
       for {
         version <- versionGen
@@ -69,8 +67,6 @@ class LocalVersionFilteringSpec
         }
       }
 
-    // Both labels used to be claimed by the Temurin group on a bare `endsWith("tem")` match
-    // and then filtered out of it again by the `-tem` suffix test, so neither ever rendered.
     "retain a bare shortcode label and a hyphenless label ending in one" in
       new JavaListController(null, null, null) {
 
@@ -80,8 +76,6 @@ class LocalVersionFilteringSpec
 
   "Vendor grouping" should {
 
-    // The mapped labels are padded to the vendor column width; an unpadded fallback would
-    // shift the first row's `|` separator off column 17 for any unrecognised shortcode.
     "pad the fallback label of an unmapped shortcode to the vendor column width" in
       new JavaListController(null, null, null) {
 
@@ -92,9 +86,6 @@ class LocalVersionFilteringSpec
         rows.head should startWith("|")
       }
 
-    // Published versions with an unmapped shortcode, published versions with no vendor and
-    // local-only installs all carry the `Unclassified` label. Collecting the pairs into a Map
-    // let the last one silently overwrite the others, dropping whole rows from the response.
     "merge groups that share a display label and keep the pair order" in
       new JavaListController(null, null, null) {
 

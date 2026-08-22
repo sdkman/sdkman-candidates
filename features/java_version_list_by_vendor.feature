@@ -218,10 +218,6 @@ Feature: Java Version List by Vendor
     """
 
   Scenario: Hyphen-qualified versions are displayed in full
-    # Regression cover for the defect in specs/java-list-view-layout.md: the
-    # suite carried no java version whose qualifier is introduced by a hyphen,
-    # so three distinct Liberica versions used to collapse to `21.0.12` and the
-    # 23-character identifier used to push the row past 80 characters.
     Given the Versions
       | candidate | version          | vendor | platform  | url                                                       |
       | java      | 21.0.12+1.1      | librca | LINUX_X64 | http://librca.example.org/jdk-21.0.12+1.1.tar.gz           |
@@ -252,11 +248,6 @@ Feature: Java Version List by Vendor
     """
 
   Scenario: A vendorless published version and a local install share one Unclassified group
-    # Both groups carry the `Unclassified` label. Keyed by label in a Map, the
-    # second group used to overwrite the first, so its rows vanished from the
-    # response with no trace. A published version with no vendor is the only
-    # shape of this collision the wire can carry: an unmapped shortcode has no
-    # `distribution` counterpart and reaches the client vendorless anyway.
     Given the Versions
       | candidate | version | vendor | platform  | url                                       |
       | java      | 11.0.3  |        | LINUX_X64 | http://open.example.org/jdk-11.0.3.tar.gz |
@@ -286,11 +277,6 @@ Feature: Java Version List by Vendor
     """
 
   Scenario: Local installs matching no published vendor fall to Unclassified
-    # `17-gln` ends in a shortcode the State API never publishes, `17-zulu` in one
-    # that is unpublished on this platform, and `system` merely ends in the letters
-    # of `tem`. All three used to be claimed by a vendor group and then filtered
-    # back out of it, so they rendered nowhere at all — indistinguishable, from the
-    # CLI, from an uninstalled JDK.
     Given the Versions
       | candidate | version | vendor | platform  | url                                       |
       | java      | 8.0.212 | tem    | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz |
@@ -320,10 +306,6 @@ Feature: Java Version List by Vendor
     """
 
   Scenario: Qualified local installs keep their qualifiers in the Version column
-    # Neither label ends in a published `-<shortcode>`, so both fall to Unclassified
-    # and the version cell comes from the fallback. Dropping the last hyphen segment
-    # unconditionally rendered both rows as `21.0.12`, hiding which of the two builds
-    # each row installs.
     Given the Versions
       | candidate | version | vendor | platform  | url                                       |
       | java      | 8.0.212 | tem    | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz |
@@ -352,9 +334,6 @@ Feature: Java Version List by Vendor
     """
 
   Scenario: Blank elements in the installed parameter are ignored
-    # The CLI can send a leading, trailing or doubled comma. The empty element it
-    # split into headed the local list and failed the non-blank guard, so the whole
-    # Unclassified group was suppressed and both real local installs vanished.
     Given the Versions
       | candidate | version | vendor | platform  | url                                       |
       | java      | 8.0.212 | tem    | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz |
@@ -383,9 +362,6 @@ Feature: Java Version List by Vendor
     """
 
   Scenario: Degenerate local install labels still return a response
-    # A local install label has no required shape, so an all-hyphen label reaches the
-    # version sort. It split into no segments at all and threw, failing the whole list
-    # with a 500 — one unusable local install hid every other version from the CLI.
     Given the Versions
       | candidate | version | vendor | platform  | url                                       |
       | java      | 8.0.212 | tem    | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz |
@@ -396,9 +372,6 @@ Feature: Java Version List by Vendor
     And every response line is at most 80 characters with no trailing whitespace
 
   Scenario: Two all-hyphen local install labels still return a response
-    # Two labels that both reduce to an empty version string meet in the same
-    # comparison. The segment list is then empty on both sides, which the version
-    # comparison did not match on, throwing and failing the list with a 500.
     Given the Versions
       | candidate | version | vendor | platform  | url                                       |
       | java      | 8.0.212 | tem    | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz |

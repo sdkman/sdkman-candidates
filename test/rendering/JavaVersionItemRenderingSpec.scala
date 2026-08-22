@@ -33,8 +33,6 @@ class JavaVersionItemRenderingSpec extends AnyWordSpec with Matchers {
       ).show shouldBe "|     | 17.0.20            | 17.0.20-tem"
     }
 
-    // The qualifier belongs to the version, so these three Liberica rows must differ visibly;
-    // stripping at the first hyphen collapsed them all to `21.0.12`.
     "keep a hyphen-introduced qualifier in the version column" in new JavaVersionRendering {
       VersionItem(
         "21.0.12-crac+1.2-librca",
@@ -51,8 +49,6 @@ class JavaVersionItemRenderingSpec extends AnyWordSpec with Matchers {
       ).show shouldBe "|   + | 8.0.202            | 8.0.202-zulu"
     }
 
-    // An unrecognised shortcode never matches the item's vendor, so the version falls back to
-    // dropping the identifier's last hyphen segment.
     "derive the version of an unrecognised shortcode from its last segment" in new JavaVersionRendering {
       VersionItem(
         "11.0.3-local",
@@ -61,9 +57,6 @@ class JavaVersionItemRenderingSpec extends AnyWordSpec with Matchers {
       ).show shouldBe "|   + | 11.0.3             | 11.0.3-local"
     }
 
-    // A local install carries no matching vendor, so the fallback decides its version cell.
-    // Dropping the last hyphen segment unconditionally ate the qualifier and collapsed
-    // `21.0.12-crac+1.2` and `21.0.12-fx+1.1` into one indistinguishable `21.0.12` row.
     "keep a qualifier the fallback cannot mistake for a shortcode" in new JavaVersionRendering {
       VersionItem(
         "21.0.12-crac+1.2",
@@ -72,7 +65,6 @@ class JavaVersionItemRenderingSpec extends AnyWordSpec with Matchers {
       ).show shouldBe "|   + | 21.0.12-crac+1.2   | 21.0.12-crac+1.2"
     }
 
-    // Shortcodes are lowercase letters only, so an upper-case segment is part of the label.
     "keep an upper-case trailing segment in the version column" in new JavaVersionRendering {
       VersionItem(
         "UPPER-CASE",
@@ -81,9 +73,6 @@ class JavaVersionItemRenderingSpec extends AnyWordSpec with Matchers {
       ).show shouldBe "|   + | UPPER-CASE         | UPPER-CASE"
     }
 
-    // Truncation is a width guarantee rather than an expected outcome: no live version is this
-    // wide, but an overflowing cell would push the row past the 80 character rule. The marker
-    // keeps the elision visible instead of presenting a clipped value as the real one.
     "truncate a version wider than the column to 17 characters plus the marker" in new JavaVersionRendering {
       VersionItem(
         "21.0.12-crac+1.2.3.4-librca",
@@ -91,8 +80,6 @@ class JavaVersionItemRenderingSpec extends AnyWordSpec with Matchers {
       ).show shouldBe "|     | 21.0.12-crac+1.2.> | 21.0.12-crac+1.2.3.4-librca"
     }
 
-    // A truncated identifier is not installable as displayed, so the row must say so rather than
-    // offering 35 characters of a 36 character label as if they were the whole thing.
     "truncate an identifier wider than the column to 34 characters plus the marker" in new JavaVersionRendering {
       VersionItem(
         "21.0.12-crac+1.2.3.4.5.6.7.10-librca",
