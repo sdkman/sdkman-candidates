@@ -6,10 +6,6 @@ Feature: Java Version List Footer
       | java      | Java | The Java Language | 21.0.12-crac+1.2.3.4-librca | https://adoptium.net | PLATFORM_SPECIFIC |
 
   Scenario: An over-long candidate default is truncated in the footer
-    # The candidate default is interpolated after a fixed 57-character prefix, so a
-    # default longer than 23 characters used to push that footer line past 80
-    # characters — the one line width the layout spec could not otherwise guarantee.
-    # The `>` marker keeps the elision visible: the shown value is not installable.
     Given the Versions
       | candidate | version | vendor | platform  | url                                       |
       | java      | 8.0.212 | tem    | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz |

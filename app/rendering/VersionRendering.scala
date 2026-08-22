@@ -51,9 +51,6 @@ trait JavaVersionRendering {
 
   val TruncationMarker = ">"
 
-  /** The width left for the footer's default identifier after its fixed 57-character prefix, so an
-    * over-long candidate default cannot push that line past 80 characters.
-    */
   val DefaultVersionLength = 23
 
   implicit val javaItemShow = show[VersionItem] { vi =>
@@ -71,17 +68,10 @@ trait JavaVersionRendering {
     s"| $use | $version | $identifier"
   }
 
-  /** The value cut to the column width, with the last character replaced by the truncation marker
-    * when anything was cut. A silently clipped identifier reads as an installable one; the marker
-    * makes the elision visible.
-    */
   def truncate(value: String, width: Int): String =
     if (value.length <= width) value
     else value.take(width - 1) + TruncationMarker
 
-  /** The identifier without its trailing vendor shortcode. Only a suffix matching the item's own
-    * vendor is removed, so hyphen-introduced qualifiers such as `-fx+1.1` stay with the version.
-    */
   private def qualifiedVersion(vi: VersionItem): String = {
     val identifier = vi.version
     vi.vendor
@@ -91,10 +81,6 @@ trait JavaVersionRendering {
       .getOrElse(dropTrailingSegment(identifier))
   }
 
-  /** The trailing segment is dropped only when it has shortcode shape, so a hyphen-introduced
-    * qualifier such as `-crac+1.2` survives on a local install whose vendor never matched. Rows
-    * that differ at all must differ visibly, and a qualifier is part of the version.
-    */
   private def dropTrailingSegment(identifier: String): String =
     identifier.lastIndexOf('-') match {
       case -1 => identifier
