@@ -202,7 +202,7 @@ The features that pin rendered output (`candidate_list.feature`, `candidates.fea
 - The MongoDB `application` collection, `GET /alive`, and removal of the Mongo driver. Phase 3.
 - Hardening the unconditional candidate-cache writes in the `sdkman-hooks` install and self-update scripts. Phase 3, with the rest of that repo.
 - Any change to either CLI, including the candidate-validity gates that strand `cuba` and `ktx`.
-- Backfilling the candidate data into Postgres. That is `candidates-migration/`, in the workspace root.
+- Backfilling the candidate data into Postgres. That is `candidates_migration/`, in the workspace root.
 - Public route shapes. Every path, status code and response body keeps its existing contract, apart from the new `503` condition and the three candidates no longer present.
 - Per-candidate default-tag configuration. The literal `"lts"` remains correct.
 - Vendor Release, dual-write, Foojay DISCO.
