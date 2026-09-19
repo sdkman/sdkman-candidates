@@ -28,7 +28,7 @@ One new endpoint is consumed, alongside the three already in use.
 |---|---|---|
 | `candidate` | string | the identifier |
 | `name` | string | display name |
-| `description` | string | free text, may contain non-ASCII |
+| `description` | string | free text, a single paragraph of printable ASCII |
 | `website_url` | string | always `https` |
 | `default` | string | **optional.** The `lts`-tagged version, already resolved to a platform by the State API. Absent when unresolved, and **always absent for `java`** |
 
@@ -103,7 +103,7 @@ Resolution is:
 
 **This service issues no tag lookup for a non-java candidate and chooses no platform.** The platform preference lives in the State API's derived-`default` query. There is no fallback, no retry, and no classification.
 
-A State API transport failure, timeout, or unparseable body during the java lookup yields `400` with an empty body, the same as a miss. `state-api-hardening.md` §1 deliberately left this path un-recovered for version *listings*; for a default resolution the CLI cannot use a `500`, and a miss and a failure are indistinguishable to it.
+A State API transport failure, timeout, or unparseable body during the java lookup yields `400` with an empty body, the same as a miss. `state-api-hardening.md` §1 is the section that *recovered* listings, and it says so: "Single-version and tag reads already handle this; listing is the gap." The tag read is the one still exposed — `findVersionByCandidateAndTag` maps a non-200 to `None` but carries no `.recover`, so a transport failure, a timeout or an unparseable `200` propagates as a Play `500`; for a default resolution the CLI cannot use a `500`, and a miss and a failure are indistinguishable to it.
 
 ### `GET /candidates/:candidate/:platformId/versions/list`
 
@@ -213,7 +213,8 @@ The features that pin rendered output (`candidate_list.feature`, `candidates.fea
 - State API side of this change: [`../../../do/sdkman-state/specs/candidate-registry.md`](../../../do/sdkman-state/specs/candidate-registry.md)
 - Phase 2 scope and measurements: [`../../../docs/specs/candidates-end-game.md`](../../../docs/specs/candidates-end-game.md)
 - Why the classification is deleted rather than renamed: [`../../../docs/decisions/0007-platform-classification-deleted.md`](../../../docs/decisions/0007-platform-classification-deleted.md)
-- Why the registry is a foreign key: [`../../../docs/decisions/0006-candidate-foreign-key.md`](../../../docs/decisions/0006-candidate-foreign-key.md)
+- Why the registry is enforced in the application rather than by a foreign key: [`../../../docs/decisions/0008-registry-enforced-in-application.md`](../../../docs/decisions/0008-registry-enforced-in-application.md), superseding [`0006`](../../../docs/decisions/0006-candidate-foreign-key.md)
+- Why descriptions are plain ASCII: [`../../../docs/decisions/0009-candidate-descriptions-normalised.md`](../../../docs/decisions/0009-candidate-descriptions-normalised.md)
 - Preceding version read flip: [`state-api-default-version.md`](state-api-default-version.md). Note two stale claims in it: the tag route's `platform` is **required**, not defaulted to `UNIVERSAL`, and the `NA` distribution sentinel was removed by State API migration `V16`.
 - The platform fallback this deletes: [`state-api-hardening.md`](state-api-hardening.md) §2
 - Vendor ⇄ distribution vocabulary: [`vendor-distribution-translation.md`](vendor-distribution-translation.md)
