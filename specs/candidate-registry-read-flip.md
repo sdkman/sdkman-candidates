@@ -12,7 +12,7 @@ Every read of the `candidates` collection moves to a new State API resource, `GE
 
 **The MongoDB connection stays.** `HealthController` reads the `application` collection for `GET /alive`, and the `application` collection is not in scope. `ApplicationRepository`, `MongoConn`, and the Mongo configuration all remain. Only `CandidatesRepository` and its callers go.
 
-The State API is consumed as-is; the new resource is specified in [`../../../do/sdkman-state/specs/candidate-registry.md`](../../../do/sdkman-state/specs/candidate-registry.md) and ships before this change.
+The State API is consumed as-is. The new resource is specified in [`../../../do/sdkman-state/specs/candidate-registry.md`](../../../do/sdkman-state/specs/candidate-registry.md) and is **already live**: `GET /candidates` serves 78 backfilled rows on `state.sdkman.io` (verified 2026-09-21), and the allow-list cutover that makes the registry load-bearing for publishes shipped with it. Nothing in this change waits on the State API any more.
 
 ## State API surface
 
@@ -34,6 +34,8 @@ One new endpoint is consumed, alongside the three already in use.
 
 There is no `distribution` field and no stored `default` field. The Mongo collection had both; neither survives.
 
+`name` carries no charset guarantee, unlike `description`: the State API validates its length only, and the backfill passes it through verbatim. Every live name is printable ASCII within 23 characters, so the fixed-width listing box is safe today, but nothing enforces it.
+
 ## What is lost, and what replaces it
 
 | Mongo field | Replacement |
@@ -53,8 +55,9 @@ The Candidates Service holds the full candidate set in memory and refreshes it f
 - While the cached set is fresh, requests are served from it with no State API call.
 - When the cached set is stale, it is refreshed. The stale copy is served while that refresh is in flight; a request never blocks on a refresh.
 - When there is **no** cached set at all, a request **waits** for the initial fetch and is served if it succeeds. It fails only if that fetch fails. A restart against a healthy State API must not produce errors.
-- When a refresh fails, the previous set is retained and continues to be served. A failed refresh is logged and retried on the next opportunity.
-- A `200` carrying an **empty** array is treated as contract drift, not as a valid empty registry: the previous set is retained and the condition is logged. The live registry is never legitimately empty, and an empty candidate set is more damaging than a stale one. Note that the State API legitimately returns `[]` between its own two releases, before the backfill runs — if this service is ever deployed ahead of that backfill it will refuse to serve, which is intended but easy to misdiagnose.
+- When a refresh fails, the previous set is retained and continues to be served. A failed refresh is logged with its cause and retried on the next opportunity.
+- Refreshes are **serialised**. At most one is in flight, and a slow one cannot overwrite the result of a later one. `sdkman-state` reached this the hard way in its own registry holder, where a write-triggered and a periodic refresh could overlap and leave the older set serving (`e4abe94`, with `1bbdc36` for logging the cause of the discarded failure).
+- A `200` carrying an **empty** array is treated as contract drift, not as a valid empty registry: the previous set is retained and the condition is logged. The live registry is never legitimately empty, and an empty candidate set is more damaging than a stale one. The window in which `[]` meant something legitimate has closed: the backfill has run (78 rows, verified 2026-09-21) and the allow-list cutover shipped behind it, so an empty body now means drift and nothing else.
 - A `200` whose body does not parse as `Candidate[]` is contract drift and is handled the same way.
 
 **Staleness is the sum of two caches, and that is intended.** Everything the State API serves is static in nature, and every call to it should be cached. `play.ws.cache.enabled=true` (`conf/application.conf`) with `ehcache` on the classpath means Play WS already honours the `Cache-Control: max-age` the State API sets on its read routes. The in-process set sits on top of that. Effective staleness for candidate metadata is therefore **this service's TTL plus the State API's `max-age`**, not the TTL alone, and the in-process set earns its keep only past the point where the HTTP cache has expired — which is exactly where the never-empty and serve-stale guarantees matter. Any TTL chosen here must be read as an addition to the State API's, not as the total.
@@ -87,7 +90,7 @@ Renders the plain-text candidate listing from the cached set, in the order recei
 
 Each section header shows the candidate's display name and its default version. The default is taken from the `default` field of the cached record, and renders as `Coming soon!` when that field is absent — the existing fallback, unchanged.
 
-`java` is the exception. Its record never carries a `default`, so the service resolves it with a tag lookup: `GET /versions/java/tags/lts` with `platform=LINUX_X64` and the Temurin distribution, rendered as the public **identifier** (`25.0.4-tem`), never the bare version. That result is cached alongside the candidate set and refreshed with it, so rendering the listing does not issue a State API call per request. A failed or absent java lookup renders `Coming soon!` like any other candidate, and never fails the whole listing.
+`java` is the exception. Its record never carries a `default`, so the service resolves it with a tag lookup: `GET /versions/java/tags/lts` with `platform=LINUX_X64` and the Temurin distribution, rendered as the public **identifier** (`25.0.4-tem`), never the bare version. That result is cached alongside the candidate set and refreshed with it, so rendering the listing does not issue a State API call per request. The java value follows the same rules as the set: a failed refresh retains the previous value, and only a value that has never resolved is absent. An absent value renders `Coming soon!` like any other candidate, and never fails the whole listing.
 
 The `test` candidate is no longer filtered out by name. It is not registered in the State API, so it does not arrive.
 
@@ -98,12 +101,12 @@ The public contract is unchanged: `200` with the candidate's **identifier**, or 
 Resolution is:
 
 - The candidate must exist in the cached set. An unknown candidate is `400`.
-- If the candidate is `java`: the Temurin tag lookup described above, rendered as an identifier.
+- If the candidate is `java`: the **cached** Temurin tag result described above, rendered as an identifier. No lookup is issued while that value is held; an absent value is `400`, like any other missing default.
 - Otherwise: the `default` field of the cached record. Absent means `400`.
 
 **This service issues no tag lookup for a non-java candidate and chooses no platform.** The platform preference lives in the State API's derived-`default` query. There is no fallback, no retry, and no classification.
 
-A State API transport failure, timeout, or unparseable body during the java lookup yields `400` with an empty body, the same as a miss. `state-api-hardening.md` §1 is the section that *recovered* listings, and it says so: "Single-version and tag reads already handle this; listing is the gap." The tag read is the one still exposed — `findVersionByCandidateAndTag` maps a non-200 to `None` but carries no `.recover`, so a transport failure, a timeout or an unparseable `200` propagates as a Play `500`; for a default resolution the CLI cannot use a `500`, and a miss and a failure are indistinguishable to it.
+A State API transport failure, timeout, or unparseable body during the java **refresh** leaves the previous value serving. With no previous value the java default is absent, and `GET /default/java` is `400` with an empty body, the same as a miss. It is never a `500`. `state-api-hardening.md` §1 is the section that *recovered* listings, and it says so: "Single-version and tag reads already handle this; listing is the gap." The tag read is the one still exposed — `findVersionByCandidateAndTag` maps a non-200 to `None` but carries no `.recover`, so a transport failure, a timeout or an unparseable `200` propagates as a Play `500`; for a default resolution the CLI cannot use a `500`, and a miss and a failure are indistinguishable to it.
 
 ### `GET /candidates/:candidate/:platformId/versions/list`
 
@@ -136,7 +139,7 @@ These design calls are locked. The planning phase does not revisit them.
 - **`GET /default/:candidate` is served from the cached derived value.** An earlier draft kept it as a live lookup on freshness grounds; that rationale does not survive the fact that the tag lookup is itself HTTP-cached for the State API's `max-age`. Reading the cached record instead removes a mechanism rather than adding one.
 - **The platform preference is not implemented in this service.** `UNIVERSAL` then `LINUX_X64` lives once, in the State API. This service must not reconstruct it, and must not rebuild the `UNIVERSAL` / `PLATFORM_SPECIFIC` classification from version data or a hardcoded list.
 - **The retry-the-other-platform behaviour from [`state-api-hardening.md`](state-api-hardening.md) §2 is deleted, not repurposed.** Note that its outcome can differ from the new rule: for a candidate carrying `lts` at both platforms, today's `LINUX_X64`-first order for a `PLATFORM_SPECIFIC`-labelled candidate resolves differently from `UNIVERSAL`-first. No live candidate is in that state, but the change is not behaviour-preserving in general. See [`../../../docs/decisions/0007-platform-classification-deleted.md`](../../../docs/decisions/0007-platform-classification-deleted.md).
-- **`java` keeps its distribution-qualified default and its special case.** The rule that java's default is Temurin at `LINUX_X64` lives in this service, not in the State API.
+- **`java` keeps its distribution-qualified default and its special case.** The rule that java's default is Temurin at `LINUX_X64` lives in this service, not in the State API. Its resolved value is cached with the candidate set and refreshed with it, so neither the listing nor `GET /default/java` issues a lookup per request.
 - **This service owns its candidate model.** `io.sdkman.repos.Candidate` comes from the published `sdkman-mongodb-persistence` artefact and carries a non-optional `distribution: String` and an `Option[String] default`, neither of which exists any more. A service-owned type replaces it, following the precedent of `domain.Version` and `domain.Platform`. `CandidateListSection` and its spec are constructed from that type, not from the library's.
 - **The `vendor` vocabulary is unaffected.** [`vendor-distribution-translation.md`](vendor-distribution-translation.md) continues to govern the wire boundary; the new resource carries no vendor concept.
 - **MongoDB is not removed from this service.** Only `CandidatesRepository` goes. `ApplicationRepository` and the Mongo wiring stay until the `application` collection moves.
@@ -144,9 +147,25 @@ These design calls are locked. The planning phase does not revisit them.
 
 ## Consumer-visible changes
 
-Three candidates disappear from `/candidates/all` and `/candidates/list`: `cuba`, `ktx` and `test`. `cuba` and `ktx` were retired during phase 1 by removing them from the State API's allow-list; `test` is a fixture. See [`../../../docs/specs/candidates-end-game.md`](../../../docs/specs/candidates-end-game.md) §6.
+**Six candidates disappear** from `/candidates/all` and `/candidates/list`: `coursier`, `cuba`, `infrastructor`, `ksrc`, `ktx` and `test`. Measured against production on 2026-09-21: the Mongo-backed listing serves 84 candidates, the registry holds 78, and those six are the difference. `cuba` and `ktx` were retired during phase 1 by removing them from the State API's allow-list; `coursier`, `infrastructor` and `ksrc` were retired on 2026-09-20 when the remediation table was re-probed; `test` is a fixture. Each is an `exclude` entry carrying its own reason in `candidates_migration/config/website-remediation.yaml`. See [`../../../docs/specs/candidates-end-game.md`](../../../docs/specs/candidates-end-game.md) §6.
 
-This is not cosmetic for anyone who has one installed. Both CLIs gate on the cached candidate list: `sdkman-init.sh:116-123` only exports `<NAME>_HOME` and extends `PATH` for listed candidates, `sdkman-main.sh:129` rejects unlisted qualifiers, and `cli/sdkman-cli-native/src/lib.rs:68-75` exits with "not a valid candidate" for `home`, `default`, `uninstall` and `current`. After their next `sdk update`, an affected user loses the binary from `PATH` and cannot run `sdk uninstall` on it. This is accepted; it is recorded here so it is not rediscovered as a bug.
+This is not cosmetic for anyone who has one installed, and **`infrastructor` is the one that matters**: it holds 7 version rows in Postgres, so it is installed on real machines. Those versions stay resolvable by exact identifier on the download path, which does not consult the registry, while the candidate itself leaves every listing. `cuba` and `ktx` hold no rows in Postgres, and `coursier` and `ksrc` hold none in either datastore, so nothing can be installed from any of the three.
+
+Both CLIs gate on the cached candidate list: `sdkman-init.sh:116-123` only exports `<NAME>_HOME` and extends `PATH` for listed candidates, `sdkman-main.sh:129` rejects unlisted qualifiers, and `cli/sdkman-cli-native/src/lib.rs:68-75` exits with "not a valid candidate" for `home`, `default`, `uninstall` and `current`. After their next `sdk update`, an affected user loses the binary from `PATH` and cannot run `sdk uninstall` on it. This is accepted; it is recorded here so it is not rediscovered as a bug.
+
+**Seven listing headers change their default version, and that is a convergence rather than a regression.** `DefaultController` has resolved defaults through the State API's `lts` tag since the version flip, while the listing header still renders Mongo's stored `default`, which nothing has updated since. Both read the same value after this change, so `sdk list` stops disagreeing with `sdk default`. Measured against production on 2026-09-21, live `GET /default/<candidate>` already equals the registry's derived `default` **for all 77 non-java candidates**, so `sdk default` and `sdk install <candidate>` resolve exactly what they resolve today.
+
+| Candidate | `sdk list` header today | After |
+|---|---|---|
+| `gradle` | `9.7.0` | `9.7.1` |
+| `groovyserv` | `1.2.0` | `2.0.0` |
+| `jenesis` | `0.12.0` | `0.14.0` |
+| `jetty` | `12.1.10` | `12.1.13` |
+| `kotlintoolchain` | `0.12.1` | `0.12.2` |
+| `jpx` | `Coming soon!` | `0.14.0` |
+| `kuml` | `Coming soon!` | `0.20.5` |
+
+**The listing text changes with it.** Every description is folded to printable ASCII ([`0009`](../../../docs/decisions/0009-candidate-descriptions-normalised.md)) and 39 of the 78 are the signed-off edits of [`0010`](../../../docs/decisions/0010-candidate-descriptions-edited.md), so `sdk list` output changes wholesale on cutover day rather than drifting there. One display name changes too: `activemq` renders as `Apache ActiveMQ Classic`. None of this is new work; it is recorded here for the same reason as the rest of this section.
 
 ## Acceptance
 
@@ -166,11 +185,12 @@ The change is complete when **all** of the following hold:
 - Rendering either listing issues no State API call while the cache is fresh.
 - `GET /default/<non-java candidate>` is answered from the cached record and issues **no** tag lookup.
 - `GET /default/<non-java candidate>` whose record has no `default` returns `400` with an empty body.
-- `GET /default/java` issues one tag lookup, at `platform=LINUX_X64` with the Temurin distribution, and returns the suffixed identifier.
+- `GET /default/java` returns the suffixed identifier from the cached java value and issues **no** tag lookup while that value is held; the refresh issues exactly one lookup, at `platform=LINUX_X64` with the Temurin distribution.
 - `GET /default/<unknown candidate>` returns `400` with an empty body and issues no tag lookup.
-- A transport failure, timeout, or unparseable body on the java lookup returns `400`, not `500`.
+- A transport failure, timeout, or unparseable body on the java refresh retains the previous java value; with no previous value, `GET /default/java` returns `400`, never `500`.
 - `GET /candidates/<unknown candidate>/<platform>/versions/list` returns `404`; a known candidate's display name is used as the listing title.
 - A State API failure with a warm cache serves the previous candidate set on every metadata-backed endpoint.
+- Two refreshes cannot overlap, and when they would, the later result is the one left serving.
 - A State API `200` with an empty array, or an unparseable body, retains the previous set and is logged.
 - A cold start against a healthy State API serves successfully; the first request waits for the initial fetch rather than failing.
 - A cold start whose initial fetch fails returns `503` with an **empty** body on every metadata-backed endpoint.
@@ -179,7 +199,7 @@ The change is complete when **all** of the following hold:
 - The refresh interval is configurable and defaults to five minutes; the `GET /candidates` request timeout matches the existing State API calls.
 - No code path reconstructs a `UNIVERSAL` / `PLATFORM_SPECIFIC` classification, and no code path chooses a platform for a non-java default.
 - The service starts and serves successfully against a State API whose candidate records carry no `default` field at all.
-- `test/support/StateApiStubs.scala` gains a `/candidates` stub, and `test/support/Mongo.scala`'s `insertCandidate` / `insertCandidates` are no longer used by any step or spec.
+- `test/support/StateApiStubs.scala` gains a `/candidates` stub, and `test/support/Mongo.scala`'s `insertCandidate` / `insertCandidates` are no longer used by any step or spec. `test/steps/DbSteps.scala` no longer builds `io.sdkman.repos.Candidate` (lines 6, 55 and 59 today) and seeds that stub instead.
 - `test/rendering/PlainTextRenderingSpec.scala` constructs its fixture from the service-owned candidate type, not `io.sdkman.repos.Candidate`.
 - The Cucumber features that pin candidate listings and defaults (`candidates.feature`, `candidate_list.feature`, `default.feature`, `java_version_list_footer.feature`) pass against State API stubs rather than Mongo fixtures.
 
@@ -192,7 +212,7 @@ Candidate metadata moves out of Mongo, so the fixture layer moves with it. This 
 | `test/support/Mongo.scala` — `insertCandidate`, `insertCandidates`, `candidatesCollection` | unused by candidate-facing steps; Mongo support stays only for `application` |
 | `test/support/StateApiStubs.scala` — stubs for `/versions/*` only | gains a `/candidates` stub returning a `Candidate[]` body, including the `default` field and its absence |
 | `test/rendering/PlainTextRenderingSpec.scala` — builds `io.sdkman.repos.Candidate` | builds the service-owned type |
-| Cucumber steps seeding candidates into Mongo | seed the State API stub instead |
+| `test/steps/DbSteps.scala` — seeds candidates into Mongo via `Mongo.insertCandidates` | seeds the State API stub instead, and drops its `io.sdkman.repos.Candidate` import |
 
 The features that pin rendered output (`candidate_list.feature`, `candidates.feature`, `default.feature`, `java_version_list_footer.feature`) are the regression net for the flip and should keep their existing expectations wherever behaviour is unchanged.
 
@@ -201,7 +221,7 @@ The features that pin rendered output (`candidate_list.feature`, `candidates.fea
 - The State API itself: the `candidates` table, routes and migrations are [`../../../do/sdkman-state/specs/candidate-registry.md`](../../../do/sdkman-state/specs/candidate-registry.md).
 - The MongoDB `application` collection, `GET /alive`, and removal of the Mongo driver. Phase 3.
 - Hardening the unconditional candidate-cache writes in the `sdkman-hooks` install and self-update scripts. Phase 3, with the rest of that repo.
-- Any change to either CLI, including the candidate-validity gates that strand `cuba` and `ktx`.
+- Any change to either CLI, including the candidate-validity gates that strand the six retired candidates.
 - Backfilling the candidate data into Postgres. That is `candidates_migration/`, in the workspace root.
 - Public route shapes. Every path, status code and response body keeps its existing contract, apart from the new `503` condition and the three candidates no longer present.
 - Per-candidate default-tag configuration. The literal `"lts"` remains correct.
