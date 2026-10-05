@@ -5,8 +5,8 @@ Feature: Java Version List by Vendor
       | candidate | tag | platform  | vendor | version |
       | java      | lts | LINUX_X64 | tem    | 17.0.0  |
     And the Candidate
-      | candidate | name | description       | default    | websiteUrl           | distribution      |
-      | java      | Java | The Java Language | 17.0.0-tem | https://adoptium.net | PLATFORM_SPECIFIC |
+      | candidate | name | description       | default | websiteUrl           |
+      | java      | Java | The Java Language |         | https://adoptium.net |
 
   Scenario: List all Java Versions
     # Orphan-distribution shortcodes (adpt, albba, gln, trava, zulufx) are

@@ -61,9 +61,9 @@ Feature: Candidate Registry Outage
 
 	Scenario: A failed refresh keeps serving the previous candidate set
 		Given the Candidates
-			| candidate | name   | description         | default | websiteUrl                  | distribution |
-			| scala     | Scala  | The Scala Language  | 2.12.0  | http://www.scala-lang.org/  | UNIVERSAL    |
-			| groovy    | Groovy | The Groovy Language | 2.4.7   | http://www.groovy-lang.org/ | UNIVERSAL    |
+			| candidate | name   | description         | default | websiteUrl                  |
+			| scala     | Scala  | The Scala Language  | 2.12.0  | http://www.scala-lang.org/  |
+			| groovy    | Groovy | The Groovy Language | 2.4.7   | http://www.groovy-lang.org/ |
 		And the candidate registry refresh fails with status 503
 		When a request is made to /candidates/all
 		Then a 200 status code is received

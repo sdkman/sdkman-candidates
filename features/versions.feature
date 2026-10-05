@@ -2,8 +2,8 @@ Feature: Versions
 
   Scenario: Find all Versions for a given Platform Specific Candidate
     Given the Candidate
-      | candidate | name | description       | default | websiteUrl             | distribution      |
-      | java      | Java | The Java Language | 8u111   | https://www.oracle.com | PLATFORM_SPECIFIC |
+      | candidate | name | description       | default | websiteUrl             |
+      | java      | Java | The Java Language |         | https://www.oracle.com |
     And the Versions
       | candidate | version | vendor | platform  | url                                                                                       |
       | java      | 8u111   | open   | LINUX_X64 | http://download.oracle.com/otn-pub/java/jdk/8u111-b14/jdk-8u111-linux-x64.tar.gz          |
@@ -17,8 +17,8 @@ Feature: Versions
 
   Scenario: Find all Versions for a given Universal Candidate
     Given the Candidate
-      | candidate | name  | description        | default | websiteUrl                  | distribution |
-      | scala     | Scala | The Scala Language | 2.12.6  | https://www.scala-lang.org/ | UNIVERSAL    |
+      | candidate | name  | description        | default | websiteUrl                  |
+      | scala     | Scala | The Scala Language | 2.12.6  | https://www.scala-lang.org/ |
     And the Versions
       | candidate | version | vendor | platform  | url                                     |
       | scala     | 2.12.6  |        | UNIVERSAL | http://dl/scala/2.12.6/scala-2.12.6.zip |
@@ -31,8 +31,8 @@ Feature: Versions
 
   Scenario: Find no Versions for a given Candidate with no Default Version
     Given the Candidate
-      | candidate | name      | description             | default | websiteUrl          | distribution |
-      | micronaut | Micronaut | The Micronaut Framework |         | http://micronaut.io | LINUX_X64    |
+      | candidate | name      | description             | default | websiteUrl          |
+      | micronaut | Micronaut | The Micronaut Framework |         | http://micronaut.io |
     And no Versions for micronaut of platform LINUX_X64 on the remote service
     And no Versions for micronaut of platform UNIVERSAL on the remote service
     When a request is made to /candidates/micronaut/linuxx64/versions/all
@@ -41,8 +41,8 @@ Feature: Versions
 
   Scenario: Find all Versions for a Candidate registered as UNIVERSAL but hosting platform-specific Versions
     Given the Candidate
-      | candidate | name | description         | default    | websiteUrl              | distribution |
-      | jmc       | JMC  |                     | 9.1.1-zulu | https://jdk.java.net/jmc | UNIVERSAL    |
+      | candidate | name | description | default    | websiteUrl               |
+      | jmc       | JMC  |             | 9.1.1-zulu | https://jdk.java.net/jmc |
     And the Versions
       | candidate | version | vendor | platform  | url                                                    |
       | jmc       | 8.3.0   |        | LINUX_X64 | https://downloads/jmc/8.3.0/jmc-8.3.0-linux-x64.tar.gz |

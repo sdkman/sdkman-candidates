@@ -3,7 +3,7 @@ package support
 import domain.Version
 
 import java.util.concurrent.TimeUnit
-import io.sdkman.repos.{Application, Candidate}
+import io.sdkman.repos.Application
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
 import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
 import org.mongodb.scala.bson.codecs.Macros._
@@ -18,7 +18,7 @@ object Mongo {
   import Helpers._
 
   val codecRegistry = fromRegistries(
-    fromProviders(classOf[Version], classOf[Candidate], classOf[Application]),
+    fromProviders(classOf[Version], classOf[Application]),
     DEFAULT_CODEC_REGISTRY
   )
 
@@ -32,20 +32,13 @@ object Mongo {
 
   lazy val versionsCollection: MongoCollection[Version] = db.getCollection("versions")
 
-  lazy val candidatesCollection: MongoCollection[Candidate] = db.getCollection("candidates")
-
   def insertVersions(vs: Seq[Version]) = versionsCollection.insertMany(vs).results()
 
   def insertVersion(v: Version) = versionsCollection.insertOne(v).results()
 
-  def insertCandidates(cs: Seq[Candidate]) = candidatesCollection.insertMany(cs).results()
-
-  def insertCandidate(c: Candidate) = candidatesCollection.insertOne(c).results()
-
   def dropAllCollections() = {
     appCollection.drop().results()
     versionsCollection.drop().results()
-    candidatesCollection.drop().results()
   }
 }
 
