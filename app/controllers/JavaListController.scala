@@ -1,11 +1,10 @@
 package controllers
 
-import clients.StateApiImpl
+import clients.{CandidateRegistry, StateApiImpl}
 import domain.{Platform, Version}
 import ordering.JavaVersionItemOrdering
 import play.api.mvc._
 import rendering.{JavaVersionRendering, VersionItemListBuilder}
-import repos.CandidatesRepository
 import utils.VersionListProperties
 
 import javax.inject.Inject
@@ -14,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class JavaListController @Inject() (
     stateApi: StateApiImpl,
-    candidatesRepo: CandidatesRepository,
+    registry: CandidateRegistry,
     cc: ControllerComponents
 ) extends AbstractController(cc)
     with JavaVersionItemOrdering
@@ -27,7 +26,7 @@ class JavaListController @Inject() (
   def list(platformId: String, current: Option[String], installed: String): Action[AnyContent] =
     Action.async(parse.anyContent) { _ =>
       for {
-        candidateO <- candidatesRepo.findCandidate(Candidate)
+        javaDefault <- registry.javaDefault()
         platform = Platform(platformId)
         versions <- stateApi.findVisibleVersionsByCandidateAndPlatform(
           Candidate,
@@ -48,8 +47,11 @@ class JavaListController @Inject() (
               toVendorItems("none", Seq.empty, localInstalledVersions, current)
             vendorsToItems :+ localInstalledItems
           }
-        combinedItems  = sortItems(mergeByLabel(allVendorItems))
-        defaultVersion = candidateO.flatMap(_.default).getOrElse("17.0.0-tem")
+        combinedItems = sortItems(mergeByLabel(allVendorItems))
+        // The footer default is the cached Temurin lts identifier; with none held a
+        // hardcoded current lts applies (specs/candidate-registry-read-flip.md,
+        // §GET /candidates/java/:platformId/versions/list).
+        defaultVersion = javaDefault.getOrElse("25.0.0.0-tem")
         footerDefault  = truncate(defaultVersion, DefaultVersionLength)
       } yield Ok(views.txt.java_version_list(combinedItems, footerDefault, platform.description))
     }
