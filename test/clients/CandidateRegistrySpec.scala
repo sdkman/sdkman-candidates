@@ -14,6 +14,7 @@ import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import play.api.Configuration
+import play.api.inject.DefaultApplicationLifecycle
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import play.api.libs.ws.ahc.AhcWSClient
@@ -63,13 +64,27 @@ class CandidateRegistrySpec
 
   private val clock = new TestClock
 
+  private val lifecycle = new DefaultApplicationLifecycle
+
   private val registry =
-    new CandidateRegistry(new StateApiImpl(new RequestBuilder(config, wsClient)), config, clock)
+    new CandidateRegistry(
+      new StateApiImpl(new RequestBuilder(config, wsClient)),
+      config,
+      clock,
+      actorSystem,
+      lifecycle
+    )
 
   override implicit val patienceConfig: PatienceConfig =
     PatienceConfig(timeout = Span(5, Seconds), interval = Span(50, Millis))
 
-  override def beforeAll(): Unit = wireMockServer.start()
+  // Cancel the scheduled refresh and drain its startup tick, so the cases
+  // drive every refresh themselves and count only their own requests.
+  override def beforeAll(): Unit = {
+    wireMockServer.start()
+    lifecycle.stop().futureValue
+    registry.refresh().futureValue
+  }
 
   override def beforeEach(): Unit = {
     wireMockServer.resetAll()
