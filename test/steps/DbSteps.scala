@@ -85,6 +85,21 @@ class DbSteps extends ScalaDsl with EN with Matchers {
     Await.result(World.candidateRegistry.refresh(), 10.seconds)
   }
 
+  // No set has ever been obtained: every read waits on a fetch that fails, so
+  // the registry stays empty (specs/candidate-registry-read-flip.md, §When no
+  // set can be obtained).
+  And("""^the candidate registry is cold and the State API fails with status (\d+)$""") {
+    status: Int =>
+      StateApiStubs.stubCandidatesError(status)
+      World.candidateRegistry.clear()
+  }
+
+  // A failed refresh over a warm registry must retain the previous set.
+  And("""^the candidate registry refresh fails with status (\d+)$""") { status: Int =>
+    StateApiStubs.stubCandidatesError(status)
+    Await.result(World.candidateRegistry.refresh(), 10.seconds)
+  }
+
   And("""^the (.*) (.*) Versions (.*) thru (.*)$""") {
     (platform: String, candidate: String, startVersion: String, endVersion: String) =>
       val startSegs = startVersion.split("\\.")
