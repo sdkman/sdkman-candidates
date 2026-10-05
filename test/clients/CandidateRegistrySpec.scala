@@ -8,7 +8,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import com.typesafe.config.ConfigFactory
 import domain.{Candidate, Version}
-import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.concurrent.{Eventually, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
@@ -19,8 +19,10 @@ import play.api.libs.ws.WSClient
 import play.api.libs.ws.ahc.AhcWSClient
 import utils.JsonConverters
 
+import java.time.{Clock, Instant, ZoneId, ZoneOffset}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.duration._
 
 class CandidateRegistrySpec
     extends AnyWordSpec
@@ -28,6 +30,7 @@ class CandidateRegistrySpec
     with BeforeAndAfterAll
     with BeforeAndAfterEach
     with ScalaFutures
+    with Eventually
     with JsonConverters {
 
   // Distinct from the Cucumber (8080) and StateApiImplSpec (8089) servers so
@@ -44,12 +47,24 @@ class CandidateRegistrySpec
          |  protocol = "http"
          |  host     = "localhost"
          |  port     = $wireMockPort
-         |}""".stripMargin
+         |}
+         |candidate-registry.refresh-interval = 5 minutes""".stripMargin
     )
   )
 
+  // A clock the cases advance by hand, so staleness needs no real waiting.
+  private class TestClock extends Clock {
+    @volatile var now: Instant                 = Instant.parse("2026-10-05T00:00:00Z")
+    def advance(by: FiniteDuration): Unit      = now = now.plusMillis(by.toMillis)
+    override def instant(): Instant            = now
+    override def getZone: ZoneId               = ZoneOffset.UTC
+    override def withZone(zone: ZoneId): Clock = this
+  }
+
+  private val clock = new TestClock
+
   private val registry =
-    new CandidateRegistry(new StateApiImpl(new RequestBuilder(config, wsClient)))
+    new CandidateRegistry(new StateApiImpl(new RequestBuilder(config, wsClient)), config, clock)
 
   override implicit val patienceConfig: PatienceConfig =
     PatienceConfig(timeout = Span(5, Seconds), interval = Span(50, Millis))
@@ -211,6 +226,74 @@ class CandidateRegistrySpec
       registry.clear()
       registry.current shouldBe None
       registry.currentJavaDefault shouldBe None
+    }
+  }
+
+  private val candidatesPath = urlPathEqualTo("/candidates")
+
+  "candidates" should {
+
+    "serve a fresh set without a State API request" in {
+      warmWithGoodSet()
+      wireMockServer.resetRequests()
+
+      registry.candidates().futureValue shouldBe Some(goodSet)
+      wireMockServer.verify(0, getRequestedFor(candidatesPath))
+    }
+
+    // A request never blocks on a refresh: the stale copy serves while the
+    // refresh it triggered is still in flight.
+    "serve a stale set at once and refresh it behind the read" in {
+      warmWithGoodSet()
+      val newSet = goodSet.take(1)
+      stubCandidates(
+        aResponse()
+          .withStatus(200)
+          .withBody(Json.toJson(newSet).toString)
+          .withFixedDelay(500)
+      )
+      clock.advance(6.minutes)
+
+      registry.candidates().futureValue shouldBe Some(goodSet)
+      eventually(registry.current shouldBe Some(newSet))
+      wireMockServer.verify(2, getRequestedFor(candidatesPath))
+    }
+
+    // A restart against a healthy State API must not produce errors.
+    "wait for the fetch when no set is held" in {
+      stubCandidates(
+        aResponse()
+          .withStatus(200)
+          .withBody(Json.toJson(goodSet).toString)
+          .withFixedDelay(500)
+      )
+
+      registry.candidates().futureValue shouldBe Some(goodSet)
+    }
+
+    "yield None when no set is held and the fetch fails" in {
+      stubCandidates(aResponse().withStatus(503))
+
+      registry.candidates().futureValue shouldBe None
+    }
+  }
+
+  "javaDefault" should {
+
+    "wait for the fetch when no set is held" in {
+      stubCandidates(aResponse().withStatus(200).withBody(Json.toJson(goodSet).toString))
+      stubJavaLts(aResponse().withStatus(200).withBody(Json.toJson(javaLts).toString))
+
+      registry.javaDefault().futureValue shouldBe Some("25.0.4-tem")
+    }
+
+    "serve the held value without a State API request while a set is held" in {
+      warmWithJavaLts()
+      wireMockServer.resetRequests()
+
+      registry.javaDefault().futureValue shouldBe Some("25.0.4-tem")
+      wireMockServer.verify(0, getRequestedFor(javaTagPath))
+      wireMockServer.verify(0, getRequestedFor(candidatesPath))
     }
   }
 }

@@ -1,12 +1,13 @@
 package clients
 
 import domain.Candidate
-import play.api.Logging
+import play.api.{Configuration, Logging}
 
-import java.time.Instant
+import java.time.{Clock, Instant}
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
@@ -15,15 +16,22 @@ import scala.util.{Failure, Success}
 // better than empty (specs/candidate-registry-read-flip.md, §Sourcing the
 // candidate set).
 @Singleton
-class CandidateRegistry @Inject() (stateApi: StateApiImpl) extends Logging {
+class CandidateRegistry @Inject() (
+    stateApi: StateApiImpl,
+    configuration: Configuration,
+    clock: Clock
+) extends Logging {
 
-  private val candidates  = new AtomicReference[Option[Seq[Candidate]]](None)
-  private val lastSuccess = new AtomicReference[Option[Instant]](None)
+  private val refreshInterval =
+    configuration.get[FiniteDuration]("candidate-registry.refresh-interval")
+
+  private val candidateSet = new AtomicReference[Option[Seq[Candidate]]](None)
+  private val lastSuccess  = new AtomicReference[Option[Instant]](None)
 
   // java's record never carries a `default`; its value is the Temurin lts
   // identifier, resolved here and refreshed with the set so no request issues
   // a tag lookup (specs/candidate-registry-read-flip.md, §GET /candidates/list).
-  private val javaDefault = new AtomicReference[Option[String]](None)
+  private val javaIdentifier = new AtomicReference[Option[String]](None)
 
   // At most one refresh is in flight. A trigger arriving meanwhile joins it
   // instead of starting a second fetch that could land out of order.
@@ -51,8 +59,8 @@ class CandidateRegistry @Inject() (stateApi: StateApiImpl) extends Logging {
       .findAllCandidates()
       .transform {
         case Success(fetched) =>
-          candidates.set(Some(fetched))
-          lastSuccess.set(Some(Instant.now()))
+          candidateSet.set(Some(fetched))
+          lastSuccess.set(Some(clock.instant()))
           Success(())
         case Failure(e) =>
           logger.warn("Candidate registry refresh failed; retaining the previous set", e)
@@ -65,7 +73,7 @@ class CandidateRegistry @Inject() (stateApi: StateApiImpl) extends Logging {
     stateApi
       .findVersionByCandidateAndTag("java", "lts", "LINUX_X64", Some("tem"))
       .map {
-        case Some(version) => javaDefault.set(Some(version.identifier))
+        case Some(version) => javaIdentifier.set(Some(version.identifier))
         case None =>
           logger.warn("Java default refresh found no lts tag; retaining the previous value")
       }
@@ -73,14 +81,35 @@ class CandidateRegistry @Inject() (stateApi: StateApiImpl) extends Logging {
         logger.warn("Java default refresh failed; retaining the previous value", e)
       }
 
-  private[clients] def current: Option[Seq[Candidate]] = candidates.get()
+  /** The cached set. With none held, waits for a fetch and yields `None` only if it fails. A stale
+    * set is served at once while a refresh runs behind it: a request never blocks on a refresh.
+    */
+  def candidates(): Future[Option[Seq[Candidate]]] =
+    candidateSet.get() match {
+      case None => refresh().map(_ => candidateSet.get())
+      case held =>
+        if (isStale) refresh()
+        Future.successful(held)
+    }
 
-  private[clients] def currentJavaDefault: Option[String] = javaDefault.get()
+  /** The cached java identifier. Waits for a fetch only while no candidate set is held. */
+  def javaDefault(): Future[Option[String]] =
+    candidateSet.get() match {
+      case None => refresh().map(_ => javaIdentifier.get())
+      case _    => Future.successful(javaIdentifier.get())
+    }
+
+  private def isStale: Boolean =
+    lastSuccess.get().forall(_.plusMillis(refreshInterval.toMillis).isBefore(clock.instant()))
+
+  private[clients] def current: Option[Seq[Candidate]] = candidateSet.get()
+
+  private[clients] def currentJavaDefault: Option[String] = javaIdentifier.get()
 
   /** Test-scoped: empties the registry so a scenario starts cold. */
   def clear(): Unit = {
-    candidates.set(None)
+    candidateSet.set(None)
     lastSuccess.set(None)
-    javaDefault.set(None)
+    javaIdentifier.set(None)
   }
 }
