@@ -5,8 +5,8 @@ Feature: Version List by Visibility
       | candidate | tag | platform  | vendor | version |
       | java      | lts | LINUX_X64 | tem    | 17.0.0  |
     And the Candidate
-      | candidate | name | description   | default    | websiteUrl           | distribution      |
-      | java      | Java | Java Platform | 17.0.0-tem | https://adoptium.net | PLATFORM_SPECIFIC |
+      | candidate | name | description   | default | websiteUrl           |
+      | java      | Java | Java Platform |         | https://adoptium.net |
     And the Versions
       | candidate | version       | vendor | platform  | url                                                                                                                  | visible |
       | java      | 8.0.222.hs     | tem   | LINUX_X64 | https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u222-b10/OpenJDK8U-jdk_x64_linux_hotspot_8u222b10.tar.gz | true    |

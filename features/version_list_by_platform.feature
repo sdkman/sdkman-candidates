@@ -5,10 +5,10 @@ Feature: Version List by Platform
       | candidate | tag | platform  | vendor | version |
       | java      | lts | LINUX_X64 | tem    | 8u111   |
     And the Candidate
-      | candidate | name      | description         | default    | websiteUrl                  | distribution      |
-      | java      | Java      | The Java Language   | 8u111-open | https://www.oracle.com      | PLATFORM_SPECIFIC |
-      | scala     | Scala     | The Scala Language  | 2.12.6     | https://www.scala-lang.org/ | UNIVERSAL         |
-      | micronaut | Micronaut | Micronaut framework | 2.0.0      | https://micronaut.io/       | MIXED             |
+      | candidate | name      | description         | default | websiteUrl                  |
+      | java      | Java      | The Java Language   |         | https://www.oracle.com      |
+      | scala     | Scala     | The Scala Language  | 2.12.6  | https://www.scala-lang.org/ |
+      | micronaut | Micronaut | Micronaut framework | 2.0.0   | https://micronaut.io/       |
 
     And the Versions
       | candidate | version     | vendor | platform    | url                                                                                       |

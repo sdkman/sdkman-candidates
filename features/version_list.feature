@@ -2,8 +2,8 @@ Feature: Version List
 
   Background:
     Given the Candidate
-      | candidate | name  | description        | default | websiteUrl                  | distribution |
-      | scala     | Scala | The Scala Language | 2.12.6  | https://www.scala-lang.org/ | UNIVERSAL    |
+      | candidate | name  | description        | default | websiteUrl                  |
+      | scala     | Scala | The Scala Language | 2.12.6  | https://www.scala-lang.org/ |
 
   Scenario: A single column list of available uninstalled Versions are displayed
     Given the UNIVERSAL scala Versions 2.11.1 thru 2.11.8

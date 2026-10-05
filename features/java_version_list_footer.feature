@@ -5,8 +5,8 @@ Feature: Java Version List Footer
       | candidate | tag | platform  | vendor | version              |
       | java      | lts | LINUX_X64 | tem    | 21.0.12-crac+1.2.3.4 |
     And the Candidate
-      | candidate | name | description       | default                     | websiteUrl           | distribution      |
-      | java      | Java | The Java Language | 21.0.12-crac+1.2.3.4-librca | https://adoptium.net | PLATFORM_SPECIFIC |
+      | candidate | name | description       | default | websiteUrl           |
+      | java      | Java | The Java Language |         | https://adoptium.net |
     And the Versions
       | candidate | version | vendor | platform  | url                                       |
       | java      | 8.0.212 | tem    | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz |
@@ -34,8 +34,8 @@ Feature: Java Version List Footer
 
   Scenario: The footer falls back to a current lts identifier when no java default resolves
     Given the Candidate
-      | candidate | name | description       | default                     | websiteUrl           | distribution      |
-      | java      | Java | The Java Language | 21.0.12-crac+1.2.3.4-librca | https://adoptium.net | PLATFORM_SPECIFIC |
+      | candidate | name | description       | default | websiteUrl           |
+      | java      | Java | The Java Language |         | https://adoptium.net |
     And the Versions
       | candidate | version | vendor | platform  | url                                       |
       | java      | 8.0.212 | tem    | LINUX_X64 | http://tem.example.org/tem-8.0.212.tar.gz |

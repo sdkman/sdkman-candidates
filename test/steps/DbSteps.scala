@@ -2,8 +2,7 @@ package steps
 
 import cucumber.api.scala.{EN, ScalaDsl}
 import io.cucumber.datatable.DataTable
-import domain.Version
-import io.sdkman.repos.Candidate
+import domain.{Candidate, Version}
 import org.scalatest.matchers.should.Matchers
 import support.{Mongo, StateApiStubs}
 
@@ -18,19 +17,17 @@ class DbSteps extends ScalaDsl with EN with Matchers {
     import scala.collection.JavaConverters._
 
     def toCandidates: Seq[Candidate] =
-      dataTable.asLists().asScala.tail.map(x => rowToCandidate(x.asScala.toList))
+      dataTable.asMaps().asScala.map(x => rowToCandidate(x.asScala.toMap)).toSeq
 
-    private def rowToCandidate(row: List[String]): Candidate = {
-      val cells = row
+    // Tables leave java's `default` blank: its value is the cached Temurin lts.
+    private def rowToCandidate(row: Map[String, String]): Candidate =
       Candidate(
-        candidate = cells.head,
-        name = cells(1),
-        description = cells(2),
-        default = if (cells(3) == "") None else Some(cells(3)),
-        websiteUrl = cells(4),
-        distribution = cells(5)
+        candidate = row("candidate"),
+        name = row("name"),
+        description = row("description"),
+        websiteUrl = row("websiteUrl"),
+        default = Option(row("default")).filter(_.nonEmpty)
       )
-    }
   }
 
   implicit class VersionDataTable(dataTable: DataTable) {
@@ -54,28 +51,14 @@ class DbSteps extends ScalaDsl with EN with Matchers {
   }
 
   And("""^the Candidates$""") { candidatesTable: DataTable =>
-    val candidates = candidatesTable.toCandidates
-    Mongo.insertCandidates(candidates)
-    StateApiStubs.stubCandidates(candidates.map(toStateApiCandidate))
+    StateApiStubs.stubCandidates(candidatesTable.toCandidates)
     reloadCandidateRegistry()
   }
 
   And("""^the Candidate$""") { candidatesTable: DataTable =>
-    val candidates = candidatesTable.toCandidates
-    Mongo.insertCandidates(candidates)
-    StateApiStubs.stubCandidates(candidates.map(toStateApiCandidate))
+    StateApiStubs.stubCandidates(candidatesTable.toCandidates)
     reloadCandidateRegistry()
   }
-
-  // java never carries a `default`: its value is the cached Temurin lts.
-  private def toStateApiCandidate(c: Candidate): domain.Candidate =
-    domain.Candidate(
-      candidate = c.candidate,
-      name = c.name,
-      description = c.description,
-      websiteUrl = c.websiteUrl,
-      default = if (c.candidate == "java") None else c.default
-    )
 
   // The app outlives every scenario, so the registry would otherwise answer
   // from the previous scenario's set. A synchronous reload pins it to this
