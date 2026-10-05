@@ -1,13 +1,10 @@
 package controllers
 
-import cats.data.OptionT
-import cats.implicits._
-import clients.StateApiImpl
+import clients.{CandidateRegistry, StateApiImpl}
 import domain.Platform
 import ordering.VersionItemOrdering
 import play.api.mvc._
 import rendering.{RowCountCalculator, VersionItemListBuilder, VersionRendering, VersionRow}
-import repos.CandidatesRepository
 import utils.VersionListProperties
 
 import javax.inject.Inject
@@ -16,7 +13,7 @@ import scala.concurrent.Future
 
 class VersionsListController @Inject() (
     stateApi: StateApiImpl,
-    candidatesRepo: CandidatesRepository,
+    registry: CandidateRegistry,
     cc: ControllerComponents
 ) extends AbstractController(cc)
     with VersionListProperties
@@ -41,10 +38,9 @@ class VersionsListController @Inject() (
         Platform(platformId).name
       )
 
-      (for {
-        candidate         <- OptionT(candidatesRepo.findCandidate(candidateId))
-        universalVersions <- OptionT.liftF(universalVersionsF)
-        platformVersions  <- OptionT.liftF(platformVersionsF)
+      def listing(title: String): Future[Result] = for {
+        universalVersions <- universalVersionsF
+        platformVersions  <- platformVersionsF
         allVersions = universalVersions ++ platformVersions
       } yield {
         import cats.syntax.show._
@@ -70,7 +66,19 @@ class VersionsListController @Inject() (
 
         } yield VersionRow(col1, col2, col3, col4).show
 
-        Ok(views.txt.version_list(candidate.name, rows))
-      }).getOrElseF(Future.successful(NotFound))
+        Ok(views.txt.version_list(title, rows))
+      }
+
+      // The listing title is the candidate's display name from the registry;
+      // no set is 503, an unknown candidate is 404
+      // (specs/candidate-registry-read-flip.md, §GET /candidates/:candidate/:platformId/versions/list).
+      registry.candidates().flatMap {
+        case None => Future.successful(ServiceUnavailable)
+        case Some(cs) =>
+          cs.find(_.candidate == candidateId) match {
+            case None            => Future.successful(NotFound)
+            case Some(candidate) => listing(candidate.name)
+          }
+      }
     }
 }
