@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{
   anyUrl,
   equalTo,
   getRequestedFor,
+  urlPathEqualTo,
   urlPathMatching,
   verify
 }
@@ -80,6 +81,11 @@ class RestSteps extends ScalaDsl with EN with Matchers with AppendedClues {
   And("""^the State API received exactly (\d+) tag lookups? for (\S+)$""") {
     (count: Int, candidate: String) =>
       verify(count, getRequestedFor(urlPathMatching(s"/versions/$candidate/tags/.*")))
+  }
+
+  And("""^the State API received exactly (\d+) requests? for the candidate registry$""") {
+    count: Int =>
+      verify(count, getRequestedFor(urlPathEqualTo("/candidates")))
   }
 
   And(

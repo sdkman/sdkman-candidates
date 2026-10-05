@@ -1,5 +1,6 @@
 package steps
 
+import clients.CandidateRegistry
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
@@ -16,6 +17,7 @@ class Env extends ScalaDsl with Logging {
 
   val app: TestServer = testServer(9000)
   app.start()
+  World.candidateRegistry = app.application.injector.instanceOf(classOf[CandidateRegistry])
 
   Before { _ =>
     Mongo.dropAllCollections()

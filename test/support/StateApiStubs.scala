@@ -2,7 +2,7 @@ package support
 
 import clients.VendorDistribution
 import com.github.tomakehurst.wiremock.client.WireMock._
-import domain.Version
+import domain.{Candidate, Version}
 import utils.JsonConverters
 
 import scala.collection.JavaConverters._
@@ -171,4 +171,22 @@ object StateApiStubs extends JsonConverters {
         .willReturn(aResponse().withStatus(404))
     )
   }
+
+  // The registry fetches GET /candidates whole. `default` is omitted from a
+  // record's JSON when it is None, mirroring the State API wire contract.
+  def stubCandidates(candidates: Seq[Candidate]): Unit =
+    stubFor(
+      get(urlPathEqualTo("/candidates"))
+        .willReturn(
+          aResponse()
+            .withBody(Json.toJson(candidates).toString)
+            .withStatus(200)
+        )
+    )
+
+  def stubCandidatesError(status: Int): Unit =
+    stubFor(
+      get(urlPathEqualTo("/candidates"))
+        .willReturn(aResponse().withStatus(status))
+    )
 }
