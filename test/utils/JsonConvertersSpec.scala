@@ -1,6 +1,6 @@
 package utils
 
-import domain.Version
+import domain.{Candidate, Version}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
@@ -91,6 +91,38 @@ class JsonConvertersSpec extends AnyWordSpec with Matchers with JsonConverters {
     "round-trip a Version with no vendor through the JSON form" in {
       val original = baseVersion(None)
       Json.toJson(original).as[Version] shouldBe original
+    }
+  }
+
+  "candidateFormat" should {
+
+    val scalaJson: JsObject = Json.obj(
+      "candidate"   -> "scala",
+      "name"        -> "Scala",
+      "description" -> "Scala is a programming language.",
+      "website_url" -> "https://www.scala-lang.org/"
+    )
+
+    val scala = Candidate(
+      candidate = "scala",
+      name = "Scala",
+      description = "Scala is a programming language.",
+      websiteUrl = "https://www.scala-lang.org/",
+      default = None
+    )
+
+    "read a record carrying a derived default" in {
+      (scalaJson + ("default" -> JsString("3.7.3"))).as[Candidate] shouldBe
+        scala.copy(default = Some("3.7.3"))
+    }
+
+    // The State API omits `default` when it resolves none, and always for java.
+    "read a record without a default as None" in {
+      scalaJson.as[Candidate] shouldBe scala
+    }
+
+    "write the website as the wire field website_url" in {
+      (Json.toJson(scala) \ "website_url").as[String] shouldBe "https://www.scala-lang.org/"
     }
   }
 }
