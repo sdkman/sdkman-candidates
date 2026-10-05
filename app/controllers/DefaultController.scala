@@ -1,49 +1,32 @@
 package controllers
 
-import clients.StateApiImpl
+import clients.CandidateRegistry
 import com.google.inject.Inject
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
-import repos.CandidatesRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class DefaultController @Inject() (
-    stateApi: StateApiImpl,
-    candidatesRepo: CandidatesRepository,
+    registry: CandidateRegistry,
     cc: ControllerComponents
 ) extends AbstractController(cc) {
 
+  // Answered wholly from the registry: no tag lookup, no platform choice. The
+  // State API derives each record's `default`; java's is the cached Temurin lts
+  // identifier (specs/candidate-registry-read-flip.md, §GET /default/:candidate).
   def find(candidate: String): Action[AnyContent] = Action.async(parse.anyContent) { _ =>
-    candidatesRepo.findCandidate(candidate).flatMap {
-      case None    => Future.successful(BadRequest(""))
-      case Some(c) =>
-        // `candidates.distribution` labels are unreliable: some UNIVERSAL-labelled
-        // candidates host `lts` only at LINUX_X64 (and vice versa), and the State
-        // API filters platform exactly. So on a preferred-platform miss we retry
-        // once at the other platform; the preferred result wins when both hit.
-        // `java` is excluded — its `lts` needs distribution=TEMURIN and exists at
-        // neither platform without it — so it issues exactly one lookup, no fallback.
-        val (preferred, fallback, vendor) =
-          if (candidate == "java") ("LINUX_X64", None, Some("tem"))
-          else if (c.distribution == "UNIVERSAL") ("UNIVERSAL", Some("LINUX_X64"), None)
-          else ("LINUX_X64", Some("UNIVERSAL"), None)
-
-        lookup(candidate, preferred, vendor).flatMap {
-          case Some(version) => Future.successful(Ok(version.identifier))
-          case None =>
-            fallback match {
-              case Some(fallbackPlatform) =>
-                lookup(candidate, fallbackPlatform, vendor).map {
-                  case Some(version) => Ok(version.identifier)
-                  case None          => BadRequest("")
-                }
-              case None => Future.successful(BadRequest(""))
-            }
+    for {
+      candidates  <- registry.candidates()
+      javaDefault <- registry.javaDefault()
+    } yield candidates match {
+      case None => ServiceUnavailable
+      case Some(cs) =>
+        cs.find(_.candidate == candidate) match {
+          case None => BadRequest("")
+          case Some(c) =>
+            val default = if (candidate == "java") javaDefault else c.default
+            default.fold(BadRequest(""))(Ok(_))
         }
     }
   }
-
-  private def lookup(candidate: String, platform: String, vendor: Option[String]) =
-    stateApi.findVersionByCandidateAndTag(candidate, "lts", platform, vendor)
 }
