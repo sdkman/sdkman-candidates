@@ -25,6 +25,11 @@ class RequestBuilder @Inject() (config: Configuration, ws: WSClient) {
   private def distributionParam(vendor: Option[String]): Option[(String, String)] =
     vendor.flatMap(VendorDistribution.toDistribution).map("distribution" -> _)
 
+  def candidatesRequest(): WSRequest =
+    ws.url(s"$stateApi/candidates")
+      .addHttpHeaders("Accept" -> "application/json")
+      .withRequestTimeout(1500.millis)
+
   def versionsByCandidatePlatformRequest(
       candidate: String,
       platform: String
