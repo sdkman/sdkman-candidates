@@ -1,7 +1,7 @@
 package utils
 
 import clients.VendorDistribution
-import domain.Version
+import domain.{Candidate, Version}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -29,4 +29,14 @@ trait JsonConverters {
           _.flatMap(VendorDistribution.toDistribution)
         )
   )(Version.apply, unlift(Version.unapply))
+
+  // A `GET /candidates` record. The wire names the website `website_url`; `default` is
+  // absent when the State API resolved none, and always absent for `java`.
+  implicit val candidateFormat: Format[Candidate] = (
+    (JsPath \ "candidate").format[String] and
+      (JsPath \ "name").format[String] and
+      (JsPath \ "description").format[String] and
+      (JsPath \ "website_url").format[String] and
+      (JsPath \ "default").formatNullable[String]
+  )(Candidate.apply, unlift(Candidate.unapply))
 }
