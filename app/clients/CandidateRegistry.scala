@@ -20,6 +20,11 @@ class CandidateRegistry @Inject() (stateApi: StateApiImpl) extends Logging {
   private val candidates  = new AtomicReference[Option[Seq[Candidate]]](None)
   private val lastSuccess = new AtomicReference[Option[Instant]](None)
 
+  // java's record never carries a `default`; its value is the Temurin lts
+  // identifier, resolved here and refreshed with the set so no request issues
+  // a tag lookup (specs/candidate-registry-read-flip.md, §GET /candidates/list).
+  private val javaDefault = new AtomicReference[Option[String]](None)
+
   // At most one refresh is in flight. A trigger arriving meanwhile joins it
   // instead of starting a second fetch that could land out of order.
   private val inFlight = new AtomicReference[Option[Future[Unit]]](None)
@@ -35,7 +40,13 @@ class CandidateRegistry @Inject() (stateApi: StateApiImpl) extends Logging {
     } else inFlight.get().getOrElse(refresh())
   }
 
-  private def fetch(): Future[Unit] =
+  private def fetch(): Future[Unit] = {
+    val set  = fetchCandidates()
+    val java = fetchJavaDefault()
+    set.zip(java).map(_ => ())
+  }
+
+  private def fetchCandidates(): Future[Unit] =
     stateApi
       .findAllCandidates()
       .transform {
@@ -48,11 +59,28 @@ class CandidateRegistry @Inject() (stateApi: StateApiImpl) extends Logging {
           Success(())
       }
 
+  // A 404 is a failed refresh, not a resolved answer: the last resolved
+  // identifier keeps serving until a later refresh resolves a new one.
+  private def fetchJavaDefault(): Future[Unit] =
+    stateApi
+      .findVersionByCandidateAndTag("java", "lts", "LINUX_X64", Some("tem"))
+      .map {
+        case Some(version) => javaDefault.set(Some(version.identifier))
+        case None =>
+          logger.warn("Java default refresh found no lts tag; retaining the previous value")
+      }
+      .recover { case e =>
+        logger.warn("Java default refresh failed; retaining the previous value", e)
+      }
+
   private[clients] def current: Option[Seq[Candidate]] = candidates.get()
+
+  private[clients] def currentJavaDefault: Option[String] = javaDefault.get()
 
   /** Test-scoped: empties the registry so a scenario starts cold. */
   def clear(): Unit = {
     candidates.set(None)
     lastSuccess.set(None)
+    javaDefault.set(None)
   }
 }
