@@ -8,6 +8,8 @@ import org.scalatest.matchers.should.Matchers
 import support.{Mongo, StateApiStubs}
 
 import scala.collection.JavaConverters._
+import scala.concurrent.Await
+import scala.concurrent.duration._
 
 class DbSteps extends ScalaDsl with EN with Matchers {
 
@@ -52,11 +54,35 @@ class DbSteps extends ScalaDsl with EN with Matchers {
   }
 
   And("""^the Candidates$""") { candidatesTable: DataTable =>
-    Mongo.insertCandidates(candidatesTable.toCandidates)
+    val candidates = candidatesTable.toCandidates
+    Mongo.insertCandidates(candidates)
+    StateApiStubs.stubCandidates(candidates.map(toStateApiCandidate))
+    reloadCandidateRegistry()
   }
 
   And("""^the Candidate$""") { candidatesTable: DataTable =>
-    Mongo.insertCandidates(candidatesTable.toCandidates)
+    val candidates = candidatesTable.toCandidates
+    Mongo.insertCandidates(candidates)
+    StateApiStubs.stubCandidates(candidates.map(toStateApiCandidate))
+    reloadCandidateRegistry()
+  }
+
+  // java never carries a `default`: its value is the cached Temurin lts.
+  private def toStateApiCandidate(c: Candidate): domain.Candidate =
+    domain.Candidate(
+      candidate = c.candidate,
+      name = c.name,
+      description = c.description,
+      websiteUrl = c.websiteUrl,
+      default = if (c.candidate == "java") None else c.default
+    )
+
+  // The app outlives every scenario, so the registry would otherwise answer
+  // from the previous scenario's set. A synchronous reload pins it to this
+  // scenario's stub (specs/candidate-registry-read-flip.md, §Test fixtures).
+  private def reloadCandidateRegistry(): Unit = {
+    World.candidateRegistry.clear()
+    Await.result(World.candidateRegistry.refresh(), 10.seconds)
   }
 
   And("""^the (.*) (.*) Versions (.*) thru (.*)$""") {

@@ -1,5 +1,6 @@
 package steps
 
+import clients.CandidateRegistry
 import domain.Version
 import scalaj.http._
 
@@ -16,4 +17,8 @@ object World {
   var candidate: String = ""
 
   var remoteVersions: List[Version] = List.empty[Version]
+
+  // Set once by Env after the app starts; never reset, as the app outlives
+  // every scenario.
+  var candidateRegistry: CandidateRegistry = _
 }
