@@ -1,7 +1,10 @@
 Feature: Candidate List
 
   Scenario: Render a detailed List of Candidates
-    Given the Candidates
+    Given the default Version on the remote service
+      | candidate | tag | platform  | vendor | version |
+      | java      | lts | LINUX_X64 | tem    | 25.0.4  |
+    And the Candidates
       | candidate | name      | description             | default   | websiteUrl                    | distribution   |
       | scala     | Scala     | The Scala Language      | 2.12.0    | http://www.scala-lang.org/    | UNIVERSAL      |
       | groovy    | Groovy    | The Groovy Language     | 2.4.7     | http://www.groovy-lang.org/   | UNIVERSAL      |
@@ -21,13 +24,25 @@ Feature: Candidate List
       |k-up                                    h-help
       |
       |--------------------------------------------------------------------------------
+      |Scala (2.12.0)                                        http://www.scala-lang.org/
+      |
+      |The Scala Language
+      |
+      |                                                             $ sdk install scala
+      |--------------------------------------------------------------------------------
       |Groovy (2.4.7)                                       http://www.groovy-lang.org/
       |
       |The Groovy Language
       |
       |                                                            $ sdk install groovy
       |--------------------------------------------------------------------------------
-      |Java (8u111)                                              https://www.oracle.com
+      |Test (0.0.1)                                                  http://example.org
+      |
+      |A test candidate
+      |
+      |                                                              $ sdk install test
+      |--------------------------------------------------------------------------------
+      |Java (25.0.4-tem)                                         https://www.oracle.com
       |
       |The Java Language
       |
@@ -39,11 +54,7 @@ Feature: Candidate List
       |
       |                                                         $ sdk install micronaut
       |--------------------------------------------------------------------------------
-      |Scala (2.12.0)                                        http://www.scala-lang.org/
-      |
-      |The Scala Language
-      |
-      |                                                             $ sdk install scala
-      |--------------------------------------------------------------------------------
       |
     """
+    And the State API received exactly 1 tag lookup for java
+    And the State API received exactly 1 request for the candidate registry
