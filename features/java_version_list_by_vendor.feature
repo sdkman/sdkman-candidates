@@ -1,7 +1,10 @@
 Feature: Java Version List by Vendor
 
   Background:
-    Given the Candidate
+    Given the default Version on the remote service
+      | candidate | tag | platform  | vendor | version |
+      | java      | lts | LINUX_X64 | tem    | 17.0.0  |
+    And the Candidate
       | candidate | name | description       | default    | websiteUrl           | distribution      |
       | java      | Java | The Java Language | 17.0.0-tem | https://adoptium.net | PLATFORM_SPECIFIC |
 

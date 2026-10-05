@@ -1,7 +1,10 @@
 Feature: Version List by Platform
 
   Background:
-    Given the Candidate
+    Given the default Version on the remote service
+      | candidate | tag | platform  | vendor | version |
+      | java      | lts | LINUX_X64 | tem    | 8u111   |
+    And the Candidate
       | candidate | name      | description         | default    | websiteUrl                  | distribution      |
       | java      | Java      | The Java Language   | 8u111-open | https://www.oracle.com      | PLATFORM_SPECIFIC |
       | scala     | Scala     | The Scala Language  | 2.12.6     | https://www.scala-lang.org/ | UNIVERSAL         |
@@ -42,7 +45,7 @@ Feature: Version List by Platform
     | > in use   * installed   + local only
     |--------------------------------------------------------------------------------
     | $ sdk install java <Identifier>    install a specific version
-    | $ sdk install java                 install the default: 8u111-open
+    | $ sdk install java                 install the default: 8u111-tem
     | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
@@ -64,7 +67,7 @@ Feature: Version List by Platform
     | > in use   * installed   + local only
     |--------------------------------------------------------------------------------
     | $ sdk install java <Identifier>    install a specific version
-    | $ sdk install java                 install the default: 8u111-open
+    | $ sdk install java                 install the default: 8u111-tem
     | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """
@@ -86,7 +89,7 @@ Feature: Version List by Platform
     | > in use   * installed   + local only
     |--------------------------------------------------------------------------------
     | $ sdk install java <Identifier>    install a specific version
-    | $ sdk install java                 install the default: 8u111-open
+    | $ sdk install java                 install the default: 8u111-tem
     | $ sdk install java [TAB]           complete an available identifier
     |================================================================================
     """

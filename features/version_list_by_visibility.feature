@@ -1,7 +1,10 @@
 Feature: Version List by Visibility
 
   Scenario: Versions which are visible or don't contain the `visible` field are displayed
-    Given the Candidate
+    Given the default Version on the remote service
+      | candidate | tag | platform  | vendor | version |
+      | java      | lts | LINUX_X64 | tem    | 17.0.0  |
+    And the Candidate
       | candidate | name | description   | default    | websiteUrl           | distribution      |
       | java      | Java | Java Platform | 17.0.0-tem | https://adoptium.net | PLATFORM_SPECIFIC |
     And the Versions
