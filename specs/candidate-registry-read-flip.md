@@ -55,14 +55,23 @@ The Candidates Service holds the full candidate set in memory and refreshes it f
 - While the cached set is fresh, requests are served from it with no State API call.
 - When the cached set is stale, it is refreshed. The stale copy is served while that refresh is in flight; a request never blocks on a refresh.
 - When there is **no** cached set at all, a request **waits** for the initial fetch and is served if it succeeds. It fails only if that fetch fails. A restart against a healthy State API must not produce errors.
+- With no cached set, every request triggers a fetch if none is in flight and joins the in-flight one otherwise; the periodic refresh also fires. A request fails only when the fetch it waited on fails.
 - When a refresh fails, the previous set is retained and continues to be served. A failed refresh is logged with its cause and retried on the next opportunity.
-- Refreshes are **serialised**. At most one is in flight, and a slow one cannot overwrite the result of a later one. `sdkman-state` reached this the hard way in its own registry holder, where a write-triggered and a periodic refresh could overlap and leave the older set serving (`e4abe94`, with `1bbdc36` for logging the cause of the discarded failure).
+- Refreshes are **serialised**. At most one is in flight: a trigger arriving while a refresh is in flight is dropped, and the in-flight result serves. `sdkman-state` reached this the hard way in its own registry holder, where a write-triggered and a periodic refresh could overlap and leave the older set serving (settled in `f26e9d0`, which holds one mutex across the registry read and the store).
 - A `200` carrying an **empty** array is treated as contract drift, not as a valid empty registry: the previous set is retained and the condition is logged. The live registry is never legitimately empty, and an empty candidate set is more damaging than a stale one. The window in which `[]` meant something legitimate has closed: the backfill has run (78 rows, verified 2026-09-21) and the allow-list cutover shipped behind it, so an empty body now means drift and nothing else.
 - A `200` whose body does not parse as `Candidate[]` is contract drift and is handled the same way.
+- Any non-`200` status is a failed refresh: the previous set is retained and the status is logged.
 
 **Staleness is the sum of two caches, and that is intended.** Everything the State API serves is static in nature, and every call to it should be cached. `play.ws.cache.enabled=true` (`conf/application.conf`) with `ehcache` on the classpath means Play WS already honours the `Cache-Control: max-age` the State API sets on its read routes. The in-process set sits on top of that. Effective staleness for candidate metadata is therefore **this service's TTL plus the State API's `max-age`**, not the TTL alone, and the in-process set earns its keep only past the point where the HTTP cache has expired — which is exactly where the never-empty and serve-stale guarantees matter. Any TTL chosen here must be read as an addition to the State API's, not as the total.
 
-**When no set can be obtained.** Every endpoint below that needs candidate metadata responds `503 Service Unavailable` **with an empty body**.
+**When no set can be obtained.** These endpoints respond `503 Service Unavailable` **with an empty body**:
+
+- `GET /candidates/all`
+- `GET /candidates/list`
+- `GET /default/:candidate`
+- `GET /candidates/:candidate/:platformId/versions/list`
+
+`GET /candidates/java/:platformId/versions/list` is **not** in the set. It needs no candidate record, and with no java value its footer takes the fallback described below.
 
 The empty body is required, not stylistic, and the reason is broader than it first appears. Three separate consumers write the response of `/candidates/all` into `$SDKMAN_DIR/var/candidates`:
 
@@ -82,7 +91,7 @@ This posture is deliberately **not** the one `StateApiImpl` applies to version l
 
 Returns the comma-joined candidate identifiers from the cached set, in the order received. The service does not re-sort.
 
-The sort authority moves from MongoDB (`sort(ascending("candidate"))`) to a Postgres `ORDER BY`, so ordering is now subject to the database's collation. Every live identifier matches `^[a-z][a-z0-9]*$`, for which the two agree, but `features/candidates.feature` and `features/candidate_list.feature` pin exact orderings and are the regression net for this.
+The sort authority moves from MongoDB (`sort(ascending("candidate"))`) to a Postgres `ORDER BY`, so ordering is now subject to the database's collation. Every live identifier matches `^[a-z][a-z0-9]*$`, for which the two agree, and that ordering is guarded by the State API's own scenario ([`candidate-registry.md`](../../../do/sdkman-state/specs/candidate-registry.md), *List candidates in ascending order*). `features/candidates.feature` and `features/candidate_list.feature` run against a seeded stub, so they pin only that this service preserves the order received.
 
 ### `GET /candidates/list`
 
@@ -90,7 +99,7 @@ Renders the plain-text candidate listing from the cached set, in the order recei
 
 Each section header shows the candidate's display name and its default version. The default is taken from the `default` field of the cached record, and renders as `Coming soon!` when that field is absent — the existing fallback, unchanged.
 
-`java` is the exception. Its record never carries a `default`, so the service resolves it with a tag lookup: `GET /versions/java/tags/lts` with `platform=LINUX_X64` and the Temurin distribution, rendered as the public **identifier** (`25.0.4-tem`), never the bare version. That result is cached alongside the candidate set and refreshed with it, so rendering the listing does not issue a State API call per request. The java value follows the same rules as the set: a failed refresh retains the previous value, and only a value that has never resolved is absent. An absent value renders `Coming soon!` like any other candidate, and never fails the whole listing.
+`java` is the exception. Its record never carries a `default`, so the service resolves it with a tag lookup: `GET /versions/java/tags/lts` with `platform=LINUX_X64` and the Temurin distribution, rendered as the public **identifier** (`25.0.4-tem`), never the bare version. That result is cached alongside the candidate set and refreshed with it, so rendering the listing does not issue a State API call per request. The java value follows the same rules as the set: a failed refresh retains the previous value, and only a value that has never resolved is absent. A `404` on the refresh counts as a failed refresh, not a resolved answer: the last resolved identifier keeps serving until a later refresh resolves a new one. An absent value renders `Coming soon!` like any other candidate, and never fails the whole listing.
 
 The `test` candidate is no longer filtered out by name. It is not registered in the State API, so it does not arrive.
 
@@ -106,7 +115,7 @@ Resolution is:
 
 **This service issues no tag lookup for a non-java candidate and chooses no platform.** The platform preference lives in the State API's derived-`default` query. There is no fallback, no retry, and no classification.
 
-A State API transport failure, timeout, or unparseable body during the java **refresh** leaves the previous value serving. With no previous value the java default is absent, and `GET /default/java` is `400` with an empty body, the same as a miss. It is never a `500`. `state-api-hardening.md` §1 is the section that *recovered* listings, and it says so: "Single-version and tag reads already handle this; listing is the gap." The tag read is the one still exposed — `findVersionByCandidateAndTag` maps a non-200 to `None` but carries no `.recover`, so a transport failure, a timeout or an unparseable `200` propagates as a Play `500`; for a default resolution the CLI cannot use a `500`, and a miss and a failure are indistinguishable to it.
+A State API `404`, transport failure, timeout, or unparseable body during the java **refresh** leaves the previous value serving. With no previous value the java default is absent, and `GET /default/java` is `400` with an empty body, the same as a miss. It is never a `500`. `state-api-hardening.md` §1 is the section that *recovered* listings, and it says so: "Single-version and tag reads already handle this; listing is the gap." The tag read is the one still exposed — `findVersionByCandidateAndTag` maps a non-200 to `None` but carries no `.recover`, so a transport failure, a timeout or an unparseable `200` propagates as a Play `500`; for a default resolution the CLI cannot use a `500`, and a miss and a failure are indistinguishable to it.
 
 ### `GET /candidates/:candidate/:platformId/versions/list`
 
@@ -114,9 +123,9 @@ Unchanged except for its source of candidate metadata. The candidate must exist 
 
 ### `GET /candidates/java/:platformId/versions/list`
 
-Unchanged except that the footer's default version can no longer come from a stored `default`. It uses the same cached java tag result described under `GET /candidates/list`. When that is absent, the existing hardcoded `17.0.0-tem` fallback applies, still truncated to the existing footer width.
+Unchanged except that the footer's default version can no longer come from a stored `default`. It uses the same cached java tag result described under `GET /candidates/list`. When that is absent, a hardcoded fallback applies, still truncated to the existing footer width. The fallback moves from `17.0.0-tem` to a current lts identifier, `25.0.0.0-tem`.
 
-That the listing header falls back to `Coming soon!` while this footer falls back to `17.0.0-tem` is deliberate: each preserves the behaviour its own view has today.
+That the listing header falls back to `Coming soon!` while this footer falls back to a hardcoded identifier is deliberate: each preserves the behaviour its own view has today.
 
 ### `GET /alive` and `GET /ping`
 
@@ -155,15 +164,17 @@ Both CLIs gate on the cached candidate list: `sdkman-init.sh:116-123` only expor
 
 **Seven listing headers change their default version, and that is a convergence rather than a regression.** `DefaultController` has resolved defaults through the State API's `lts` tag since the version flip, while the listing header still renders Mongo's stored `default`, which nothing has updated since. Both read the same value after this change, so `sdk list` stops disagreeing with `sdk default`. Measured against production on 2026-09-21, live `GET /default/<candidate>` already equals the registry's derived `default` **for all 77 non-java candidates**, so `sdk default` and `sdk install <candidate>` resolve exactly what they resolve today.
 
-| Candidate | `sdk list` header today | After |
-|---|---|---|
-| `gradle` | `9.7.0` | `9.7.1` |
-| `groovyserv` | `1.2.0` | `2.0.0` |
-| `jenesis` | `0.12.0` | `0.14.0` |
-| `jetty` | `12.1.10` | `12.1.13` |
-| `kotlintoolchain` | `0.12.1` | `0.12.2` |
-| `jpx` | `Coming soon!` | `0.14.0` |
-| `kuml` | `Coming soon!` | `0.20.5` |
+| Candidate | `sdk list` header, 2026-09-21 |
+|---|---|
+| `gradle` | `9.7.0` |
+| `groovyserv` | `1.2.0` |
+| `jenesis` | `0.12.0` |
+| `jetty` | `12.1.10` |
+| `kotlintoolchain` | `0.12.1` |
+| `jpx` | `Coming soon!` |
+| `kuml` | `Coming soon!` |
+
+After cutover the header equals `GET /default/<candidate>` for every non-java candidate. The concrete values move with vendor `lts` tags independently of this change, so none are pinned here.
 
 **The listing text changes with it.** Every description is folded to printable ASCII ([`0009`](../../../docs/decisions/0009-candidate-descriptions-normalised.md)) and 39 of the 78 are the signed-off edits of [`0010`](../../../docs/decisions/0010-candidate-descriptions-edited.md), so `sdk list` output changes wholesale on cutover day rather than drifting there. One display name changes too: `activemq` renders as `Apache ActiveMQ Classic`. None of this is new work; it is recorded here for the same reason as the rest of this section.
 
@@ -181,20 +192,22 @@ The change is complete when **all** of the following hold:
 - `GET /candidates/list` renders every candidate in the order received, with no name-based filtering of `test`.
 - A candidate whose State API record has no `default` renders `Coming soon!` in the listing header.
 - The listing header for `java` shows the Temurin `lts` **identifier**, and renders `Coming soon!` if that lookup fails.
-- The `sdk list java` footer shows the same java value, falls back to `17.0.0-tem` when it is absent, and remains truncated to the existing footer width.
+- The `sdk list java` footer shows the same java value, falls back to `25.0.0.0-tem` when it is absent, and remains truncated to the existing footer width.
 - Rendering either listing issues no State API call while the cache is fresh.
 - `GET /default/<non-java candidate>` is answered from the cached record and issues **no** tag lookup.
 - `GET /default/<non-java candidate>` whose record has no `default` returns `400` with an empty body.
 - `GET /default/java` returns the suffixed identifier from the cached java value and issues **no** tag lookup while that value is held; the refresh issues exactly one lookup, at `platform=LINUX_X64` with the Temurin distribution.
 - `GET /default/<unknown candidate>` returns `400` with an empty body and issues no tag lookup.
-- A transport failure, timeout, or unparseable body on the java refresh retains the previous java value; with no previous value, `GET /default/java` returns `400`, never `500`.
+- A `404`, transport failure, timeout, or unparseable body on the java refresh retains the previous java value; with no previous value, `GET /default/java` returns `400`, never `500`.
 - `GET /candidates/<unknown candidate>/<platform>/versions/list` returns `404`; a known candidate's display name is used as the listing title.
 - A State API failure with a warm cache serves the previous candidate set on every metadata-backed endpoint.
-- Two refreshes cannot overlap, and when they would, the later result is the one left serving.
+- Two refreshes cannot overlap; a trigger during an in-flight refresh is dropped.
 - A State API `200` with an empty array, or an unparseable body, retains the previous set and is logged.
+- A non-`200` status from `GET /candidates` retains the previous set and is logged.
 - A cold start against a healthy State API serves successfully; the first request waits for the initial fetch rather than failing.
-- A cold start whose initial fetch fails returns `503` with an **empty** body on every metadata-backed endpoint.
+- A cold start whose initial fetch fails returns `503` with an **empty** body on each of the four endpoints listed under *When no set can be obtained*, and `GET /candidates/java/:platformId/versions/list` still serves with the `25.0.0.0-tem` footer.
 - A failed warm at startup does not prevent the service from starting.
+- After a failed warm, the first request once the State API is reachable is served, without waiting for the TTL.
 - `GET /ping` answers successfully regardless of State API or cache state.
 - The refresh interval is configurable and defaults to five minutes; the `GET /candidates` request timeout matches the existing State API calls.
 - No code path reconstructs a `UNIVERSAL` / `PLATFORM_SPECIFIC` classification, and no code path chooses a platform for a non-java default.
@@ -216,6 +229,8 @@ Candidate metadata moves out of Mongo, so the fixture layer moves with it. This 
 
 The features that pin rendered output (`candidate_list.feature`, `candidates.feature`, `default.feature`, `java_version_list_footer.feature`) are the regression net for the flip and should keep their existing expectations wherever behaviour is unchanged.
 
+The Cucumber harness runs one long-lived app across every scenario, so a TTL cache would answer one scenario from the previous scenario's stub. The step that seeds the `/candidates` stub therefore also forces a **synchronous reload** of the candidate set and the java value before the scenario's request is made. The reload hook is test-scoped and never exposed as a public route. Journal assertions on State API lookups count the lookups issued by that forced reload.
+
 ## Out of scope
 
 - The State API itself: the `candidates` table, routes and migrations are [`../../../do/sdkman-state/specs/candidate-registry.md`](../../../do/sdkman-state/specs/candidate-registry.md).
@@ -223,7 +238,7 @@ The features that pin rendered output (`candidate_list.feature`, `candidates.fea
 - Hardening the unconditional candidate-cache writes in the `sdkman-hooks` install and self-update scripts. Phase 3, with the rest of that repo.
 - Any change to either CLI, including the candidate-validity gates that strand the six retired candidates.
 - Backfilling the candidate data into Postgres. That is `candidates_migration/`, in the workspace root.
-- Public route shapes. Every path, status code and response body keeps its existing contract, apart from the new `503` condition and the three candidates no longer present.
+- Public route shapes. Every path, status code and response body keeps its existing contract, apart from the new `503` condition and the six candidates no longer present.
 - Per-candidate default-tag configuration. The literal `"lts"` remains correct.
 - Vendor Release, dual-write, Foojay DISCO.
 - Any change to version listing, single-version lookup, or `/validate`.
