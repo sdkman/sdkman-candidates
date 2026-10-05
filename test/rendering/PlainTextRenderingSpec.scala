@@ -1,6 +1,6 @@
 package rendering
 
-import io.sdkman.repos.Candidate
+import domain.Candidate
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -10,9 +10,8 @@ class PlainTextRenderingSpec extends AnyWordSpec with Matchers {
     "scala",
     "Scala",
     "The Scala Language",
-    Some("2.12.1"),
     "https://www.scala-lang.org/",
-    "UNIVERSAL"
+    Some("2.12.1")
   )
   val sectionWithDefault = new CandidateListSection(scala) with PlainTextRendering {
     override val ConsoleWidth = 42
@@ -22,9 +21,8 @@ class PlainTextRenderingSpec extends AnyWordSpec with Matchers {
     "micronaut",
     "Micronaut",
     "The Micronaut Framework",
-    None,
     "http://micronaut.io",
-    "UNIVERSAL"
+    None
   )
   val sectionWithoutDefault = new CandidateListSection(micronaut) with PlainTextRendering {
     override val ConsoleWidth = 44
