@@ -7,7 +7,8 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import com.typesafe.config.ConfigFactory
-import domain.Version
+import clients.StateApiImpl.{CandidatesContractDrift, CandidatesUnavailable}
+import domain.{Candidate, Version}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.Inspectors.forAll
 import org.scalatest.concurrent.ScalaFutures
@@ -61,6 +62,47 @@ class StateApiImplSpec
   // Drive stubs against this specific server (avoid WireMock's static default,
   // which would target localhost:8080 and clash with the Cucumber server).
   private def stub = wireMockServer.stubFor _
+
+  "findAllCandidates" should {
+
+    def stubCandidates(response: ResponseDefinitionBuilder): Unit =
+      stub(get(urlPathEqualTo("/candidates")).willReturn(response))
+
+    "map a 200 non-empty array to the candidates in received order" in {
+      // Deliberately not ascending: the client must not re-sort what it receives.
+      val candidates = List(
+        Candidate("scala", "Scala", "The Scala language.", "https://scala-lang.org", Some("3.3.1")),
+        Candidate("java", "Java", "The Java platform.", "https://java.com", None)
+      )
+      stubCandidates(
+        aResponse().withStatus(200).withBody(Json.toJson(candidates).toString)
+      )
+
+      stateApi.findAllCandidates().futureValue shouldBe candidates
+    }
+
+    "fail with CandidatesContractDrift on a 200 empty array" in {
+      stubCandidates(aResponse().withStatus(200).withBody("[]"))
+
+      val failure = stateApi.findAllCandidates().failed.futureValue
+      failure shouldBe a[CandidatesContractDrift]
+      failure.getMessage should include("empty array")
+    }
+
+    "fail with CandidatesContractDrift on a 200 unparseable body" in {
+      stubCandidates(aResponse().withStatus(200).withBody("""{"unexpected":"shape"}"""))
+
+      stateApi.findAllCandidates().failed.futureValue shouldBe a[CandidatesContractDrift]
+    }
+
+    "fail with CandidatesUnavailable carrying the status on a non-200" in {
+      stubCandidates(aResponse().withStatus(503))
+
+      val failure = stateApi.findAllCandidates().failed.futureValue
+      failure shouldBe CandidatesUnavailable(503)
+      failure.getMessage should include("503")
+    }
+  }
 
   "findVersionByCandidateAndTag" should {
 

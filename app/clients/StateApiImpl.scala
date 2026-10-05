@@ -1,7 +1,7 @@
 package clients
 
 import cats.implicits.{catsSyntaxOptionId, none}
-import domain.Version
+import domain.{Candidate, Version}
 import play.api.Logging
 import play.api.http.Status
 import play.api.libs.json.{JsError, JsSuccess}
@@ -12,6 +12,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait StateApi {
+
+  def findAllCandidates(): Future[Seq[Candidate]]
 
   def findVisibleVersionsByCandidateAndPlatform(
       candidate: String,
@@ -39,7 +41,23 @@ class StateApiImpl @Inject() (requestBuilder: RequestBuilder)
     with JsonConverters
     with Logging {
 
-  import StateApiImpl.ContractDrift
+  import StateApiImpl.{CandidatesContractDrift, CandidatesUnavailable, ContractDrift}
+
+  override def findAllCandidates(): Future[Seq[Candidate]] =
+    requestBuilder
+      .candidatesRequest()
+      .get()
+      .flatMap { response =>
+        if (response.status == Status.OK)
+          response.json.validate[List[Candidate]] match {
+            // The live registry is never legitimately empty, so an empty 200
+            // is drift, not a valid empty set the caller could cache.
+            case JsSuccess(Nil, _)   => Future.failed(CandidatesContractDrift("empty array"))
+            case JsSuccess(value, _) => Future.successful(value)
+            case JsError(e)          => Future.failed(CandidatesContractDrift(e.toString))
+          }
+        else Future.failed(CandidatesUnavailable(response.status))
+      }
 
   override def findVisibleVersionsByCandidateAndPlatform(
       candidate: String,
@@ -119,6 +137,17 @@ class StateApiImpl @Inject() (requestBuilder: RequestBuilder)
 }
 
 object StateApiImpl {
+
+  // A 200 candidate registry response that is empty or does not parse as
+  // Candidate[]. Callers retain their previous set rather than adopt it.
+  final case class CandidatesContractDrift(detail: String)
+      extends RuntimeException(
+        s"State API candidate registry returned 200 with an unusable body: $detail"
+      )
+
+  // Any non-200 from the candidate registry read.
+  final case class CandidatesUnavailable(status: Int)
+      extends RuntimeException(s"State API candidate registry returned status $status")
 
   // A 200 listing response whose body does not parse as Version[] signals the
   // State API contract has drifted. It is distinct from a "no versions"
