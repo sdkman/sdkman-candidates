@@ -1,13 +1,15 @@
 package clients
 
+import akka.actor.ActorSystem
 import domain.Candidate
+import play.api.inject.ApplicationLifecycle
 import play.api.{Configuration, Logging}
 
 import java.time.{Clock, Instant}
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
@@ -19,7 +21,9 @@ import scala.util.{Failure, Success}
 class CandidateRegistry @Inject() (
     stateApi: StateApiImpl,
     configuration: Configuration,
-    clock: Clock
+    clock: Clock,
+    actorSystem: ActorSystem,
+    lifecycle: ApplicationLifecycle
 ) extends Logging {
 
   private val refreshInterval =
@@ -36,6 +40,15 @@ class CandidateRegistry @Inject() (
   // At most one refresh is in flight. A trigger arriving meanwhile joins it
   // instead of starting a second fetch that could land out of order.
   private val inFlight = new AtomicReference[Option[Future[Unit]]](None)
+
+  // The first tick is the startup warm. refresh() never fails, so a State API
+  // outage at boot leaves the set empty without stopping the service.
+  private val schedule =
+    actorSystem.scheduler.scheduleWithFixedDelay(Duration.Zero, refreshInterval) { () =>
+      refresh()
+    }
+
+  lifecycle.addStopHook(() => Future.successful(schedule.cancel()))
 
   def refresh(): Future[Unit] = {
     val promise = Promise[Unit]()
