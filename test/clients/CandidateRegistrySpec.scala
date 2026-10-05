@@ -7,7 +7,7 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import com.typesafe.config.ConfigFactory
-import domain.Candidate
+import domain.{Candidate, Version}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -129,12 +129,88 @@ class CandidateRegistrySpec
     }
   }
 
+  private val javaLts = Version(
+    candidate = "java",
+    version = "25.0.4",
+    platform = "LINUX_X64",
+    url = "https://downloads/java/25.0.4-tem/java-25.0.4-tem.tar.gz",
+    visible = Some(true),
+    vendor = Some("tem")
+  )
+
+  private val javaTagPath = urlPathEqualTo("/versions/java/tags/lts")
+
+  private def stubJavaLts(response: ResponseDefinitionBuilder): Unit =
+    wireMockServer.stubFor(
+      get(javaTagPath)
+        .withQueryParam("platform", equalTo("LINUX_X64"))
+        .withQueryParam("distribution", equalTo("TEMURIN"))
+        .willReturn(response)
+    )
+
+  private def warmWithJavaLts(): Unit = {
+    stubCandidates(aResponse().withStatus(200).withBody(Json.toJson(goodSet).toString))
+    stubJavaLts(aResponse().withStatus(200).withBody(Json.toJson(javaLts).toString))
+    registry.refresh().futureValue
+    registry.currentJavaDefault shouldBe Some("25.0.4-tem")
+  }
+
+  "refresh of the java default" should {
+
+    // The identifier, never the bare version: conflating the two caused two
+    // production rollbacks (docs/glossary.md, identifier / version).
+    "resolve the Temurin lts tag at LINUX_X64 to its identifier" in {
+      warmWithJavaLts()
+      wireMockServer.verify(1, getRequestedFor(javaTagPath))
+    }
+
+    // A 404 is a failed refresh, not an answer that java has no default.
+    "retain the previous value after a 404" in {
+      warmWithJavaLts()
+      stubJavaLts(aResponse().withStatus(404))
+
+      registry.refresh().futureValue
+      registry.currentJavaDefault shouldBe Some("25.0.4-tem")
+    }
+
+    "retain the previous value after a response slower than the 1500 ms timeout" in {
+      warmWithJavaLts()
+      stubJavaLts(
+        aResponse()
+          .withStatus(200)
+          .withBody(Json.toJson(javaLts.copy(version = "25.0.5")).toString)
+          .withFixedDelay(2000)
+      )
+
+      registry.refresh().futureValue
+      registry.currentJavaDefault shouldBe Some("25.0.4-tem")
+    }
+
+    "retain the previous value after a malformed body" in {
+      warmWithJavaLts()
+      stubJavaLts(aResponse().withStatus(200).withBody("""{"unexpected":"shape"}"""))
+
+      registry.refresh().futureValue
+      registry.currentJavaDefault shouldBe Some("25.0.4-tem")
+    }
+
+    "stay empty when the first refresh gets a 404" in {
+      stubCandidates(aResponse().withStatus(200).withBody(Json.toJson(goodSet).toString))
+      stubJavaLts(aResponse().withStatus(404))
+
+      registry.refresh().futureValue
+      registry.current shouldBe Some(goodSet)
+      registry.currentJavaDefault shouldBe None
+    }
+  }
+
   "clear" should {
 
     "empty the registry" in {
       warmWithGoodSet()
       registry.clear()
       registry.current shouldBe None
+      registry.currentJavaDefault shouldBe None
     }
   }
 }
