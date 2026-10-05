@@ -49,7 +49,7 @@ For most loop work the test suite is sufficient — the dev server is rarely nee
 - `app/clients/` — HTTP clients. `StateApiImpl.scala` is the State API client; `RequestBuilder.scala` constructs the WS requests. **This is where most step-2 work happens.**
 - `app/controllers/` — Play controllers. `DefaultController.scala` is the focus of the default-version migration; `VersionsController`, `VersionsListController`, `JavaListController`, `ValidationController` already call the State API client (with the contract bugs flagged in the spec).
 - `app/domain/` — domain types (`Version`, `Platform`).
-- `app/repos/` — Mongo repository wrappers (legacy; still used for `Candidate` metadata).
+- `app/repos/` — Mongo repository wrappers (legacy; `ApplicationRepository` only). Candidate metadata comes from `CandidateRegistry` (`app/clients/`) over the State API.
 - `conf/routes` — Play routes.
 - `conf/application.conf` — config, including the `state-api { … }` block.
 - `test/` — ScalaTest specs (`*Spec.scala`) and Cucumber wiring.
