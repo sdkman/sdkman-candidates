@@ -1,4 +1,4 @@
-name: Notify on Failure
+name: Workflow Failure Alert
 
 on:
   workflow_run:
@@ -8,5 +8,5 @@ on:
 
 jobs:
   notify:
-    uses: sdkman/.github/.github/workflows/reusable-notify-on-failure.yml@main
+    uses: sdkman/.github/.github/workflows/reusable-workflow-failure-alert.yml@main
     secrets: inherit
