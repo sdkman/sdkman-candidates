@@ -101,7 +101,7 @@ The change is complete when **all** of the following hold:
 ## References
 
 - Default-version migration spec: [`state-api-default-version.md`](./state-api-default-version.md)
-- State API query-parameter strictness (the change that makes outbound shortcodes a hard `400`): `../../do/sdkman-state/specs/version-read-query-parameters.md`
+- State API query-parameter strictness (the change that makes outbound shortcodes a hard `400`): `../../do/sdkman-state/specs/009-version_read_query_parameters.md`
 - Migration overview: `../../docs/specs/end-game.md`
 - Step-2 high-level analysis: `../../docs/specs/02-candidates-state-api-integration.md`
 - Live State API swagger: <https://state.sdkman.io/swagger/documentation.yaml>

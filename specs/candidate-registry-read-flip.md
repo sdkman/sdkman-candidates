@@ -12,7 +12,7 @@ Every read of the `candidates` collection moves to a new State API resource, `GE
 
 **The MongoDB connection stays.** `HealthController` reads the `application` collection for `GET /alive`, and the `application` collection is not in scope. `ApplicationRepository`, `MongoConn`, and the Mongo configuration all remain. Only `CandidatesRepository` and its callers go.
 
-The State API is consumed as-is. The new resource is specified in [`../../../do/sdkman-state/specs/candidate-registry.md`](../../../do/sdkman-state/specs/candidate-registry.md) and is **already live**: `GET /candidates` serves 78 backfilled rows on `state.sdkman.io` (verified 2026-09-21), and the allow-list cutover that makes the registry load-bearing for publishes shipped with it. Nothing in this change waits on the State API any more.
+The State API is consumed as-is. The new resource is specified in [`../../../do/sdkman-state/specs/014-candidate_registry.md`](../../../do/sdkman-state/specs/014-candidate_registry.md) and is **already live**: `GET /candidates` serves 78 backfilled rows on `state.sdkman.io` (verified 2026-09-21), and the allow-list cutover that makes the registry load-bearing for publishes shipped with it. Nothing in this change waits on the State API any more.
 
 ## State API surface
 
@@ -91,7 +91,7 @@ This posture is deliberately **not** the one `StateApiImpl` applies to version l
 
 Returns the comma-joined candidate identifiers from the cached set, in the order received. The service does not re-sort.
 
-The sort authority moves from MongoDB (`sort(ascending("candidate"))`) to a Postgres `ORDER BY`, so ordering is now subject to the database's collation. Every live identifier matches `^[a-z][a-z0-9]*$`, for which the two agree, and that ordering is guarded by the State API's own scenario ([`candidate-registry.md`](../../../do/sdkman-state/specs/candidate-registry.md), *List candidates in ascending order*). `features/candidates.feature` and `features/candidate_list.feature` run against a seeded stub, so they pin only that this service preserves the order received.
+The sort authority moves from MongoDB (`sort(ascending("candidate"))`) to a Postgres `ORDER BY`, so ordering is now subject to the database's collation. Every live identifier matches `^[a-z][a-z0-9]*$`, for which the two agree, and that ordering is guarded by the State API's own scenario ([`014-candidate_registry.md`](../../../do/sdkman-state/specs/014-candidate_registry.md), *List candidates in ascending order*). `features/candidates.feature` and `features/candidate_list.feature` run against a seeded stub, so they pin only that this service preserves the order received.
 
 ### `GET /candidates/list`
 
@@ -233,7 +233,7 @@ The Cucumber harness runs one long-lived app across every scenario, so a TTL cac
 
 ## Out of scope
 
-- The State API itself: the `candidates` table, routes and migrations are [`../../../do/sdkman-state/specs/candidate-registry.md`](../../../do/sdkman-state/specs/candidate-registry.md).
+- The State API itself: the `candidates` table, routes and migrations are [`../../../do/sdkman-state/specs/014-candidate_registry.md`](../../../do/sdkman-state/specs/014-candidate_registry.md).
 - The MongoDB `application` collection, `GET /alive`, and removal of the Mongo driver. Phase 3.
 - Hardening the unconditional candidate-cache writes in the `sdkman-hooks` install and self-update scripts. Phase 3, with the rest of that repo.
 - Any change to either CLI, including the candidate-validity gates that strand the six retired candidates.
@@ -245,7 +245,7 @@ The Cucumber harness runs one long-lived app across every scenario, so a TTL cac
 
 ## References
 
-- State API side of this change: [`../../../do/sdkman-state/specs/candidate-registry.md`](../../../do/sdkman-state/specs/candidate-registry.md)
+- State API side of this change: [`../../../do/sdkman-state/specs/014-candidate_registry.md`](../../../do/sdkman-state/specs/014-candidate_registry.md)
 - Phase 2 scope and measurements: [`../../../docs/specs/candidates-end-game.md`](../../../docs/specs/candidates-end-game.md)
 - Why the classification is deleted rather than renamed: [`../../../docs/decisions/0007-platform-classification-deleted.md`](../../../docs/decisions/0007-platform-classification-deleted.md)
 - Why the registry is enforced in the application rather than by a foreign key: [`../../../docs/decisions/0008-registry-enforced-in-application.md`](../../../docs/decisions/0008-registry-enforced-in-application.md), superseding [`0006`](../../../docs/decisions/0006-candidate-foreign-key.md)
