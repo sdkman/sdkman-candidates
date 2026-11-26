@@ -63,3 +63,19 @@ Feature: CLI Candidates Excluded
     When a request is made to /candidates/sdkrs/linuxx64/versions/list
     Then a 404 status code is received
     And the State API received no requests for sdkrs
+
+  Scenario: Validation fails by name for a CLI candidate
+    Given the Version on the remote service
+      | candidate | version | vendor | platform  | url                                |
+      | sdkcli    | 5.24.0  |        | UNIVERSAL | http://dl/sdkcli/5.24.0/sdkman.zip |
+    And the Version on the remote service
+      | candidate | version | vendor | platform  | url                                |
+      | sdkrs     | 0.8.0   |        | LINUX_X64 | http://dl/sdkrs/0.8.0/sdkrs.tar.gz |
+    When I attempt validation at endpoint /validate/sdkcli/5.24.0/linuxx64
+    Then a 200 status code is received
+    And the response body is "invalid"
+    And the State API received no requests for sdkcli
+    When I attempt validation at endpoint /validate/sdkrs/0.8.0/linuxx64
+    Then a 200 status code is received
+    And the response body is "invalid"
+    And the State API received no requests for sdkrs
