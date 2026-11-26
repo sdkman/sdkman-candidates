@@ -79,3 +79,17 @@ Feature: CLI Candidates Excluded
     Then a 200 status code is received
     And the response body is "invalid"
     And the State API received no requests for sdkrs
+
+  Scenario: Find no Versions by name for a CLI candidate
+    Given the Versions
+      | candidate | version | vendor | platform  | url                                |
+      | sdkcli    | 5.24.0  |        | UNIVERSAL | http://dl/sdkcli/5.24.0/sdkman.zip |
+      | sdkrs     | 0.8.0   |        | LINUX_X64 | http://dl/sdkrs/0.8.0/sdkrs.tar.gz |
+    When a request is made to /candidates/sdkcli/linuxx64/versions/all
+    Then a 200 status code is received
+    And the response body is ""
+    And the State API received no requests for sdkcli
+    When a request is made to /candidates/sdkrs/linuxx64/versions/all
+    Then a 200 status code is received
+    And the response body is ""
+    And the State API received no requests for sdkrs

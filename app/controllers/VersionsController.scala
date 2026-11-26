@@ -2,10 +2,11 @@ package controllers
 
 import clients.StateApiImpl
 import com.google.inject.Inject
-import domain.Platform
+import domain.{CliCandidates, Platform}
 import play.api.mvc._
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class VersionsController @Inject() (
     stateApi: StateApiImpl,
@@ -14,14 +15,18 @@ class VersionsController @Inject() (
 
   def all(candidate: String, platformId: String): Action[AnyContent] =
     Action.async(parse.anyContent) { _ =>
-      val universalVersionsF =
-        stateApi.findVisibleVersionsByCandidateAndPlatform(candidate, Platform.Universal.name)
-      val platformVersionsF =
-        stateApi.findVisibleVersionsByCandidateAndPlatform(candidate, Platform(platformId).name)
+      if (CliCandidates.contains(candidate))
+        Future.successful(Ok(""))
+      else {
+        val universalVersionsF =
+          stateApi.findVisibleVersionsByCandidateAndPlatform(candidate, Platform.Universal.name)
+        val platformVersionsF =
+          stateApi.findVisibleVersionsByCandidateAndPlatform(candidate, Platform(platformId).name)
 
-      for {
-        universalVersions <- universalVersionsF
-        platformVersions  <- platformVersionsF
-      } yield Ok((universalVersions ++ platformVersions).map(_.identifier).mkString(","))
+        for {
+          universalVersions <- universalVersionsF
+          platformVersions  <- platformVersionsF
+        } yield Ok((universalVersions ++ platformVersions).map(_.identifier).mkString(","))
+      }
     }
 }
