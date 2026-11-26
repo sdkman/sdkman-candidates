@@ -93,3 +93,19 @@ Feature: CLI Candidates Excluded
     Then a 200 status code is received
     And the response body is ""
     And the State API received no requests for sdkrs
+
+  Scenario: Validation succeeds for a candidate absent from the registry
+    Given the Version on the remote service
+      | candidate     | version | vendor | platform  | url                                     |
+      | infrastructor | 0.3.1   |        | UNIVERSAL | http://dl/infrastructor/0.3.1/infra.zip |
+    When I attempt validation at endpoint /validate/infrastructor/0.3.1/linuxx64
+    Then a 200 status code is received
+    And the response body is "valid"
+
+  Scenario: Find all Versions for a candidate absent from the registry
+    Given the Versions
+      | candidate     | version | vendor | platform  | url                                     |
+      | infrastructor | 0.3.1   |        | UNIVERSAL | http://dl/infrastructor/0.3.1/infra.zip |
+    When a request is made to /candidates/infrastructor/linuxx64/versions/all
+    Then a 200 status code is received
+    And the response body is "0.3.1"
