@@ -29,44 +29,46 @@ class VersionsListController @Inject() (
       installed: Option[String]
   ): Action[AnyContent] =
     Action.async(parse.anyContent) { _ =>
-      val universalVersionsF = stateApi.findVisibleVersionsByCandidateAndPlatform(
-        candidateId,
-        Platform.Universal.name
-      )
-      val platformVersionsF = stateApi.findVisibleVersionsByCandidateAndPlatform(
-        candidateId,
-        Platform(platformId).name
-      )
-
-      def listing(title: String): Future[Result] = for {
-        universalVersions <- universalVersionsF
-        platformVersions  <- platformVersionsF
-        allVersions = universalVersions ++ platformVersions
-      } yield {
-        import cats.syntax.show._
-
-        def flattenNonEmpty(os: Option[String]) = os.filter(_.nonEmpty)
-
-        val rowCount   = asRowCount(allVersions.length)
-        val upperBound = rowCount * DefaultColumnCount
-        val padded = pad(
-          items(
-            available(allVersions),
-            local(flattenNonEmpty(installed)),
-            flattenNonEmpty(current)
-          ).descendingOrder,
-          upperBound
+      def listing(title: String): Future[Result] = {
+        val universalVersionsF = stateApi.findVisibleVersionsByCandidateAndPlatform(
+          candidateId,
+          Platform.Universal.name
         )
-        val rows: Seq[String] = for {
-          i <- 0 until rowCount
-          col1 = padded(i + 0 * rowCount)
-          col2 = padded(i + 1 * rowCount)
-          col3 = padded(i + 2 * rowCount)
-          col4 = padded(i + 3 * rowCount)
+        val platformVersionsF = stateApi.findVisibleVersionsByCandidateAndPlatform(
+          candidateId,
+          Platform(platformId).name
+        )
 
-        } yield VersionRow(col1, col2, col3, col4).show
+        for {
+          universalVersions <- universalVersionsF
+          platformVersions  <- platformVersionsF
+          allVersions = universalVersions ++ platformVersions
+        } yield {
+          import cats.syntax.show._
 
-        Ok(views.txt.version_list(title, rows))
+          def flattenNonEmpty(os: Option[String]) = os.filter(_.nonEmpty)
+
+          val rowCount   = asRowCount(allVersions.length)
+          val upperBound = rowCount * DefaultColumnCount
+          val padded = pad(
+            items(
+              available(allVersions),
+              local(flattenNonEmpty(installed)),
+              flattenNonEmpty(current)
+            ).descendingOrder,
+            upperBound
+          )
+          val rows: Seq[String] = for {
+            i <- 0 until rowCount
+            col1 = padded(i + 0 * rowCount)
+            col2 = padded(i + 1 * rowCount)
+            col3 = padded(i + 2 * rowCount)
+            col4 = padded(i + 3 * rowCount)
+
+          } yield VersionRow(col1, col2, col3, col4).show
+
+          Ok(views.txt.version_list(title, rows))
+        }
       }
 
       // The listing title is the candidate's display name from the registry;

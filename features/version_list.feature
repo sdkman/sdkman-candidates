@@ -244,3 +244,4 @@ Feature: Version List
   Scenario: An unknown Candidate is not found
     When a request is made to /candidates/groovy/linuxx64/versions/list
     Then a 404 status code is received
+    And the State API received no requests for groovy
