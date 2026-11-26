@@ -83,6 +83,10 @@ class RestSteps extends ScalaDsl with EN with Matchers with AppendedClues {
       verify(count, getRequestedFor(urlPathMatching(s"/versions/$candidate/tags/.*")))
   }
 
+  And("""^the State API received no requests for (\S+)$""") { candidate: String =>
+    verify(0, getRequestedFor(urlPathMatching(s"/versions/$candidate(/.*)?")))
+  }
+
   And("""^the State API received exactly (\d+) requests? for the candidate registry$""") {
     count: Int =>
       verify(count, getRequestedFor(urlPathEqualTo("/candidates")))
