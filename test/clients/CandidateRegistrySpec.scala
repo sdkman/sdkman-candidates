@@ -142,6 +142,15 @@ class CandidateRegistrySpec
       registry.current shouldBe Some(List(scala, java))
     }
 
+    "cache an empty set from an answer of only sdkcli and sdkrs" in {
+      warmWithGoodSet()
+      val received = List(sdkcli, sdkrs)
+      stubCandidates(aResponse().withStatus(200).withBody(Json.toJson(received).toString))
+
+      registry.refresh().futureValue
+      registry.current shouldBe Some(Nil)
+    }
+
     "retain the previous set after a 200 malformed body" in {
       warmWithGoodSet()
       stubCandidates(aResponse().withStatus(200).withBody("""{"unexpected":"shape"}"""))
