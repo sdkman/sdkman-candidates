@@ -102,6 +102,11 @@ class CandidateRegistrySpec
     Candidate("scala", "Scala", "The Scala language.", "https://scala-lang.org", Some("3.3.1"))
   )
 
+  private val sdkcli =
+    Candidate("sdkcli", "SDKMAN CLI", "The bash CLI.", "https://sdkman.io", Some("5.24.0"))
+  private val sdkrs =
+    Candidate("sdkrs", "SDKMAN Native CLI", "The native CLI.", "https://sdkman.io", Some("0.8.0"))
+
   private def stubCandidates(response: ResponseDefinitionBuilder): Unit =
     wireMockServer.stubFor(get(urlPathEqualTo("/candidates")).willReturn(response))
 
@@ -125,6 +130,16 @@ class CandidateRegistrySpec
 
       registry.refresh().futureValue
       registry.current shouldBe Some(goodSet)
+    }
+
+    "drop sdkcli and sdkrs and keep the received order" in {
+      warmWithGoodSet()
+      val (java, scala) = (goodSet.head, goodSet(1))
+      val received      = List(sdkcli, scala, sdkrs, java)
+      stubCandidates(aResponse().withStatus(200).withBody(Json.toJson(received).toString))
+
+      registry.refresh().futureValue
+      registry.current shouldBe Some(List(scala, java))
     }
 
     "retain the previous set after a 200 malformed body" in {

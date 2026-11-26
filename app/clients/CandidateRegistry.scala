@@ -1,7 +1,7 @@
 package clients
 
 import akka.actor.ActorSystem
-import domain.Candidate
+import domain.{Candidate, CliCandidates}
 import play.api.inject.ApplicationLifecycle
 import play.api.{Configuration, Logging}
 
@@ -72,7 +72,8 @@ class CandidateRegistry @Inject() (
       .findAllCandidates()
       .transform {
         case Success(fetched) =>
-          candidateSet.set(Some(fetched))
+          // The CLI candidates never enter the set: specs/cli-candidates-excluded.md
+          candidateSet.set(Some(fetched.filterNot(c => CliCandidates.contains(c.candidate))))
           lastSuccess.set(Some(clock.instant()))
           Success(())
         case Failure(e) =>
